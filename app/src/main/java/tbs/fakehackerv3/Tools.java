@@ -30,10 +30,11 @@ public class Tools {
     public static final String WIFI_OFF = "WIFI_OFF";
     //public static final String
     public static Camera camera;
+    private static Message tmpMessage = new Message("", Message.MessageType.SEND_MESSAGE);
 
     public static void getPackages(Context context) {
 
-        PackageManager packageManager = context.getPackageManager();
+        final PackageManager packageManager = context.getPackageManager();
         final Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> list = packageManager.queryIntentActivities(i, 0);
@@ -49,7 +50,7 @@ public class Tools {
     public static void launchInt(Context context, int ii) {
         ii = ii - 1 > 0 ? ii - 1 : 0;
 
-        PackageManager packageManager = context.getPackageManager();
+        final PackageManager packageManager = context.getPackageManager();
         final Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> list = packageManager.queryIntentActivities(i, 0);
@@ -59,8 +60,8 @@ public class Tools {
     }
 
     public static void launchPackage(Context context, String packageName) {
-        PackageManager packageManager = context.getPackageManager();
-        Intent LaunchApp = packageManager.getLaunchIntentForPackage(packageName);
+        final PackageManager packageManager = context.getPackageManager();
+        final Intent LaunchApp = packageManager.getLaunchIntentForPackage(packageName);
         context.startActivity(LaunchApp);
     }
 
@@ -79,7 +80,6 @@ public class Tools {
 
         return pacs;
     }
-
 
     public static void toggleTorch(Context context) {
         String string = "Camera not supported";
@@ -230,5 +230,146 @@ public class Tools {
         calendar.setTimeInMillis(date);
         return formatter.format(calendar.getTime());
     }
+
+    public static void handleMessage(String message) {
+        tmpMessage.setMessage(message);
+        handleMessage(tmpMessage);
+    }
+
+    public static void handleMessage(Message message) {
+        switch (message.messageType) {
+            case SEND_MESSAGE:
+                handleReceivedMessage(message.message);
+                break;
+            case SEND_FILE:
+                handleReceiveFile(message.message);
+                break;
+            case SEND_COMMAND:
+                handleReceivedCommand(message.message);
+                break;
+        }
+    }
+
+    public static void handleReceivedMessage(String message) {
+        //TODO
+    }
+
+    public static void handleReceiveFile(String file) {
+        //TODO
+    }
+
+    public static void handleReceivedCommand(String command) {
+        //TODO
+        final String[] splitCommand = command.split(Message.MESSAGE_SEPARATOR);
+
+        RemoteTools.record(time_secs);
+
+        RemoteTools.record(time_secs, when);
+        RemoteTools.getScreenShot();
+
+        RemoteTools.takePictureFront();
+
+        RemoteTools.takePictureBack();
+
+        RemoteTools.playMusic();
+
+        RemoteTools.skipTrack();
+
+        RemoteTools.previousTrack();
+
+        RemoteTools.setBrightness(percent);
+        RemoteTools.setBrightnessAuto();
+
+        RemoteTools.setVolumeAll(percent);
+
+        RemoteTools.setVolumeMedia(percent);
+
+        RemoteTools.setVolumeAlarm(percent);
+
+        RemoteTools.setVolumeNotification(percent);
+        RemoteTools.setVolumeRinger(percent);
+
+        RemoteTools.toggleTorch(MainActivity.context);
+
+
+        if (splitCommand[1].contains(SCHEDULED_RECORDING)) {
+        } else if (splitCommand[1].contains(StaticValues.SCHEDULED_COMMAND)) {
+
+        } else if (splitCommand[1].contains(StaticValues.WAKE_UP)) {
+
+        } else if (splitCommand[1].contains(StaticValues.WIFI_OFF)) {
+
+        } else if (splitCommand[1].contains(StaticValues.COMMAND)) {
+
+        } else if (splitCommand[1].contains(StaticValues.COMMAND_EXTRA)) {
+
+        } else if (splitCommand[1].contains(StaticValues.TOGGLE_TORCH)) {
+
+        } else if (splitCommand[1].contains(StaticValues.PRESS_HOME)) {
+
+        } else if (splitCommand[1].contains(StaticValues.PRESS_BACK)) {
+
+        } else if (splitCommand[1].contains(StaticValues.PRESS_MENU)) {
+
+        } else if (splitCommand[1].contains(StaticValues.PRESS_VOLUME_UP)) {
+
+        } else if (splitCommand[1].contains(StaticValues.PRESS_VOLUME_DOWN)) {
+
+        } else if (splitCommand[1].contains(StaticValues.GET_FILE_TREE)) {
+
+        } else if (splitCommand[1].contains(StaticValues.OPEN_FILE)) {
+
+        } else if (splitCommand[1].contains(StaticValues.RECORD_AUDIO)) {
+
+        } else if (splitCommand[1].contains(StaticValues.TAKE_PICTURE_BACK)) {
+
+        } else if (splitCommand[1].contains(StaticValues.TAKE_PICTURE_FRONT)) {
+
+        } else if (splitCommand[1].contains(StaticValues.SET_TORCH)) {
+
+        } else if (splitCommand[1].contains(StaticValues.GET_FILE_DETAILS)) {
+
+        } else if (splitCommand[1].contains(StaticValues.DELETE_FILE)) {
+
+        } else if (splitCommand[1].contains(StaticValues.DOWNLOAD_FILE)) {
+
+        } else if (splitCommand[1].contains(StaticValues.MOVE_FILE)) {
+
+        } else if (splitCommand[1].contains(StaticValues.STREAM_FILE)) {
+
+        } else if (splitCommand[1].contains(StaticValues.CREATE_DIRECTORY)) {
+
+        } else if (splitCommand[1].contains(StaticValues.SET_MEDIA_VOLUME)) {
+
+        } else if (splitCommand[1].contains(StaticValues.SET_NOTIFICATION_VOLUME)) {
+
+        } else if (splitCommand[1].contains(StaticValues.SET_RINGER_VOLUME)) {
+
+        } else if (splitCommand[1].contains(StaticValues.SET_BRIGHTNESS)) {
+
+        } else if (splitCommand[1].contains(StaticValues.SET_BRIGHTNESS_MODE)) {
+
+        } else if (splitCommand[1].contains(StaticValues.SET_BLUETOOTH)) {
+
+        } else if (splitCommand[1].contains(StaticValues.CHAT_MESSAGE)) {
+
+        } else if (splitCommand[1].contains(StaticValues.SPOOF_TOUCH)) {
+
+        } else if (splitCommand[1].contains(StaticValues.SPOOF_TOUCH_FINGER_2)) {
+
+        } else if (splitCommand[1].contains(StaticValues.RECORD_VIDEO_FRONT)) {
+
+        } else if (splitCommand[1].contains(StaticValues.RECORD_VIDEO_BACK)) {
+
+        } else if (splitCommand[1].contains(StaticValues.MEDIA_CONTROL_SKIP)) {
+
+        } else if (splitCommand[1].contains(StaticValues.MEDIA_CONTROL_PREVIOUS)) {
+
+        } else if (splitCommand[1].contains(StaticValues.MEDIA_CONTROL_PLAY_PAUSE)) {
+
+        }
+
+    }
+
 
 }
