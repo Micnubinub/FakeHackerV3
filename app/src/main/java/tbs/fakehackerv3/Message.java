@@ -17,6 +17,10 @@ public class Message {
         setMessage(messageStringWithSep);
     }
 
+    public Message(MessageType messageType) {
+        this.messageType = messageType;
+    }
+
     public void setMessage(String messageStringWithSep) {
         final String[] msg = messageStringWithSep.split(MESSAGE_SEPARATOR);
         if (msg.length < 1) {

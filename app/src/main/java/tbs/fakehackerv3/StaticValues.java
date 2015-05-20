@@ -7,7 +7,6 @@ public class StaticValues {
     public static final String SCHEDULED_RECORDING = "SCHEDULED_RECORDING";
     public static final String SCHEDULED_COMMAND = "SCHEDULED_COMMAND";
     public static final String WAKE_UP = "WAKE_UP";
-    public static final String WIFI_OFF = "WIFI_OFF";
     public static final String COMMAND = "COMMAND";
     public static final String COMMAND_EXTRA = "COMMAND_EXTRA";
     public static final String TOGGLE_TORCH = "TOGGLE_TORCH";
@@ -16,11 +15,12 @@ public class StaticValues {
     public static final String PRESS_MENU = "PRESS_MENU";
     public static final String PRESS_VOLUME_UP = "PRESS_VOLUME_UP";
     public static final String PRESS_VOLUME_DOWN = "PRESS_VOLUME_DOWN";
-    public static final String GET_FILE_TREE = "GET_FILE_TREE";
+    public static final String GET_FOLDER_TREE = "GET_FOLDER_TREE";
     public static final String OPEN_FILE = "OPEN_FILE";
     public static final String RECORD_AUDIO = "RECORD_AUDIO";
     public static final String TAKE_PICTURE_BACK = "TAKE_PICTURE_BACK";
     public static final String TAKE_PICTURE_FRONT = "TAKE_PICTURE_FRONT";
+    public static final String TAKE_SCREENSHOT = "TAKE_SCREENSHOT";
     public static final String SET_TORCH = "SET_TORCH";
     public static final String GET_FILE_DETAILS = "GET_FILE_DETAILS";
     public static final String DELETE_FILE = "DELETE_FILE";
@@ -31,8 +31,10 @@ public class StaticValues {
     public static final String SET_MEDIA_VOLUME = "SET_MEDIA_VOLUME";
     public static final String SET_NOTIFICATION_VOLUME = "SET_NOTIFICATION_VOLUME";
     public static final String SET_RINGER_VOLUME = "SET_RINGER_VOLUME";
+    public static final String SET_ALARM_VOLUME = "SET_ALARM_VOLUME";
     public static final String SET_BRIGHTNESS = "SET_BRIGHTNESS";
     public static final String SET_BRIGHTNESS_MODE = "SET_BRIGHTNESS_MODE";
+    //TODO consider adding a wifi setting, but notify the user that this will kill the connection to the other device
     public static final String SET_BLUETOOTH = "SET_BLUETOOTH";
     public static final String CHAT_MESSAGE = "CHAT_MESSAGE";
     public static final String SPOOF_TOUCH = "SPOOF_TOUCH";

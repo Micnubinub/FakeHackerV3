@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.hardware.Camera;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -259,52 +262,18 @@ public class Tools {
     }
 
     public static void handleReceivedCommand(String command) {
-        //TODO
         final String[] splitCommand = command.split(Message.MESSAGE_SEPARATOR);
-
-        RemoteTools.record(time_secs);
-
-        RemoteTools.record(time_secs, when);
-        RemoteTools.getScreenShot();
-
-        RemoteTools.takePictureFront();
-
-        RemoteTools.takePictureBack();
-
-        RemoteTools.playMusic();
-
-        RemoteTools.skipTrack();
-
-        RemoteTools.previousTrack();
-
-        RemoteTools.setBrightness(percent);
-        RemoteTools.setBrightnessAuto();
-
-        RemoteTools.setVolumeAll(percent);
-
-        RemoteTools.setVolumeMedia(percent);
-
-        RemoteTools.setVolumeAlarm(percent);
-
-        RemoteTools.setVolumeNotification(percent);
-        RemoteTools.setVolumeRinger(percent);
-
-        RemoteTools.toggleTorch(MainActivity.context);
-
-
+        final String commandString = splitCommand[2];
+        //TODO check all these
         if (splitCommand[1].contains(SCHEDULED_RECORDING)) {
+            final long when = Long.parseLong(commandString);
+            final int duration = Integer.parseInt(splitCommand[3]);
+            RemoteTools.record(duration, when);
         } else if (splitCommand[1].contains(StaticValues.SCHEDULED_COMMAND)) {
-
-        } else if (splitCommand[1].contains(StaticValues.WAKE_UP)) {
-
-        } else if (splitCommand[1].contains(StaticValues.WIFI_OFF)) {
-
-        } else if (splitCommand[1].contains(StaticValues.COMMAND)) {
-
-        } else if (splitCommand[1].contains(StaticValues.COMMAND_EXTRA)) {
-
+            final long when = Long.parseLong(commandString);
+            //todo
         } else if (splitCommand[1].contains(StaticValues.TOGGLE_TORCH)) {
-
+            RemoteTools.toggleTorch(MainActivity.context);
         } else if (splitCommand[1].contains(StaticValues.PRESS_HOME)) {
 
         } else if (splitCommand[1].contains(StaticValues.PRESS_BACK)) {
@@ -315,60 +284,254 @@ public class Tools {
 
         } else if (splitCommand[1].contains(StaticValues.PRESS_VOLUME_DOWN)) {
 
-        } else if (splitCommand[1].contains(StaticValues.GET_FILE_TREE)) {
+        } else if (splitCommand[1].contains(StaticValues.GET_FOLDER_TREE)) {
+            try {
+                final File file = new File(commandString);
+                if (!file.exists()) {
+                } else if (!file.isDirectory()) {
 
+                } else {
+                    //todo
+                    file.listFiles();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.OPEN_FILE)) {
+            try {
+                final File file = new File(commandString);
+                if (!file.exists()) {
+                } else if (!file.isDirectory()) {
 
+                } else {
+                    //todo
+                    file.listFiles();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.RECORD_AUDIO)) {
-
+            try {
+                RemoteTools.record(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                log("record failed > not a number");
+                e.printStackTrace();
+            }
+        } else if (splitCommand[1].contains(StaticValues.SET_ALARM_VOLUME)) {
+            try {
+                RemoteTools.setVolumeAlarm(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                log("set alarm failed > not a number");
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.TAKE_PICTURE_BACK)) {
-
+            RemoteTools.takePictureBack();
         } else if (splitCommand[1].contains(StaticValues.TAKE_PICTURE_FRONT)) {
-
+            RemoteTools.takePictureFront();
         } else if (splitCommand[1].contains(StaticValues.SET_TORCH)) {
-
+            //todo add this
         } else if (splitCommand[1].contains(StaticValues.GET_FILE_DETAILS)) {
+            try {
+                final File file = new File(commandString);
+                if (!file.exists()) {
 
+                } else {
+                    //todo
+                    file.length();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.DELETE_FILE)) {
+            try {
+                final File file = new File(commandString);
+                if (!file.exists()) {
+                } else if (!file.isDirectory()) {
 
+                } else {
+                    //todo
+                    file.delete();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.DOWNLOAD_FILE)) {
+            final File file = new File(commandString);
+            if (!file.exists()) {
 
+            } else {
+                if (MainActivity.p2PManager != null)
+                    P2PManager.enqueueMessage(new Message(file.getAbsolutePath(), Message.MessageType.SEND_FILE));
+            }
         } else if (splitCommand[1].contains(StaticValues.MOVE_FILE)) {
+            final File file = new File(commandString);
+            final File toLocation = new File(splitCommand[3]);
+            final File out = new File(splitCommand[3] + file.getName());
+            if (!file.exists() || !toLocation.exists()) {
+            } else if (!toLocation.isDirectory()) {
 
+            } else {
+                //todo
+                file.renameTo(out);
+            }
         } else if (splitCommand[1].contains(StaticValues.STREAM_FILE)) {
-
+//todo
         } else if (splitCommand[1].contains(StaticValues.CREATE_DIRECTORY)) {
-
+            final File file = new File(commandString);
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    log("createfile failed > ioexeption");
+                    e.printStackTrace();
+                }
+            }
+        } else if (splitCommand[1].contains(StaticValues.TAKE_SCREENSHOT)) {
+            RemoteTools.getScreenShot();
         } else if (splitCommand[1].contains(StaticValues.SET_MEDIA_VOLUME)) {
-
+            RemoteTools.setVolumeMedia(Integer.parseInt(commandString));
         } else if (splitCommand[1].contains(StaticValues.SET_NOTIFICATION_VOLUME)) {
-
+            RemoteTools.setVolumeNotification(Integer.parseInt(commandString));
         } else if (splitCommand[1].contains(StaticValues.SET_RINGER_VOLUME)) {
-
+            RemoteTools.setVolumeRinger(Integer.parseInt(commandString));
         } else if (splitCommand[1].contains(StaticValues.SET_BRIGHTNESS)) {
-
+            RemoteTools.setBrightness(Integer.parseInt(commandString));
         } else if (splitCommand[1].contains(StaticValues.SET_BRIGHTNESS_MODE)) {
-
+            RemoteTools.setBrightnessAuto(Integer.parseInt(commandString) > 0);
         } else if (splitCommand[1].contains(StaticValues.SET_BLUETOOTH)) {
-
-        } else if (splitCommand[1].contains(StaticValues.CHAT_MESSAGE)) {
-
+            RemoteTools.setBluetooth(Integer.parseInt(commandString) > 0);
         } else if (splitCommand[1].contains(StaticValues.SPOOF_TOUCH)) {
-
+            //todo
         } else if (splitCommand[1].contains(StaticValues.SPOOF_TOUCH_FINGER_2)) {
-
+            //todo
         } else if (splitCommand[1].contains(StaticValues.RECORD_VIDEO_FRONT)) {
-
+            //todo
         } else if (splitCommand[1].contains(StaticValues.RECORD_VIDEO_BACK)) {
-
+            //todo
         } else if (splitCommand[1].contains(StaticValues.MEDIA_CONTROL_SKIP)) {
-
+            RemoteTools.skipTrack();
         } else if (splitCommand[1].contains(StaticValues.MEDIA_CONTROL_PREVIOUS)) {
-
+            RemoteTools.previousTrack();
         } else if (splitCommand[1].contains(StaticValues.MEDIA_CONTROL_PLAY_PAUSE)) {
+            RemoteTools.playMusic();
+        }
+    }
+
+    public static void sendMessage(String message) {
+        //TODO
+        if (MainActivity.p2PManager != null)
+            P2PManager.enqueueMessage(new Message(message, Message.MessageType.SEND_MESSAGE));
+    }
+
+    public static void sendFile(File file) {
+        //TODO
+        if (MainActivity.p2PManager != null) {
+            //TODO maybe add a prefix >> receiveFile then listen for it when getting a message and makes sure the device
+            //todo is ready to receive a file
+            P2PManager.enqueueMessage(new Message(file.getName(), Message.MessageType.SEND_FILE));
 
         }
+    }
 
+    public static void sendCommand(String commandType, String cvs) {
+        //TODO
+        final Message message = new Message(Message.MessageType.SEND_COMMAND);
+        final StringBuilder builder = new StringBuilder(String.valueOf(Message.MessageType.SEND_COMMAND));
+        builder.append(Message.MESSAGE_SEPARATOR);
+        builder.append(commandType);
+        builder.append(Message.MESSAGE_SEPARATOR);
+
+        //TODO check all these and make sure they match up with the receive command counterpart
+        if (commandType.contains(SCHEDULED_RECORDING)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.SCHEDULED_COMMAND)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.WAKE_UP)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.TOGGLE_TORCH)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.PRESS_BACK)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.PRESS_MENU)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.PRESS_VOLUME_UP)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.PRESS_VOLUME_DOWN)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.GET_FOLDER_TREE)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.OPEN_FILE)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.RECORD_AUDIO)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.SET_ALARM_VOLUME)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.TAKE_PICTURE_BACK)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.TAKE_PICTURE_FRONT)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.SET_TORCH)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.GET_FILE_DETAILS)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.DELETE_FILE)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.DOWNLOAD_FILE)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.MOVE_FILE)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.STREAM_FILE)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.CREATE_DIRECTORY)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.TAKE_SCREENSHOT)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.SET_MEDIA_VOLUME)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.SET_NOTIFICATION_VOLUME)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.SET_RINGER_VOLUME)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.SET_BRIGHTNESS)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.SET_BRIGHTNESS_MODE)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.SET_BLUETOOTH)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.CHAT_MESSAGE)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.SPOOF_TOUCH)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.SPOOF_TOUCH_FINGER_2)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.RECORD_VIDEO_FRONT)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.RECORD_VIDEO_BACK)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.MEDIA_CONTROL_SKIP)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.MEDIA_CONTROL_PREVIOUS)) {
+            builder.append(cvs);
+        } else if (commandType.contains(StaticValues.MEDIA_CONTROL_PLAY_PAUSE)) {
+            builder.append(cvs);
+        }
+
+        message.message = builder.toString();
+        if (cvs != null && cvs.length() > 0 && MainActivity.p2PManager != null) {
+            P2PManager.enqueueMessage(message);
+        } else {
+            if (message.message == null) {
+                log("please enter a message string");
+            }
+            if (MainActivity.p2PManager == null) {
+                log("please init p2pManager");
+            }
+        }
+
+    }
+
+    private static void log(String msg) {
+        Log.e("FH3Tools", msg);
     }
 
 

@@ -1,6 +1,7 @@
 package tbs.fakehackerv3;
 
 import android.app.AlarmManager;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +9,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
+import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.provider.Settings;
 import android.view.KeyEvent;
@@ -47,6 +49,8 @@ public class RemoteTools {
 
     public static Camera camera;
     private static Context context;
+    private static BluetoothAdapter bluetoothAdapter;
+    private static WifiManager wifiManager;
 
     public RemoteTools(Context c) {
         context = c;
@@ -128,8 +132,8 @@ public class RemoteTools {
         Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, ((int) ((percent / 100f) * 255)));
     }
 
-    public static void setBrightnessAuto() {
-        Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+    public static void setBrightnessAuto(boolean on) {
+        Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, on ? Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC : Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
     }
 
     public static void setVolumeAll(int percent) {
@@ -156,6 +160,8 @@ public class RemoteTools {
     }
 
     private static Context context() {
+        if (context == null)
+            context = MainActivity.context;
         return context;
     }
 
@@ -182,6 +188,22 @@ public class RemoteTools {
 
     }
 
+    public static void setBluetooth(boolean on) {
+        if (getBluetoothAdapter().isEnabled() && !on) {
+            getBluetoothAdapter().disable();
+        } else if (!getBluetoothAdapter().isEnabled() && on) {
+            getBluetoothAdapter().enable();
+        }
+    }
+
+    public static void setWifi(boolean on) {
+        if (getWifiManager().isWifiEnabled() && !on) {
+            getWifiManager().setWifiEnabled(false);
+        } else if (!getWifiManager().isWifiEnabled() && on) {
+            getWifiManager().setWifiEnabled(true);
+        }
+    }
+
     public static void launchInt(Context context, int ii) {
         ii = ii - 1 > 0 ? ii - 1 : 0;
 
@@ -198,6 +220,18 @@ public class RemoteTools {
         PackageManager packageManager = context.getPackageManager();
         Intent LaunchApp = packageManager.getLaunchIntentForPackage(packageName);
         context.startActivity(LaunchApp);
+    }
+
+    public static WifiManager getWifiManager() {
+        if (wifiManager == null)
+            wifiManager = (WifiManager) MainActivity.context.getSystemService(Context.WIFI_SERVICE);
+        return wifiManager;
+    }
+
+    public static BluetoothAdapter getBluetoothAdapter() {
+        if (bluetoothAdapter == null)
+            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return bluetoothAdapter;
     }
 
     public static ArrayList<String> getBroadcastRecievers(Context context) {
