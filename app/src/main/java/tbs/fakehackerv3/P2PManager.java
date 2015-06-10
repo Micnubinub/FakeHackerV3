@@ -10,13 +10,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
-import android.net.wifi.p2p.*;
+import android.net.wifi.p2p.WifiP2pConfig;
+import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,14 +114,30 @@ public class P2PManager extends Service {
         }
     };
 
+    private static P2PManager p2PManager;
+
     public P2PManager() {
         super();
     }
 
+    public static P2PManager getP2PManager(Activity activity) {
+        if (P2PManager.activity != activity) {
+            p2PManager = new P2PManager(activity, null, true);
+        }
 
-    public P2PManager(Activity activity, P2PListener p2PListener, boolean startScan) {
-        this.activity = activity;
-        this.p2PListener = p2PListener;
+        return p2PManager;
+    }
+
+    public static P2PManager getP2PManager(Activity activity, P2PListener p2PListener, boolean startScan) {
+        if (P2PManager.activity != activity) {
+            p2PManager = new P2PManager(activity, p2PListener, startScan);
+        }
+        return p2PManager;
+    }
+
+    private P2PManager(Activity activity, P2PListener p2PListener, boolean startScan) {
+        P2PManager.activity = activity;
+        P2PManager.p2PListener = p2PListener;
 
         if (isServiceRunning() || isActive() || tryingToConnect)
             return;
@@ -401,7 +425,7 @@ public class P2PManager extends Service {
     }
 
     public static void log(String msg) {
-        
+
         Log.e("p2p", msg);
     }
 

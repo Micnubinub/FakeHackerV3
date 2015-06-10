@@ -57,8 +57,7 @@ public class RemoteTools {
     }
 
     public static void record(int time_secs) {
-        //Todo make it better
-        MediaRecorder mediaRecorder = new MediaRecorder();
+        final MediaRecorder mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setOutputFile(Environment.getExternalStorageDirectory().getAbsolutePath() + "/test/test.mp3");
@@ -70,8 +69,6 @@ public class RemoteTools {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     public static void record(int time_secs, long when) {
@@ -107,22 +104,22 @@ public class RemoteTools {
     }
 
     public static void playMusic() {
-        Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
-        KeyEvent downEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
+        final Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+        final KeyEvent downEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
         downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
         context().sendBroadcast(downIntent);
     }
 
     public static void skipTrack() {
-        Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
-        KeyEvent downEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT);
+        final Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+        final KeyEvent downEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT);
         downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
         context().sendBroadcast(downIntent);
     }
 
     public static void previousTrack() {
-        Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
-        KeyEvent downEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS);
+        final Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+        final KeyEvent downEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS);
         downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
         context().sendBroadcast(downIntent);
     }
@@ -175,7 +172,7 @@ public class RemoteTools {
 
     public static void getPackages(Context context) {
 
-        PackageManager packageManager = context.getPackageManager();
+        final PackageManager packageManager = context.getPackageManager();
         final Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> list = packageManager.queryIntentActivities(i, 0);
@@ -250,10 +247,8 @@ public class RemoteTools {
         return pacs;
     }
 
-
     public static void toggleTorch(Context context) {
         try {
-
             if (camera == null)
                 camera = Camera.open();
             else
@@ -262,7 +257,7 @@ public class RemoteTools {
             final PackageManager packageManager = context.getPackageManager();
 
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-
+                //Todo extract lines and make a method setTorch(on)
                 if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
                     Camera.Parameters p = camera.getParameters();
                     if (p.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
@@ -290,25 +285,16 @@ public class RemoteTools {
     public static String fileSize(long size) {
         String s = String.valueOf(size) + "Bytes";
 
-        if (size < 1024)
-            return s;
-
         if (size > 1024 && size < Math.pow(2, 20)) {
             s = String.format("%.3f", size / 1024) + "KB";
             return s;
-        }
-
-        if (size > Math.pow(2, 20) && size < Math.pow(2, 30)) {
+        } else if (size > Math.pow(2, 20) && size < Math.pow(2, 30)) {
             s = String.format("%.3f", size / Math.pow(2, 20)) + "MB";
             return s;
-        }
-
-        if (size > Math.pow(2, 30) && size < Math.pow(2, 40)) {
+        } else if (size > Math.pow(2, 30) && size < Math.pow(2, 40)) {
             s = String.format("%.3f", size / Math.pow(2, 30)) + "GB";
             return s;
-        }
-
-        if (size > Math.pow(2, 40)) {
+        } else if (size > Math.pow(2, 40)) {
             s = String.format("%.3f", size / Math.pow(2, 40)) + "TB";
             return s;
         }
@@ -318,10 +304,10 @@ public class RemoteTools {
 
     public static String getDate(long date) {
         // Create a DateFormatter object for displaying date in specified format.
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        final DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 
         // Create a calendar object that will convert the date and time value in milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
         return formatter.format(calendar.getTime());
     }

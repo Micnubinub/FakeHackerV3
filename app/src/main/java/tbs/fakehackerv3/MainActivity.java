@@ -1,46 +1,41 @@
 package tbs.fakehackerv3;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.view.View;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
     public static P2PManager p2PManager;
-    public static Context context;
+    private final View.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent i = null;
+            switch (v.getId()) {
+                case R.id.messaging:
+                    i = new Intent(MainActivity.this, Messaging.class);
+                    break;
+                case R.id.remote:
+                    i = new Intent(MainActivity.this, Remote.class);
+                    break;
+            }
+
+            if (i != null) {
+                startActivity(i);
+            }
+        }
+    };
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        context = this;
+        findViewById(R.id.remote).setOnClickListener(listener);
+        findViewById(R.id.messaging).setOnClickListener(listener);
 
-        p2PManager = new P2PManager(this, new P2PManager.P2PListener() {
-            @Override
-            public void onScanStarted() {
 
-            }
-
-            @Override
-            public void onMessageReceived(String msg) {
-                Tools.handleReceiveFile(msg);
-            }
-
-            @Override
-            public void onDevicesConnected() {
-
-            }
-
-            @Override
-            public void onDevicesDisconnected() {
-
-            }
-
-            @Override
-            public void onSocketsConfigured() {
-
-            }
-        }, true);
     }
 
 }

@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -77,51 +76,10 @@ public class Tools {
         ArrayList<String> pacs = new ArrayList<String>(list.size());
 
         for (int ii = 0; ii < list.size(); ii++) {
-
             pacs.add(ii, list.get(ii).loadLabel(packageManager).toString() + " (" + list.get(ii).activityInfo.packageName + ")");
         }
 
         return pacs;
-    }
-
-    public static void toggleTorch(Context context) {
-        String string = "Camera not supported";
-        try {
-
-            if (camera == null)
-                camera = Camera.open();
-            else
-                camera.reconnect();
-
-            final PackageManager packageManager = context.getPackageManager();
-
-            if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-
-                if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
-                    Camera.Parameters p = camera.getParameters();
-                    if (p.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
-                        p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                        camera.setParameters(p);
-                        camera.stopPreview();
-                        camera.release();
-                        camera = null;
-                        string = "Turning the flash off...";
-                    } else {
-                        p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                        camera.setParameters(p);
-                        camera.startPreview();
-                        string = "Turning the flash on...";
-                    }
-                } else {
-                    string = "Flash not supported";
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            string = "Toggling failed";
-        }
-        //TODO MainActivity.consoleEntries.add(new ConsoleItem(string));
     }
 
     public static void launchIE(final Context context) {
@@ -186,7 +144,6 @@ public class Tools {
                     });
                     dialog.setContentView(textView);
                     dialog.show();
-
                 }
                 //TODO MainActivity.consoleEntries.add(new ConsoleItem("Exiting Intanet Eksplora ..."));
             }
@@ -275,15 +232,15 @@ public class Tools {
         } else if (splitCommand[1].contains(StaticValues.TOGGLE_TORCH)) {
             RemoteTools.toggleTorch(MainActivity.context);
         } else if (splitCommand[1].contains(StaticValues.PRESS_HOME)) {
-
+            //todo
         } else if (splitCommand[1].contains(StaticValues.PRESS_BACK)) {
-
+            //todo
         } else if (splitCommand[1].contains(StaticValues.PRESS_MENU)) {
-
+            //todo
         } else if (splitCommand[1].contains(StaticValues.PRESS_VOLUME_UP)) {
-
+            //todo
         } else if (splitCommand[1].contains(StaticValues.PRESS_VOLUME_DOWN)) {
-
+            //todo
         } else if (splitCommand[1].contains(StaticValues.GET_FOLDER_TREE)) {
             try {
                 final File file = new File(commandString);
