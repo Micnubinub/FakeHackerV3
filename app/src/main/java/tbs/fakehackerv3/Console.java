@@ -1,5 +1,7 @@
 package tbs.fakehackerv3;
 
+import android.app.Activity;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -7,11 +9,10 @@ import android.view.View;
 /**
  * Created by Michael on 5/22/2015.
  */
-public class Console extends Fragment{
+public class Console extends Activity{
 
-    @Nullable
     @Override
-    public View getView() {
-        return super.getView();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 }

@@ -128,6 +128,10 @@ public class P2PManager extends Service {
         return p2PManager;
     }
 
+    public static Context getContext() {
+        return activity;
+    }
+
     public static P2PManager getP2PManager(Activity activity, P2PListener p2PListener, boolean startScan) {
         if (P2PManager.activity != activity) {
             p2PManager = new P2PManager(activity, p2PListener, startScan);

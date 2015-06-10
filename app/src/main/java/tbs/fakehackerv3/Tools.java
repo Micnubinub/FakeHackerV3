@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -230,7 +231,7 @@ public class Tools {
             final long when = Long.parseLong(commandString);
             //todo
         } else if (splitCommand[1].contains(StaticValues.TOGGLE_TORCH)) {
-            RemoteTools.toggleTorch(MainActivity.context);
+            RemoteTools.toggleTorch();
         } else if (splitCommand[1].contains(StaticValues.PRESS_HOME)) {
             //todo
         } else if (splitCommand[1].contains(StaticValues.PRESS_BACK)) {

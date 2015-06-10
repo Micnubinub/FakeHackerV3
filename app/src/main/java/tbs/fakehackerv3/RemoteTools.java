@@ -158,7 +158,7 @@ public class RemoteTools {
 
     private static Context context() {
         if (context == null)
-            context = MainActivity.context;
+            context = P2PManager.getContext();
         return context;
     }
 
@@ -220,8 +220,12 @@ public class RemoteTools {
     }
 
     public static WifiManager getWifiManager() {
-        if (wifiManager == null)
-            wifiManager = (WifiManager) MainActivity.context.getSystemService(Context.WIFI_SERVICE);
+        try {
+            if (wifiManager == null)
+                wifiManager = (WifiManager) context().getSystemService(Context.WIFI_SERVICE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return wifiManager;
     }
 
@@ -247,7 +251,7 @@ public class RemoteTools {
         return pacs;
     }
 
-    public static void toggleTorch(Context context) {
+    public static void toggleTorch() {
         try {
             if (camera == null)
                 camera = Camera.open();

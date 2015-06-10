@@ -12,7 +12,7 @@ import android.widget.TextView;
 public class Remote extends Activity {
     private static Switch flashLight, wifi, bluetooth;
     private TextView takePictureFront, takePictureBack, previousTrack, nextTrack, pausePlay;
-    private SeekBar alarm, notificatiol, all, ringer, media;
+    private SeekBar alarm, notification, all, ringer, media;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,11 +20,23 @@ public class Remote extends Activity {
         setContentView(R.layout.remote);
 
         //Switch
-        flashLight, wifi, bluetooth;
+        flashLight = (Switch) findViewById(R.id.flash);
+        wifi = (Switch) findViewById(R.id.wifi);
+        bluetooth = (Switch) findViewById(R.id.bluetooth);
+
         //TextView
-        takePictureFront, takePictureBack, previousTrack, nextTrack, pausePlay;
+        takePictureFront = (TextView) findViewById(R.id.take_pic_front);
+        takePictureBack = (TextView) findViewById(R.id.take_pic_back);
+        previousTrack = (TextView) findViewById(R.id.previous);
+        nextTrack = (TextView) findViewById(R.id.next);
+        pausePlay = (TextView) findViewById(R.id.play_pause);
+
         //SeekBar
-        alarm, notificatiol, all, ringer, media;
+        alarm = (SeekBar) findViewById(R.id.volume_alarm);
+        notification = (SeekBar) findViewById(R.id.volume_notification);
+        all = (SeekBar) findViewById(R.id.volume_all);
+        ringer = (SeekBar) findViewById(R.id.volume_ringer);
+        media = (SeekBar) findViewById(R.id.volume_media);
 
     }
 }
