@@ -12,6 +12,7 @@ import android.media.MediaRecorder;
 import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import java.text.DateFormat;
@@ -141,15 +142,15 @@ public class RemoteTools {
     }
 
     public static void setVolumeMedia(int percent) {
-        Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_MUSIC, ((int) ((percent / 100f) * 15)));
+        Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_MUSIC, Math.round((percent / 100f) * 15));
     }
 
     public static void setVolumeAlarm(int percent) {
-        Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_ALARM, ((int) ((percent / 100f) * 15)));
+        Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_ALARM, Math.round((percent / 100f) * 15));
     }
 
     public static void setVolumeNotification(int percent) {
-        Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_NOTIFICATION, ((int) ((percent / 100f) * 15)));
+        Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_NOTIFICATION, Math.round((percent / 100f) * 15));
     }
 
     public static void setVolumeRinger(int percent) {
@@ -280,6 +281,7 @@ public class RemoteTools {
             }
 
         } catch (Exception e) {
+            Log.e("p2p","toggle Torch");
             e.printStackTrace();
         }
 

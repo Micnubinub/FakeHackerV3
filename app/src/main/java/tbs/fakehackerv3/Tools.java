@@ -306,7 +306,7 @@ public class Tools {
         } else if (splitCommand[1].contains(StaticValues.DOWNLOAD_FILE)) {
             final File file = new File(commandString);
             if (!file.exists()) {
-
+                file.mkdirs();
             } else {
                 if (MainActivity.p2PManager != null)
                     P2PManager.enqueueMessage(new Message(file.getAbsolutePath(), Message.MessageType.SEND_FILE));
@@ -317,7 +317,6 @@ public class Tools {
             final File out = new File(splitCommand[3] + file.getName());
             if (!file.exists() || !toLocation.exists()) {
             } else if (!toLocation.isDirectory()) {
-
             } else {
                 //todo
                 file.renameTo(out);
@@ -377,7 +376,6 @@ public class Tools {
             //TODO maybe add a prefix >> receiveFile then listen for it when getting a message and makes sure the device
             //todo is ready to receive a file
             P2PManager.enqueueMessage(new Message(file.getName(), Message.MessageType.SEND_FILE));
-
         }
     }
 

@@ -77,7 +77,6 @@ public class P2PManager extends Service {
                         @Override
                         public void onSuccess() {
                             log("successfully removed group");
-
                         }
 
                         @Override

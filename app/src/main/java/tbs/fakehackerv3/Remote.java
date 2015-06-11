@@ -83,6 +83,7 @@ public class Remote extends Activity {
         @Override
         public void onMessageReceived(String msg) {
             //Todo
+            handleReceivedCommand(msg);
         }
 
         @Override
@@ -97,7 +98,7 @@ public class Remote extends Activity {
 
         @Override
         public void onSocketsConfigured() {
-//            messageEditText.setEnabled(true);
+
         }
     };
 
@@ -106,19 +107,19 @@ public class Remote extends Activity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.take_pic_back:
-                    //Todo P2PManager.enqueueMessage(new Message());
+                    sendCommand(StaticValues.TAKE_PICTURE_BACK, "");
                     break;
                 case R.id.take_pic_front:
-
+                    sendCommand(StaticValues.TAKE_PICTURE_FRONT, "");
                     break;
                 case R.id.next:
-
+                    sendCommand(StaticValues.MEDIA_CONTROL_SKIP, "");
                     break;
                 case R.id.play_pause:
-
+                    sendCommand(StaticValues.MEDIA_CONTROL_PLAY_PAUSE, "");
                     break;
                 case R.id.previous:
-
+                    sendCommand(StaticValues.MEDIA_CONTROL_PREVIOUS, "");
                     break;
             }
         }
@@ -129,13 +130,14 @@ public class Remote extends Activity {
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             switch (buttonView.getId()) {
                 case R.id.flash:
-
+                    sendCommand(StaticValues.TOGGLE_TORCH, "");
                     break;
                 case R.id.wifi:
-
+                    //TODO maybe consider adding this
+                    sendCommand(StaticValues.SET_BLUETOOTH, isChecked ? "1" : "0");
                     break;
                 case R.id.bluetooth:
-
+                    sendCommand(StaticValues.SET_BLUETOOTH, isChecked ? "1" : "0");
                     break;
             }
         }
@@ -144,27 +146,7 @@ public class Remote extends Activity {
     private static final SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            switch (seekBar.getId()) {
-                case R.id.volume_alarm:
 
-                    break;
-
-                case R.id.brightness:
-
-                    break;
-                case R.id.volume_all:
-
-                    break;
-                case R.id.volume_media:
-
-                    break;
-                case R.id.volume_notification:
-
-                    break;
-                case R.id.volume_ringer:
-
-                    break;
-            }
         }
 
         @Override
@@ -174,7 +156,27 @@ public class Remote extends Activity {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-
+            final int progress = seekBar.getProgress();
+            switch (seekBar.getId()) {
+                case R.id.volume_alarm:
+                    sendCommand(StaticValues.SET_ALARM_VOLUME, String.valueOf(progress));
+                    break;
+                case R.id.brightness:
+                    sendCommand(StaticValues.SET_BRIGHTNESS, String.valueOf(progress));
+                    break;
+                case R.id.volume_all:
+                    sendCommand(StaticValues.SET_BRIGHTNESS, String.valueOf(progress));
+                    break;
+                case R.id.volume_media:
+                    sendCommand(StaticValues.SET_MEDIA_VOLUME, String.valueOf(progress));
+                    break;
+                case R.id.volume_notification:
+                    sendCommand(StaticValues.SET_NOTIFICATION_VOLUME, String.valueOf(progress));
+                    break;
+                case R.id.volume_ringer:
+                    sendCommand(StaticValues.SET_RINGER_VOLUME, String.valueOf(progress));
+                    break;
+            }
         }
     };
 
@@ -306,17 +308,41 @@ public class Remote extends Activity {
         } else if (splitCommand[1].contains(StaticValues.TAKE_SCREENSHOT)) {
             RemoteTools.getScreenShot();
         } else if (splitCommand[1].contains(StaticValues.SET_MEDIA_VOLUME)) {
-            RemoteTools.setVolumeMedia(Integer.parseInt(commandString));
+            try {
+                RemoteTools.setVolumeMedia(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SET_NOTIFICATION_VOLUME)) {
-            RemoteTools.setVolumeNotification(Integer.parseInt(commandString));
+            try {
+                RemoteTools.setVolumeNotification(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SET_RINGER_VOLUME)) {
-            RemoteTools.setVolumeRinger(Integer.parseInt(commandString));
+            try {
+                RemoteTools.setVolumeRinger(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SET_BRIGHTNESS)) {
-            RemoteTools.setBrightness(Integer.parseInt(commandString));
+            try {
+                RemoteTools.setBrightness(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SET_BRIGHTNESS_MODE)) {
-            RemoteTools.setBrightnessAuto(Integer.parseInt(commandString) > 0);
+            try {
+                RemoteTools.setBrightnessAuto(Integer.parseInt(commandString) > 0);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SET_BLUETOOTH)) {
-            RemoteTools.setBluetooth(Integer.parseInt(commandString) > 0);
+            try {
+                RemoteTools.setBluetooth(Integer.parseInt(commandString) > 0);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SPOOF_TOUCH)) {
             //todo
         } else if (splitCommand[1].contains(StaticValues.SPOOF_TOUCH_FINGER_2)) {
@@ -417,7 +443,7 @@ public class Remote extends Activity {
             builder.append(cvs);
         }
 
-        if (cvs != null && cvs.length() > 0 && MainActivity.p2PManager != null) {
+        if (cvs != null && cvs.length() > 0 && p2PManager != null) {
             P2PManager.enqueueMessage(new Message(builder.toString(), Message.MessageType.SEND_COMMAND));
         } else {
             log("please enter a message string or please init p2pManager");
