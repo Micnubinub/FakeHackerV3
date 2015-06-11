@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.hardware.Camera;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,12 +26,8 @@ import java.util.List;
  */
 public class Tools {
 
-    public static final String SCHEDULED_RECORDING = "SCHEDULED_RECORDING";
-    public static final String SCHEDULED_COMMAND = "SCHEDULED_COMMAND";
-    public static final String WAKE_UP = "WAKE_UP";
-    public static final String WIFI_OFF = "WIFI_OFF";
+
     //public static final String
-    public static Camera camera;
 
     public static void getPackages(Context context) {
 
@@ -218,7 +213,7 @@ public class Tools {
         final String[] splitCommand = command.split(Message.MESSAGE_SEPARATOR);
         final String commandString = splitCommand[2];
         //TODO check all these
-        if (splitCommand[1].contains(SCHEDULED_RECORDING)) {
+        if (splitCommand[1].contains(StaticValues.SCHEDULED_RECORDING)) {
             final long when = Long.parseLong(commandString);
             final int duration = Integer.parseInt(splitCommand[3]);
             RemoteTools.record(duration, when);
@@ -395,7 +390,7 @@ public class Tools {
         builder.append(Message.MESSAGE_SEPARATOR);
 
         //TODO check all these and make sure they match up with the receive command counterpart
-        if (commandType.contains(SCHEDULED_RECORDING)) {
+        if (commandType.contains(StaticValues.SCHEDULED_RECORDING)) {
             builder.append(cvs);
         } else if (commandType.contains(StaticValues.SCHEDULED_COMMAND)) {
             builder.append(cvs);

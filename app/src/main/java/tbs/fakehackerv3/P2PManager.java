@@ -838,7 +838,6 @@ public class P2PManager extends Service {
             view = View.inflate(activity, R.layout.device_list_item, null);
             final WifiP2pDevice device = ((WifiP2pDevice) peers.toArray()[i]);
             ((TextView) view.findViewById(R.id.device_name)).setText(device.deviceName + " (" + device.deviceAddress + ")");
-//            try {
             final TextView deviceStatus = ((TextView) view.findViewById(R.id.device_status));
             switch (device.status) {
                 case WifiP2pDevice.CONNECTED:
@@ -862,9 +861,7 @@ public class P2PManager extends Service {
                     deviceStatus.setTextColor(0xff259b24);
                     break;
             }
-//            } catch (Exception e) {
-//                log("crashed > " + e.getMessage()); e.printStackTrace();
-//            }
+
             return view;
         }
     }

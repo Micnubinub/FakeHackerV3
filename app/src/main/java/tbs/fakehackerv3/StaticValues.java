@@ -4,8 +4,6 @@ package tbs.fakehackerv3;
  * Created by root on 9/09/14.
  */
 public class StaticValues {
-    public static final String SCHEDULED_RECORDING = "SCHEDULED_RECORDING";
-    public static final String SCHEDULED_COMMAND = "SCHEDULED_COMMAND";
     public static final String WAKE_UP = "WAKE_UP";
     public static final String COMMAND = "COMMAND";
     public static final String COMMAND_EXTRA = "COMMAND_EXTRA";
@@ -44,6 +42,9 @@ public class StaticValues {
     public static final String MEDIA_CONTROL_SKIP = "MEDIA_CONTROL_SKIP";
     public static final String MEDIA_CONTROL_PREVIOUS = "MEDIA_CONTROL_PREVIOUS";
     public static final String MEDIA_CONTROL_PLAY_PAUSE = "MEDIA_CONTROL_PLAY_PAUSE";
+    public static final String SCHEDULED_RECORDING = "SCHEDULED_RECORDING";
+    public static final String SCHEDULED_COMMAND = "SCHEDULED_COMMAND";
+
  /* public static final int  = 33;
     public static final int  = 34;
     public static final int  = 35;
