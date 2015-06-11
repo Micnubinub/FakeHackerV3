@@ -5,20 +5,25 @@ package tbs.fakehackerv3;
  */
 public class Message {
     public static final String MESSAGE_SEPARATOR = "///,///,///";
-    public String message;
+    private String message;
     public MessageType messageType;
 
     public Message(String message, MessageType messageType) {
-        this.message = message;
         this.messageType = messageType;
-    }
-
-    public Message(String messageStringWithSep) {
-        setMessage(messageStringWithSep);
-    }
-
-    public Message(MessageType messageType) {
-        this.messageType = messageType;
+        switch (messageType) {
+            case SEND_COMMAND:
+                this.message = message;
+                break;
+            case SEND_FILE:
+                this.message = String.valueOf(messageType) + MESSAGE_SEPARATOR + message;
+                break;
+            case SEND_MESSAGE:
+                if (message == null || message.length() < 1) {
+                    message = "nothing to see here";
+                }
+                this.message = String.valueOf(messageType) + MESSAGE_SEPARATOR + message + MESSAGE_SEPARATOR + String.valueOf(System.currentTimeMillis());
+                break;
+        }
     }
 
     public void setMessage(String messageStringWithSep) {
@@ -36,6 +41,14 @@ public class Message {
             }
             this.message = msg[1];
         }
+    }
+
+    public String getSendableMessage() {
+        return message;
+    }
+
+    public String getMessage() {
+        return message.split(MESSAGE_SEPARATOR)[1];
     }
 
     public enum MessageType {

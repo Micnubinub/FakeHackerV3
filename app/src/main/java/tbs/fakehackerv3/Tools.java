@@ -33,7 +33,6 @@ public class Tools {
     public static final String WIFI_OFF = "WIFI_OFF";
     //public static final String
     public static Camera camera;
-    private static Message tmpMessage = new Message("", Message.MessageType.SEND_MESSAGE);
 
     public static void getPackages(Context context) {
 
@@ -192,21 +191,17 @@ public class Tools {
         return formatter.format(calendar.getTime());
     }
 
-    public static void handleMessage(String message) {
-        tmpMessage.setMessage(message);
-        handleMessage(tmpMessage);
-    }
 
     public static void handleMessage(Message message) {
         switch (message.messageType) {
             case SEND_MESSAGE:
-                handleReceivedMessage(message.message);
+                handleReceivedMessage(message.getMessage());
                 break;
             case SEND_FILE:
-                handleReceiveFile(message.message);
+                handleReceiveFile(message.getMessage());
                 break;
             case SEND_COMMAND:
-                handleReceivedCommand(message.message);
+                handleReceivedCommand(message.getMessage());
                 break;
         }
     }
@@ -393,7 +388,7 @@ public class Tools {
 
     public static void sendCommand(String commandType, String cvs) {
         //TODO
-        final Message message = new Message(Message.MessageType.SEND_COMMAND);
+
         final StringBuilder builder = new StringBuilder(String.valueOf(Message.MessageType.SEND_COMMAND));
         builder.append(Message.MESSAGE_SEPARATOR);
         builder.append(commandType);
@@ -474,16 +469,10 @@ public class Tools {
             builder.append(cvs);
         }
 
-        message.message = builder.toString();
         if (cvs != null && cvs.length() > 0 && MainActivity.p2PManager != null) {
-            P2PManager.enqueueMessage(message);
+            P2PManager.enqueueMessage(new Message(builder.toString(), Message.MessageType.SEND_COMMAND));
         } else {
-            if (message.message == null) {
-                log("please enter a message string");
-            }
-            if (MainActivity.p2PManager == null) {
-                log("please init p2pManager");
-            }
+            log("please enter a message string or please init p2pManager");
         }
 
     }

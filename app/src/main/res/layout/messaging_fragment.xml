@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
+    android:background="#222222"
     android:orientation="vertical">
 
     <ListView
@@ -10,7 +10,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/message"
-        android:dividerHeight="0dp" />
+        android:dividerHeight="9dp"
+        android:padding="8dp" />
 
     <EditText
         android:id="@+id/message"
@@ -23,6 +24,7 @@
         android:minHeight="48dp"
         android:padding="8dp"
         android:stackFromBottom="true"
+        android:textColor="#fff"
         android:textSize="18dp"
         android:transcriptMode="alwaysScroll" />
 
@@ -31,7 +33,9 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:padding="8dp"
+        android:src="@drawable/send" />
 
 
 </RelativeLayout>

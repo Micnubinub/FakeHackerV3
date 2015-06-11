@@ -29,17 +29,24 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
             // Check to see if Wi-Fi is enabled and notify appropriate activity
-            int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
+            final int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                 // TODO Wifi P2P is enabled
-               // log("p2p enabled");
+//                log("p2p enabled");
             } else {
                 // TODO Wi-Fi P2P is not enabled
-//                if (p2PManager!=null)
-//                    P2PManager.toast("Please enable Wifi")
+                if (p2PManager != null)
+                    P2PManager.toast("Please enable Wifi Direct");
             }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
 
+            // Request available peers from the wifi p2p manager. This is an
+            // asynchronous call and the calling activity is notified with a
+            // callback on PeerListListener.onPeersAvailable()
+            log("peers changed");
+            if (wifiP2pManager != null) {
+                wifiP2pManager.requestPeers(mChannel, P2PManager.wifiP2PPeerListener);
+            }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             // Respond to new connection or disconnections
 //            WifiP2pInfo wifiInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
@@ -63,12 +70,13 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             // Respond to this device's wifi state changing
-            //log("wifi changed");
+//            log("wifi changed");
         }
     }
 
+
     public static void log(String msg) {
-       // MainActivity.addLog(msg);
-        Log.e("p2p", "broadcast : "+msg);
+        // MainActivity.addLog(msg);
+        Log.e("p2p", "broadcast : " + msg);
     }
 }
