@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:background="#222222"
+    android:id="@+id/main_view"
+    android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:id="@+id/top_panel"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/hamburger"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="8dp"
+            android:src="@drawable/hamburger" />
+
+        <TextView
+            android:textColor="#fff"
+            android:id="@+id/static_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/device"
+            android:padding="8dp"
+            android:singleLine="true"
+            android:text="test"
+            android:textSize="22sp" />
+
+        <TextView
+            android:textColor="#fff"
+            android:id="@+id/device_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/device"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:paddingBottom="8dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="test"
+            android:textSize="22sp" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/top_panel" />
+
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"></RelativeLayout>
+    <LinearLayout
+        android:id="@+id/side_pane"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/top_panel"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+    <tbs.fakehackerv3.FAB
+        android:visibility="gone"
+        android:id="@+id/fab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_centerHorizontal="true"
+        android:padding="8dp" />
+</RelativeLayout>

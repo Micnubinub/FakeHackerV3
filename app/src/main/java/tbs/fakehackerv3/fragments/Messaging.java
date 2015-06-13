@@ -1,8 +1,9 @@
-package tbs.fakehackerv3;
+package tbs.fakehackerv3.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -13,14 +14,26 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import tbs.fakehackerv3.P2PManager;
+import tbs.fakehackerv3.R;
+import tbs.fakehackerv3.ReceivedMessage;
 
 /**
  * Created by Michael on 5/22/2015.
  */
-public class Messaging extends Activity {
+public class Messaging extends Fragment {
+
+    @Nullable
+    @Override
+    public View getView() {
+        //Todo
+        final View view = View.inflate(getActivity(), R.layout.message_item, null);
+        return view;
+    }
+
     private static ListView messageList;
     private static EditText messageEditText;
     private static ImageView sendMessage;
@@ -35,7 +48,7 @@ public class Messaging extends Activity {
                 P2PManager.setMessage(msg);
             messageEditText.setText("");
 
-            messages.add(new ReceivedMessage(msg, "Sent : " + String.valueOf(System.currentTimeMillis()), "me"));
+            addReceivedMessage(new ReceivedMessage(msg, "Sent : " + String.valueOf(System.currentTimeMillis()), "me"));
 
             Log.e("p2p", "message : " + msg);
             notifyDataSetChanged();
@@ -83,13 +96,11 @@ public class Messaging extends Activity {
         sendMessage.setOnClickListener(sendMessageClickListener);
     }
 
-    private static Activity context;
-    private static P2PManager p2PManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = this;
+
         P2PManager.getP2PManager(this);
 
         setContentView(R.layout.messaging_fragment);
@@ -115,7 +126,7 @@ public class Messaging extends Activity {
             }
         });
         sendMessage.setOnClickListener(sendMessageClickListener);
-        p2PManager = P2PManager.getP2PManager(this, p2pListener, true);
+
     }
 
     private static final ArrayList<ReceivedMessage> messages = new ArrayList<ReceivedMessage>();
@@ -154,40 +165,16 @@ public class Messaging extends Activity {
         }
     }
 
-    private static final P2PManager.P2PListener p2pListener = new P2PManager.P2PListener() {
-        @Override
-        public void onScanStarted() {
-            context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(context, "Scanning", Toast.LENGTH_LONG).show();
-                }
-            });
+    public static void addReceivedMessage(ReceivedMessage message) {
+        if (message != null && !messages.contains(message)) {
+            messages.add(message);
+            addMessageToDataBase(message);
         }
+    }
 
-        @Override
-        public void onMessageReceived(String msg) {
-            final String[] received = msg.split(Message.MESSAGE_SEPARATOR, 3);
-            messages.add(new ReceivedMessage(received[1], "RECEIVED : " + received[2], "random"));
-            notifyDataSetChanged();
-            Log.e("notified", "msg");
-        }
-
-        @Override
-        public void onDevicesConnected() {
-
-        }
-
-        @Override
-        public void onDevicesDisconnected() {
-
-        }
-
-        @Override
-        public void onSocketsConfigured() {
-            messageEditText.setEnabled(true);
-        }
-    };
+    public static void addMessageToDataBase(ReceivedMessage message) {
+        //TODO
+    }
 
 
 }

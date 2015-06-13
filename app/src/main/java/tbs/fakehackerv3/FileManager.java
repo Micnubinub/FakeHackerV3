@@ -15,6 +15,9 @@ import java.util.Comparator;
  * Created by root on 31/07/14.
  */
 public class FileManager {
+    public static final String FILE_SEP = ":::";
+    public static final String FILE_ATTRIBUTE_SEP = "/:/";
+
     private static Context context;
     private static String currentDirectory = Environment.getExternalStorageDirectory().getPath();
     private static boolean isInFileManagerMode = false;
@@ -256,7 +259,25 @@ public class FileManager {
         });
     }
 
-    public static ArrayList<File> getCurrentTree() {
-        return currentTree;
+    public static String getCurrentTree() {
+        final StringBuilder builder = new StringBuilder();
+
+
+        //
+        return builder.toString();
+    }
+
+    public enum FileType {
+        MUSIC, PICTURE, GENERIC, VIDEO, DOCUMENT
+    }
+
+    public class MikeFile {
+
+        final String path, name, fileSize;
+        final FileType fileType;
+
+        public MikeFile() {
+            super();
+        }
     }
 }

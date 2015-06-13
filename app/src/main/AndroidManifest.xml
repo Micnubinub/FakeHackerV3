@@ -33,7 +33,7 @@
         </activity>
 
         <activity
-            android:name=".Messaging"
+            android:name=".fragments.Messaging"
             android:label="Messaging">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,7 +42,7 @@
         </activity>
 
         <activity
-            android:name=".Remote"
+            android:name=".fragments.Remote"
             android:label="Remote">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

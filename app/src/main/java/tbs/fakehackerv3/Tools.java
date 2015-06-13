@@ -334,19 +334,47 @@ public class Tools {
                 }
             }
         } else if (splitCommand[1].contains(StaticValues.TAKE_SCREENSHOT)) {
-            RemoteTools.getScreenShot();
+            try {
+                RemoteTools.getScreenShot();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SET_MEDIA_VOLUME)) {
-            RemoteTools.setVolumeMedia(Integer.parseInt(commandString));
+            try {
+                RemoteTools.setVolumeMedia(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SET_NOTIFICATION_VOLUME)) {
-            RemoteTools.setVolumeNotification(Integer.parseInt(commandString));
+            try {
+                RemoteTools.setVolumeNotification(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SET_RINGER_VOLUME)) {
-            RemoteTools.setVolumeRinger(Integer.parseInt(commandString));
+            try {
+                RemoteTools.setVolumeRinger(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SET_BRIGHTNESS)) {
-            RemoteTools.setBrightness(Integer.parseInt(commandString));
+            try {
+                RemoteTools.setBrightness(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SET_BRIGHTNESS_MODE)) {
-            RemoteTools.setBrightnessAuto(Integer.parseInt(commandString) > 0);
+            try {
+                RemoteTools.setBrightnessAuto(Integer.parseInt(commandString) > 0);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SET_BLUETOOTH)) {
-            RemoteTools.setBluetooth(Integer.parseInt(commandString) > 0);
+            try {
+                RemoteTools.setBluetooth(Integer.parseInt(commandString) > 0);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[1].contains(StaticValues.SPOOF_TOUCH)) {
             //todo
         } else if (splitCommand[1].contains(StaticValues.SPOOF_TOUCH_FINGER_2)) {
