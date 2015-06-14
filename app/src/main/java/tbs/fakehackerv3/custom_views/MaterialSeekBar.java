@@ -8,8 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.micnubinub.mrautomatic.R;
-
+import tbs.fakehackerv3.R;
 
 /**
  * Created by root on 24/08/14.

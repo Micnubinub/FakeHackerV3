@@ -15,6 +15,7 @@ import tbs.fakehackerv3.fragments.Remote;
 
 
 public class MainActivity extends Activity {
+    //Todo
     private final View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -48,9 +49,9 @@ public class MainActivity extends Activity {
         @Override
         public void onMessageReceived(String msg) {
             final String[] received = msg.split(Message.MESSAGE_SEPARATOR, 3);
-            messages.add(new ReceivedMessage(received[1], "RECEIVED : " + received[2], "random"));
+          /*Todo  messages.add(new ReceivedMessage(received[1], "RECEIVED : " + received[2], "random"));
             notifyDataSetChanged();
-            Log.e("notified", "msg");
+            Log.e("notified", "msg");*/
         }
 
         @Override
@@ -65,7 +66,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onSocketsConfigured() {
-            messageEditText.setEnabled(true);
+            /*Todo messageEditText.setEnabled(true);*/
         }
     };
 

@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
-import com.micnubinub.mrautomatic.R;
+import tbs.fakehackerv3.R;
 
 
 /**

@@ -33,24 +33,6 @@
         </activity>
 
         <activity
-            android:name=".fragments.Messaging"
-            android:label="Messaging">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".fragments.Remote"
-            android:label="Remote">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name=".Console"
             android:label="Console">
             <intent-filter>

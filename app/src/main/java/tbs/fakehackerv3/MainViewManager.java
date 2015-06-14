@@ -59,7 +59,6 @@ public class MainViewManager {
 
                     break;
 
-                case R.id.
             }
         }
     };
