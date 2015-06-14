@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.ImageView;
 
 /**
@@ -26,7 +27,6 @@ public class FAB extends ImageView {
     public FAB(Context context) {
         super(context);
         init();
-
     }
 
     public FAB(Context context, AttributeSet attrs) {
@@ -37,6 +37,24 @@ public class FAB extends ImageView {
     private void init() {
         setState(State.SCANNING);
         setBackgroundResource(R.drawable.bg_circle);
+        setOnClickListener(new OnClickListener() {
+            //Todo
+            @Override
+            public void onClick(View v) {
+                switch (state) {
+                    case SCANNING:
+                        setState(State.IDLE);
+                        P2PManager.stopScan();
+                        break;
+                    case CONNECTING:
+
+                        break;
+                    case IDLE:
+                        setState(State.SCANNING);
+                        break;
+                }
+            }
+        });
     }
 
     public void setState(State state) {
@@ -53,12 +71,16 @@ public class FAB extends ImageView {
             case CONNECTING:
                 setImageDrawable(null);
                 break;
+            case HIDING:
+                setImageDrawable(null);
+                animator.start();
+                break;
         }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+
         lastUpdate = System.currentTimeMillis();
 
 
@@ -75,8 +97,10 @@ public class FAB extends ImageView {
             case IDLE:
 
                 break;
+            case HIDING:
+                return;
         }
-
+        super.onDraw(canvas);
     }
 
     @Override
@@ -123,7 +147,7 @@ public class FAB extends ImageView {
     }
 
     public enum State {
-        SCANNING, IDLE, CONNECTING
+        SCANNING, IDLE, CONNECTING, HIDING
     }
 
     private final ValueAnimator.UpdateListener updateListener = new ValueAnimator.UpdateListener() {

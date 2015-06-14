@@ -2,17 +2,17 @@ package tbs.fakehackerv3.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +39,7 @@ public class RemoteMaterial extends Fragment {
 
     @Nullable
     @Override
-    public View getView() {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Todo
         context = getActivity();
         list = (ListView) View.inflate(getActivity(), R.layout.remote_fragment, null);
@@ -102,39 +102,6 @@ public class RemoteMaterial extends Fragment {
                 break;
         }
     }
-
-    private static final View.OnClickListener clickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.take_pic_back:
-
-                    break;
-                case R.id.take_pic_front:
-                    sendCommand(StaticValues.TAKE_PICTURE_FRONT, "");
-                    break;
-
-            }
-        }
-    };
-
-    private static Switch.OnCheckedChangeListener switchListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            switch (buttonView.getId()) {
-                case R.id.flash:
-                    sendCommand(StaticValues.TOGGLE_TORCH, "");
-                    break;
-                case R.id.wifi:
-                    //TODO maybe consider adding this
-                    sendCommand(StaticValues.SET_BLUETOOTH, isChecked ? "1" : "0");
-                    break;
-                case R.id.bluetooth:
-                    sendCommand(StaticValues.SET_BLUETOOTH, isChecked ? "1" : "0");
-                    break;
-            }
-        }
-    };
 
     public static void sendCommand(String commandType, String cvs) {
         //TODO
@@ -244,7 +211,6 @@ public class RemoteMaterial extends Fragment {
             }
         });
 
-
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -304,7 +270,6 @@ public class RemoteMaterial extends Fragment {
                 ((TextView) dialog.findViewById(R.id.text)).setText(String.format("Notification volume will be set to: %d", progress));
             }
         });
-
 
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -378,7 +343,6 @@ public class RemoteMaterial extends Fragment {
                 dialog.findViewById(R.id.text).setVisibility(isChecked ? View.GONE : View.VISIBLE);
             }
         });
-
 
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -490,7 +454,6 @@ public class RemoteMaterial extends Fragment {
         materialRadioGroup.addView(button7);
         materialRadioGroup.addView(button8);
 
-
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -549,7 +512,6 @@ public class RemoteMaterial extends Fragment {
                         sendCommand(StaticValues.MEDIA_CONTROL_PREVIOUS, "");
                         break;
                 }
-
             }
         });
 
@@ -595,7 +557,6 @@ public class RemoteMaterial extends Fragment {
         ((TextView) dialog.findViewById(R.id.title)).setText("Sync");
         final MaterialSwitch materialSwitch = (MaterialSwitch) dialog.findViewById(R.id.material_switch);
         materialSwitch.setText("Sync");
-
 
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override

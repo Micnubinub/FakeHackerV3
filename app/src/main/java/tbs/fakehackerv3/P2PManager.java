@@ -164,9 +164,10 @@ public class P2PManager extends Service {
         super();
     }
 
+
     public static P2PManager getP2PManager(Activity activity) {
         if (P2PManager.activity != activity) {
-            p2PManager = new P2PManager(activity, true);
+            p2PManager = new P2PManager(activity);
         }
 
         return p2PManager;
@@ -176,23 +177,23 @@ public class P2PManager extends Service {
         return activity;
     }
 
-    public static P2PManager getP2PManager(Activity activity, P2PListener p2PListener, boolean startScan) {
+    public static P2PManager getP2PManager(Activity activity, P2PListener p2PListener) {
         P2PManager.p2PListener = p2PListener;
         if (P2PManager.activity != activity) {
-            p2PManager = new P2PManager(activity, startScan);
+            p2PManager = new P2PManager(activity);
         }
         return p2PManager;
     }
 
-    private P2PManager(Activity activity, boolean startScan) {
+    private P2PManager(Activity activity) {
         P2PManager.activity = activity;
 
 
         if (isServiceRunning() || isActive() || tryingToConnect)
             return;
         activity.startService(new Intent(activity, P2PManager.class));
-        if (startScan)
-            startScan();
+        //Todo make a preference and put it in setttings
+
     }
 
     public static void connectToDevice(final WifiP2pDevice device) {
@@ -605,6 +606,25 @@ public class P2PManager extends Service {
         });
     }
 
+    public static void disconnectToCurrentDevice() {
+        final WifiP2pManager.ActionListener actionListener = new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                //todo
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                //todo
+            }
+        };
+
+
+        manager.cancelConnect(channel, actionListener);
+        manager.removeGroup(channel, actionListener);
+
+    }
+
     private static void dismissDialog() {
         try {
             activity.runOnUiThread(new Runnable() {
@@ -620,9 +640,25 @@ public class P2PManager extends Service {
         }
     }
 
-    private static void startScan() {
+    public static void stopScan() {
+        try {
+            if (MainActivity.connected) {
+                MainViewManager.fab.setState(FAB.State.HIDING);
+            } else {
+                MainViewManager.fab.setState(FAB.State.IDLE);
+            }
+            manager.stopPeerDiscovery(channel, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void startScan() {
         if (isActive())
             return;
+
+        MainActivity.mainViewManager.fab.setState(FAB.State.SCANNING);
 
         log("starting scan");
         dialogShown = false;

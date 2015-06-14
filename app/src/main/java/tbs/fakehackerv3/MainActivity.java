@@ -3,6 +3,10 @@ package tbs.fakehackerv3;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -10,11 +14,14 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 
+import tbs.fakehackerv3.fragments.CustomAndDownloadedCommands;
 import tbs.fakehackerv3.fragments.Messaging;
+import tbs.fakehackerv3.fragments.OnlineRepo;
 import tbs.fakehackerv3.fragments.Remote;
+import tbs.fakehackerv3.fragments.Settings;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
     //Todo
     private final View.OnClickListener listener = new View.OnClickListener() {
         @Override
@@ -72,14 +79,42 @@ public class MainActivity extends Activity {
 
     public static P2PManager p2PManager;
     public static Activity context;
+    public static FragmentManager fragmentManager;
+    public static FragmentTransaction fragmentTransaction;
+    public static MainViewManager mainViewManager;
+    //Fragments
+    public static CustomAndDownloadedCommands customAndDownloadedCommands;
+    public static OnlineRepo onlineRepo;
+    public static Remote remote;
+    public static Messaging messaging;
+    public static Settings settings;
+
+    //Custom Views
+    public static FAB fab;
+    public static boolean connected;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.main_view);
-        MainViewManager mainViewManager = new MainViewManager(findViewById(R.id.main_view));
-        p2PManager = P2PManager.getP2PManager(this, p2pListener, true);
+        mainViewManager = new MainViewManager(findViewById(R.id.main_view));
+        p2PManager = P2PManager.getP2PManager(this, p2pListener);
+
+        // get fragment manager
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+    }
+
+    public static void addFragment(Fragment fragment) {
+        fragmentTransaction.add(R.id.container, fragment);
+        fragmentTransaction.commit();
+    }
+
+    public static void replaceFragment(Fragment fragment) {
+        fragmentTransaction.replace(R.id.container, fragment);
+        fragmentTransaction.commit();
     }
 
     public static void handleReceivedCommand(String command) {
@@ -123,7 +158,6 @@ public class MainActivity extends Activity {
                 final File file = new File(commandString);
                 if (!file.exists()) {
                 } else if (!file.isDirectory()) {
-
                 } else {
                     //todo
                     file.listFiles();
@@ -260,6 +294,41 @@ public class MainActivity extends Activity {
         } else if (splitCommand[1].contains(StaticValues.MEDIA_CONTROL_PLAY_PAUSE)) {
             RemoteTools.playMusic();
         }
+    }
+
+    public static Settings getSettings() {
+        if (settings == null) {
+            settings = new Settings();
+        }
+        return settings;
+    }
+
+    public static OnlineRepo getOnlineRepo() {
+        if (onlineRepo == null) {
+            onlineRepo = new OnlineRepo();
+        }
+        return onlineRepo;
+    }
+
+    public static CustomAndDownloadedCommands getCustomAndDownloadedCommands() {
+        if (customAndDownloadedCommands == null) {
+            customAndDownloadedCommands = new CustomAndDownloadedCommands();
+        }
+        return customAndDownloadedCommands;
+    }
+
+    public static Messaging getMessaging() {
+        if (messaging == null) {
+            messaging = new Messaging();
+        }
+        return messaging;
+    }
+
+    public static Remote getRemote() {
+        if (remote == null) {
+            remote = new Remote();
+        }
+        return remote;
     }
 
     private static void log(String msg) {

@@ -1,10 +1,12 @@
 package tbs.fakehackerv3.fragments;
 
-import android.app.Activity;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -23,16 +25,13 @@ public class Remote extends Fragment {
     private static Switch flashLight, wifi, bluetooth;
     private TextView takePictureFront, takePictureBack, previousTrack, nextTrack, pausePlay;
     private SeekBar alarm, notification, all, ringer, media, brightness;
-    private static Activity context;
+
 
     @Nullable
     @Override
-    public View getView() {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Todo
         final View v = View.inflate(getActivity(), R.layout.remote, null);
-
-        context = getActivity();
-
         //Switch
         flashLight = (Switch) v.findViewById(R.id.flash);
         wifi = (Switch) v.findViewById(R.id.wifi);

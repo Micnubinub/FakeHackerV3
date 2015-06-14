@@ -15,9 +15,9 @@ import android.widget.TextView;
 public class MainViewManager {
     //TODO dialog.findViewById(R.id.text).setSelected(true);
     private static View mainView;
-    private static FAB fab;
-    private static LinearLayout sidePane;
-    private static FrameLayout container;
+    public static FAB fab;
+    public static LinearLayout sidePane;
+    public static FrameLayout container;
     private static ImageView hamburger;
     private static Context context;
     private static TextView connectedToStaticText, connectedToDevice;

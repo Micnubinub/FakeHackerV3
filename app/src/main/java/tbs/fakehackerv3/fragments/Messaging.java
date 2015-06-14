@@ -1,11 +1,13 @@
 package tbs.fakehackerv3.fragments;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -46,10 +48,9 @@ public class Messaging extends Fragment {
     private static final MessageAdapter messageAdapter = new MessageAdapter();
     private static Activity context;
 
-
     @Nullable
     @Override
-    public View getView() {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Todo
         context = getActivity();
         final View v = View.inflate(getActivity(), R.layout.messaging_fragment, null);
@@ -77,7 +78,6 @@ public class Messaging extends Fragment {
         messageList.setAdapter(messageAdapter);
         return v;
     }
-
 
     private static void notifyDataSetChanged() {
         try {
