@@ -1,7 +1,6 @@
 package tbs.fakehackerv3.fragments;
 
-import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.app.Activity;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -25,15 +24,6 @@ import tbs.fakehackerv3.ReceivedMessage;
  * Created by Michael on 5/22/2015.
  */
 public class Messaging extends Fragment {
-
-    @Nullable
-    @Override
-    public View getView() {
-        //Todo
-        final View view = View.inflate(getActivity(), R.layout.message_item, null);
-        return view;
-    }
-
     private static ListView messageList;
     private static EditText messageEditText;
     private static ImageView sendMessage;
@@ -47,14 +37,46 @@ public class Messaging extends Fragment {
             if (msg.length() > 0)
                 P2PManager.setMessage(msg);
             messageEditText.setText("");
-
             addReceivedMessage(new ReceivedMessage(msg, "Sent : " + String.valueOf(System.currentTimeMillis()), "me"));
-
             Log.e("p2p", "message : " + msg);
             notifyDataSetChanged();
         }
     };
     private static final MessageAdapter messageAdapter = new MessageAdapter();
+    private static Activity context;
+
+
+    @Nullable
+    @Override
+    public View getView() {
+        //Todo
+        context = getActivity();
+        final View v = View.inflate(getActivity(), R.layout.messaging_fragment, null);
+        sendMessage = (ImageView) v.findViewById(R.id.send);
+        messageEditText = (EditText) v.findViewById(R.id.message);
+        messageList = (ListView) v.findViewById(R.id.list);
+
+        messageEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                sendMessage.setEnabled(messageEditText.getText().toString().length() > 0);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        sendMessage.setOnClickListener(sendMessageClickListener);
+        messageList.setAdapter(messageAdapter);
+        return v;
+    }
+
 
     private static void notifyDataSetChanged() {
         try {
@@ -67,66 +89,6 @@ public class Messaging extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-        setContentView(R.layout.messaging_fragment);
-        sendMessage = (ImageView) findViewById(R.id.send);
-        messageEditText = (EditText) findViewById(R.id.message);
-        messageList = (ListView) findViewById(R.id.list);
-
-        messageEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                sendMessage.setEnabled(messageEditText.getText().toString().length() > 0);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        sendMessage.setOnClickListener(sendMessageClickListener);
-    }
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        P2PManager.getP2PManager(this);
-
-        setContentView(R.layout.messaging_fragment);
-        sendMessage = (ImageView) findViewById(R.id.send);
-        messageEditText = (EditText) findViewById(R.id.message);
-        messageList = (ListView) findViewById(R.id.list);
-        messageList.setAdapter(messageAdapter);
-
-        messageEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                sendMessage.setEnabled(messageEditText.getText().toString().length() > 0);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        sendMessage.setOnClickListener(sendMessageClickListener);
-
     }
 
     private static final ArrayList<ReceivedMessage> messages = new ArrayList<ReceivedMessage>();

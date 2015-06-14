@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
         }
     };
 
-    private static P2PManager p2PManager;
+    public static P2PManager p2PManager;
     private static Activity context;
 
     @Override

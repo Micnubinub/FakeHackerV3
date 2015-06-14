@@ -267,17 +267,72 @@ public class FileManager {
         return builder.toString();
     }
 
+
+    public class MikeFile {
+        public final String path, name, fileSize;
+        public final FileType fileType;
+
+        public MikeFile(String mikeFile) {
+            final String[] split = mikeFile.split(FILE_ATTRIBUTE_SEP, 4);
+            this.fileSize = split[3];
+            this.path = split[1];
+            this.name = split[2];
+            final String type = split[0];
+            if (type.equals(String.valueOf(FileType.GENERIC))) {
+                fileType = FileType.GENERIC;
+            } else if (type.equals(String.valueOf(FileType.MUSIC))) {
+                fileType = FileType.MUSIC;
+            } else if (type.equals(String.valueOf(FileType.PICTURE))) {
+                fileType = FileType.PICTURE;
+            } else if (type.equals(String.valueOf(FileType.VIDEO))) {
+                fileType = FileType.VIDEO;
+            } else {
+                fileType = FileType.DOCUMENT;
+            }
+        }
+
+        public MikeFile(FileType fileType, String path, String name, String fileSize) {
+            this.fileSize = fileSize;
+            this.fileType = fileType;
+            this.name = name;
+            this.path = path;
+        }
+    }
+
+
+    private static String getFileTypeString(String fileName) {
+        final String ext = getExtension(fileName);
+        FileType fileType = FileType.GENERIC;
+
+        if (MUSIC_EXTENSIONS.contains(ext)) {
+            fileType = FileType.MUSIC;
+        } else if (PICTURE_EXTENSIONS.contains(ext)) {
+            fileType = FileType.PICTURE;
+        } else if (VIDEO_EXTENSIONS.contains(ext)) {
+            fileType = FileType.VIDEO;
+        } else if (DOCUMENT_EXTENSIONS.contains(ext)) {
+            fileType = FileType.DOCUMENT;
+        }
+        return String.valueOf(fileType);
+    }
+
+    public static String getExtension(String fileName) {
+        String extension = "";
+
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i + 1);
+        }
+
+        return extension.toLowerCase();
+    }
+
     public enum FileType {
         MUSIC, PICTURE, GENERIC, VIDEO, DOCUMENT
     }
 
-    public class MikeFile {
-
-        final String path, name, fileSize;
-        final FileType fileType;
-
-        public MikeFile() {
-            super();
-        }
-    }
+    public static final String DOCUMENT_EXTENSIONS = "doc,docx,txt,rtf,pdf,odt,wpd,xls,xlsx,ods,ppt,pptx";
+    public static final String VIDEO_EXTENSIONS = "webm,mkv,flv,vob,ogv,ogg,drc,mng,avi,mov,qt,wmv,yuv,rm,rmvb,asf,mp4,m4p,m4v,mpg,mp2,mpeg,mpe,mpv,m2v,svi,3gp,3g2,mxf,roq,nsv";
+    public static final String PICTURE_EXTENSIONS = "jpg,jpeg,tif,gif,png,raw";
+    public static final String MUSIC_EXTENSIONS = "3gp,act,aiff,aac,amr,au,awb,dct,dss,dvf,flac,gsm,,m4a,m4p,mmf,mp3,mpc,msv,ogg,oga,opus,ra,rm,raw,sln,tta,vox,wav,wma,wv,webm";
 }

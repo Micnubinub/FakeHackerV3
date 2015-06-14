@@ -1,0 +1,64 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_background_inset">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/white_button_selector"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="8dp"
+        android:text="Title"
+        android:textColor="@color/dark_grey_text"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+
+    <tbs.fakehackerv3.custom_views.MaterialCheckBox
+        android:id="@+id/material_checkbox"
+        android:layout_width="fill_parent"
+        android:layout_height="35dp"
+        android:layout_below="@+id/title"
+        android:layout_margin="8dp"
+        android:visibility="gone" />
+
+    <TextView
+
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/material_checkbox"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:ellipsize="end"
+        android:padding="8dp"
+        android:text="Secondary"
+        android:textColor="@color/dark_grey_text"
+        android:textSize="18sp" />
+
+    <tbs.fakehackerv3.custom_views.MaterialSeekBar
+        android:id="@+id/material_seekbar"
+        android:layout_width="fill_parent"
+        android:layout_height="24dp"
+        android:layout_below="@+id/text"
+        android:layout_margin="8dp" />
+
+    <include
+        android:id="@+id/save_cancel"
+        layout="@layout/save_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/material_seekbar"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="4dp" />
+
+</RelativeLayout>

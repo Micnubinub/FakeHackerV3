@@ -1,7 +1,6 @@
 package tbs.fakehackerv3.fragments;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,16 +9,10 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.IOException;
-
-import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.Message;
 import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
-import tbs.fakehackerv3.RemoteTools;
 import tbs.fakehackerv3.StaticValues;
 
 /**
@@ -27,41 +20,34 @@ import tbs.fakehackerv3.StaticValues;
  */
 public class Remote extends Fragment {
 
+    private static Switch flashLight, wifi, bluetooth;
+    private TextView takePictureFront, takePictureBack, previousTrack, nextTrack, pausePlay;
+    private SeekBar alarm, notification, all, ringer, media, brightness;
+    private static Activity context;
+
     @Nullable
     @Override
     public View getView() {
         //Todo
-        final View view = View.inflate(getActivity(), R.layout.message_item, null);
-        return view;
-    }
+        final View v = View.inflate(getActivity(), R.layout.remote, null);
 
-    private static Switch flashLight, wifi, bluetooth;
-    private TextView takePictureFront, takePictureBack, previousTrack, nextTrack, pausePlay;
-    private SeekBar alarm, notification, all, ringer, media, brightness;
-    private static P2PManager p2PManager;
-    private static Activity context;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.remote);
-        context = this;
+        context = getActivity();
 
         //Switch
-        flashLight = (Switch) findViewById(R.id.flash);
-        wifi = (Switch) findViewById(R.id.wifi);
-        bluetooth = (Switch) findViewById(R.id.bluetooth);
+        flashLight = (Switch) v.findViewById(R.id.flash);
+        wifi = (Switch) v.findViewById(R.id.wifi);
+        bluetooth = (Switch) v.findViewById(R.id.bluetooth);
 
         flashLight.setOnCheckedChangeListener(switchListener);
         wifi.setOnCheckedChangeListener(switchListener);
         bluetooth.setOnCheckedChangeListener(switchListener);
 
         //TextView
-        takePictureFront = (TextView) findViewById(R.id.take_pic_front);
-        takePictureBack = (TextView) findViewById(R.id.take_pic_back);
-        previousTrack = (TextView) findViewById(R.id.previous);
-        nextTrack = (TextView) findViewById(R.id.next);
-        pausePlay = (TextView) findViewById(R.id.play_pause);
+        takePictureFront = (TextView) v.findViewById(R.id.take_pic_front);
+        takePictureBack = (TextView) v.findViewById(R.id.take_pic_back);
+        previousTrack = (TextView) v.findViewById(R.id.previous);
+        nextTrack = (TextView) v.findViewById(R.id.next);
+        pausePlay = (TextView) v.findViewById(R.id.play_pause);
 
         takePictureFront.setOnClickListener(clickListener);
         takePictureBack.setOnClickListener(clickListener);
@@ -70,12 +56,12 @@ public class Remote extends Fragment {
         pausePlay.setOnClickListener(clickListener);
 
         //SeekBar
-        alarm = (SeekBar) findViewById(R.id.volume_alarm);
-        notification = (SeekBar) findViewById(R.id.volume_notification);
-        all = (SeekBar) findViewById(R.id.volume_all);
-        ringer = (SeekBar) findViewById(R.id.volume_ringer);
-        media = (SeekBar) findViewById(R.id.volume_media);
-        brightness = (SeekBar) findViewById(R.id.brightness);
+        alarm = (SeekBar) v.findViewById(R.id.volume_alarm);
+        notification = (SeekBar) v.findViewById(R.id.volume_notification);
+        all = (SeekBar) v.findViewById(R.id.volume_all);
+        ringer = (SeekBar) v.findViewById(R.id.volume_ringer);
+        media = (SeekBar) v.findViewById(R.id.volume_media);
+        brightness = (SeekBar) v.findViewById(R.id.brightness);
 
         alarm.setOnSeekBarChangeListener(seekBarListener);
         notification.setOnSeekBarChangeListener(seekBarListener);
@@ -84,41 +70,8 @@ public class Remote extends Fragment {
         media.setOnSeekBarChangeListener(seekBarListener);
         brightness.setOnSeekBarChangeListener(seekBarListener);
 
-        p2PManager = P2PManager.getP2PManager(this, p2pListener, true);
+        return v;
     }
-
-    private static final P2PManager.P2PListener p2pListener = new P2PManager.P2PListener() {
-        @Override
-        public void onScanStarted() {
-            context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(context, "Scanning", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-
-        @Override
-        public void onMessageReceived(String msg) {
-            //Todo
-            handleReceivedCommand(msg);
-        }
-
-        @Override
-        public void onDevicesConnected() {
-
-        }
-
-        @Override
-        public void onDevicesDisconnected() {
-
-        }
-
-        @Override
-        public void onSocketsConfigured() {
-
-        }
-    };
 
     private static final View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
@@ -197,7 +150,6 @@ public class Remote extends Fragment {
             }
         }
     };
-
 
 
     public static void sendCommand(String commandType, String cvs) {
@@ -283,7 +235,7 @@ public class Remote extends Fragment {
             builder.append(cvs);
         }
 
-        if (cvs != null && cvs.length() > 0 && p2PManager != null) {
+        if (cvs != null && cvs.length() > 0) {
             P2PManager.enqueueMessage(new Message(builder.toString(), Message.MessageType.SEND_COMMAND));
         } else {
             log("please enter a message string or please init p2pManager");
