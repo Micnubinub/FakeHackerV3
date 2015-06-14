@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -136,6 +137,20 @@ public class Messaging extends Fragment {
 
     public static void addMessageToDataBase(ReceivedMessage message) {
         //TODO
+    }
+    public static void toast(final String msg) {
+        if (context != null) {
+            try {
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

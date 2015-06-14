@@ -2,7 +2,6 @@ package tbs.fakehackerv3.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.media.AudioManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,14 +12,15 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import tbs.fakehackerv3.Message;
 import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
 import tbs.fakehackerv3.StaticValues;
+import tbs.fakehackerv3.custom_views.MaterialCheckBox;
 import tbs.fakehackerv3.custom_views.MaterialRadioButton;
 import tbs.fakehackerv3.custom_views.MaterialRadioGroup;
 import tbs.fakehackerv3.custom_views.MaterialSeekBar;
@@ -35,7 +35,7 @@ public class RemoteMaterial extends Fragment {
     private static Activity context;
     private static final String[] commands = {"Wifi", "Bluetooth", "Data", "Brightness", "Silent mode",
             "Notification volume", "Alarm volume", "Media",
-            "Media Volume", "Ringer volume", "Auto rotation", "Sleep time out"};
+            "Media Volume", "Ringer volume", "Auto rotation", "Sleep time out", "Sync", "Take picture front", "Take picture back", "Toggle flash"};
 
     @Nullable
     @Override
@@ -53,45 +53,53 @@ public class RemoteMaterial extends Fragment {
         return list;
     }
 
-    private static void openDialog(int i) {
+    private void openDialog(int i) {
         switch (i) {
             case 0:
-
+                showWifiDialog();
                 break;
             case 1:
-
+                showBluetoothDialog();
                 break;
             case 2:
-
+                showDataDialog();
                 break;
             case 3:
-
+                showBrightnessDialog();
                 break;
             case 4:
-
+                showSilentModeDialog();
                 break;
             case 5:
-
+                showNotificationVolumeDialog();
                 break;
             case 6:
-
+                showAlarmVolumeDialog();
                 break;
             case 7:
-
+                showMusicPlayerDialog();
                 break;
             case 8:
-
+                showMediaVolumeDialog();
                 break;
             case 9:
-
+                showRingtoneVolumeDialog();
                 break;
             case 10:
-
+                showAutoRotationDialog();
                 break;
             case 11:
-
+                showSleepTimeoutDialog();
                 break;
-
+            case 12:
+                showSyncDialog();
+                break;
+            case 13:
+                sendCommand(StaticValues.TAKE_PICTURE_FRONT, "");
+                break;
+            case 14:
+                sendCommand(StaticValues.TAKE_PICTURE_BACK, "");
+                break;
         }
     }
 
@@ -100,20 +108,12 @@ public class RemoteMaterial extends Fragment {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.take_pic_back:
-                    sendCommand(StaticValues.TAKE_PICTURE_BACK, "");
+
                     break;
                 case R.id.take_pic_front:
                     sendCommand(StaticValues.TAKE_PICTURE_FRONT, "");
                     break;
-                case R.id.next:
-                    sendCommand(StaticValues.MEDIA_CONTROL_SKIP, "");
-                    break;
-                case R.id.play_pause:
-                    sendCommand(StaticValues.MEDIA_CONTROL_PLAY_PAUSE, "");
-                    break;
-                case R.id.previous:
-                    sendCommand(StaticValues.MEDIA_CONTROL_PREVIOUS, "");
-                    break;
+
             }
         }
     };
@@ -135,44 +135,6 @@ public class RemoteMaterial extends Fragment {
             }
         }
     };
-
-    private static final SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-            final int progress = seekBar.getProgress();
-            switch (seekBar.getId()) {
-                case R.id.volume_alarm:
-                    sendCommand(StaticValues.SET_ALARM_VOLUME, String.valueOf(progress));
-                    break;
-                case R.id.brightness:
-                    sendCommand(StaticValues.SET_BRIGHTNESS, String.valueOf(progress));
-                    break;
-                case R.id.volume_all:
-                    sendCommand(StaticValues.SET_BRIGHTNESS, String.valueOf(progress));
-                    break;
-                case R.id.volume_media:
-                    sendCommand(StaticValues.SET_MEDIA_VOLUME, String.valueOf(progress));
-                    break;
-                case R.id.volume_notification:
-                    sendCommand(StaticValues.SET_NOTIFICATION_VOLUME, String.valueOf(progress));
-                    break;
-                case R.id.volume_ringer:
-                    sendCommand(StaticValues.SET_RINGER_VOLUME, String.valueOf(progress));
-                    break;
-            }
-        }
-    };
-
 
     public static void sendCommand(String commandType, String cvs) {
         //TODO
@@ -275,7 +237,6 @@ public class RemoteMaterial extends Fragment {
         ((TextView) dialog.findViewById(R.id.title)).setText("Alarm volume");
 
         final MaterialSeekBar materialSeekBar = (MaterialSeekBar) dialog.findViewById(R.id.material_seekbar);
-        materialSeekBar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM));
         materialSeekBar.setOnProgressChangedListener(new MaterialSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(int max, int progress) {
@@ -294,8 +255,7 @@ public class RemoteMaterial extends Fragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setCommandValue(Utility.ALARM_VOLUME_SETTING, String.valueOf(materialSeekBar.getProgress()));
-
+                sendCommand(StaticValues.SET_ALARM_VOLUME, String.valueOf(materialSeekBar.getProgress()));
             }
         });
         dialog.show();
@@ -308,7 +268,6 @@ public class RemoteMaterial extends Fragment {
         ((TextView) dialog.findViewById(R.id.text)).setText("Media volume");
 
         final MaterialSeekBar materialSeekBar = (MaterialSeekBar) dialog.findViewById(R.id.material_seekbar);
-        materialSeekBar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         materialSeekBar.setOnProgressChangedListener(new MaterialSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(int max, int progress) {
@@ -326,8 +285,7 @@ public class RemoteMaterial extends Fragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setCommandValue(Utility.MEDIA_VOLUME_SETTING, String.valueOf(materialSeekBar.getProgress()));
-
+                sendCommand(StaticValues.SET_MEDIA_VOLUME, String.valueOf(materialSeekBar.getProgress()));
             }
         });
         dialog.show();
@@ -358,8 +316,7 @@ public class RemoteMaterial extends Fragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setCommandValue(Utility.NOTIFICATION_VOLUME_SETTING, String.valueOf(materialSeekBar.getProgress()));
-
+                sendCommand(StaticValues.SET_NOTIFICATION_VOLUME, String.valueOf(materialSeekBar.getProgress()));
             }
         });
 
@@ -373,7 +330,6 @@ public class RemoteMaterial extends Fragment {
         ((TextView) dialog.findViewById(R.id.text)).setText("Ringtone volume");
 
         final MaterialSeekBar materialSeekBar = (MaterialSeekBar) dialog.findViewById(R.id.material_seekbar);
-        materialSeekBar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_RING));
         materialSeekBar.setOnProgressChangedListener(new MaterialSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(int max, int progress) {
@@ -391,8 +347,7 @@ public class RemoteMaterial extends Fragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setCommandValue(Utility.RINGER_VOLUME_SETTING, String.valueOf(materialSeekBar.getProgress()));
-
+                sendCommand(StaticValues.SET_RINGER_VOLUME, String.valueOf(materialSeekBar.getProgress()));
             }
         });
 
@@ -435,8 +390,11 @@ public class RemoteMaterial extends Fragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setCommandValue(Utility.BRIGHTNESS_SETTING, materialCheckBox.isChecked() ? "-1" : String.valueOf(materialSeekBar.getProgress()));
-
+                if (materialCheckBox.isChecked()) {
+                    sendCommand(StaticValues.SET_BRIGHTNESS_MODE, "1");
+                } else {
+                    sendCommand(StaticValues.SET_BRIGHTNESS, String.valueOf(materialSeekBar.getProgress()));
+                }
             }
         });
 
@@ -446,7 +404,6 @@ public class RemoteMaterial extends Fragment {
     private void showDataDialog() {
         final Dialog dialog = getDialog();
         dialog.setContentView(R.layout.radio_group);
-        dialog.findViewById(R.id.coming_soon).setVisibility(View.VISIBLE);
         ((TextView) dialog.findViewById(R.id.title)).setText("Data");
         final MaterialRadioGroup materialRadioGroup = (MaterialRadioGroup) dialog.findViewById(R.id.material_radio_group);
         final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, dpToPixels(40));
@@ -473,8 +430,7 @@ public class RemoteMaterial extends Fragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCommandValue(Utility.DATA_SETTING, String.valueOf(materialRadioGroup.getSelection()));
-
+                //Todo
             }
         });
 
@@ -538,8 +494,7 @@ public class RemoteMaterial extends Fragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCommandValue(Utility.SLEEP_TIMEOUT_SETTING, String.valueOf(materialRadioGroup.getSelection()));
-
+                //Todo
             }
         });
 
@@ -556,7 +511,6 @@ public class RemoteMaterial extends Fragment {
     private void showMusicPlayerDialog() {
         final Dialog dialog = getDialog();
         dialog.setContentView(R.layout.radio_group);
-        dialog.findViewById(R.id.coming_soon).setVisibility(View.VISIBLE);
         ((TextView) dialog.findViewById(R.id.title)).setText("Media Control");
         final MaterialRadioGroup materialRadioGroup = (MaterialRadioGroup) dialog.findViewById(R.id.material_radio_group);
         final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, dpToPixels(40));
@@ -581,13 +535,20 @@ public class RemoteMaterial extends Fragment {
         materialRadioGroup.addView(button3);
         materialRadioGroup.addView(button4);
 
-        dialog.findViewById(R.id.coming_soon).setVisibility(View.VISIBLE);
-
-
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                setCommandValue(Utility.MEDIA_CONTROL_SETTING, String.valueOf(materialRadioGroup.getSelection()));
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.next:
+                        sendCommand(StaticValues.MEDIA_CONTROL_SKIP, "");
+                        break;
+                    case R.id.play_pause:
+                        sendCommand(StaticValues.MEDIA_CONTROL_PLAY_PAUSE, "");
+                        break;
+                    case R.id.previous:
+                        sendCommand(StaticValues.MEDIA_CONTROL_PREVIOUS, "");
+                        break;
+                }
 
             }
         });
@@ -613,7 +574,7 @@ public class RemoteMaterial extends Fragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCommandValue(Utility.AUTO_ROTATION_SETTING, materialSwitch.isChecked() ? "1" : "0");
+//                Todo sendCommand(StaticValues.MEDIA_CONTROL_PREVIOUS, materialSwitch.isChecked()?"1":"0");
 
             }
         });
@@ -633,14 +594,13 @@ public class RemoteMaterial extends Fragment {
         dialog.setContentView(R.layout.switch_item);
         ((TextView) dialog.findViewById(R.id.title)).setText("Sync");
         final MaterialSwitch materialSwitch = (MaterialSwitch) dialog.findViewById(R.id.material_switch);
-        dialog.findViewById(R.id.coming_soon).setVisibility(View.VISIBLE);
         materialSwitch.setText("Sync");
 
 
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCommandValue(Utility.ACCOUNT_SYNC_SETTING, materialSwitch.isChecked() ? "1" : "0");
+//                Todo sendCommand(StaticValues.MEDIA_CONTROL_PREVIOUS, materialSwitch.isChecked()?"1":"0");
 
             }
         });
@@ -666,8 +626,7 @@ public class RemoteMaterial extends Fragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCommandValue(Utility.BLUETOOTH_SETTING, materialSwitch.isChecked() ? "1" : "0");
-
+                sendCommand(StaticValues.SET_BLUETOOTH, materialSwitch.isChecked() ? "1" : "0");
             }
         });
 
@@ -691,8 +650,7 @@ public class RemoteMaterial extends Fragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCommandValue(Utility.WIFI_SETTING, materialSwitch.isChecked() ? "1" : "0");
-
+//                setCommandValue(Utility.WIFI_SETTING, materialSwitch.isChecked() ? "1" : "0");
             }
         });
 
@@ -717,8 +675,7 @@ public class RemoteMaterial extends Fragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCommandValue(Utility.SILENT_MODE_SETTING, materialSwitch.isChecked() ? "1" : "0");
-
+                //                setCommandValue(Utility.WIFI_SETTING, materialSwitch.isChecked() ? "1" : "0");
             }
         });
 
@@ -756,6 +713,21 @@ public class RemoteMaterial extends Fragment {
 
             ((TextView) convertView).setText(commands[position]);
             return convertView;
+        }
+    }
+
+    public static void toast(final String msg) {
+        if (context != null) {
+            try {
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
     };
 
     public static P2PManager p2PManager;
-    private static Activity context;
+    public static Activity context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -264,6 +264,21 @@ public class MainActivity extends Activity {
 
     private static void log(String msg) {
         Log.e("Remote", msg);
+    }
+
+    public static void toast(final String msg) {
+        if (context != null) {
+            try {
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
