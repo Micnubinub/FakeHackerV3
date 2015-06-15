@@ -42,7 +42,7 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
             // asynchronous call and the calling activity is notified with a
             // callback on PeerListListener.onPeersAvailable()
             log("peers changed");
-            if (wifiP2pManager != null) {
+            if (wifiP2pManager != null && !P2PManager.isActive() && !P2PManager.tryingToConnect) {
                 if (!P2PManager.isActive())
                     wifiP2pManager.requestPeers(mChannel, P2PManager.wifiP2PPeerListener);
             }
@@ -56,9 +56,9 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
 
             final NetworkInfo networkState = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             log("connection changed : " + (networkState.isConnected() ? "connected" : "not-connected"));
-            if (networkState.isConnected()) {
+            if (networkState.isConnected() && !P2PManager.isActive() && !P2PManager.tryingToConnect) {
                 log("connection changed, connected, requesting group info");
-                P2PManager.requestConnectionInfo();
+                P2PManager.requestConnectionInfo("p2pBroadcast connection changed");
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             // Respond to this device's wifi state changing

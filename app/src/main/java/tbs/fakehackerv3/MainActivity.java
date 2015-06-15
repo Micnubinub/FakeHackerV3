@@ -2,7 +2,10 @@ package tbs.fakehackerv3;
 
 import android.app.Activity;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pGroup;
+import android.net.wifi.p2p.WifiP2pInfo;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -61,6 +64,28 @@ public class MainActivity extends FragmentActivity {
                 public void run() {
                     toast("Connected : " + device.deviceName);
                     MainViewManager.setStaticText("Connected to");
+                    P2PManager.manager.requestConnectionInfo(P2PManager.channel, new WifiP2pManager.ConnectionInfoListener() {
+                        @Override
+                        public void onConnectionInfoAvailable(final WifiP2pInfo info) {
+
+                            if (info.isGroupOwner) {
+                                P2PManager.manager.requestPeers(P2PManager.channel, new WifiP2pManager.PeerListListener() {
+                                    @Override
+                                    public void onPeersAvailable(WifiP2pDeviceList peers) {
+                                        String out = "connected devices : ";
+                                        for (WifiP2pDevice wifiP2pDevice : peers.getDeviceList()) {
+                                            if (wifiP2pDevice.status == WifiP2pDevice.CONNECTED) {
+                                                out += wifiP2pDevice.deviceName + " (" + wifiP2pDevice.deviceAddress + "),";
+                                            }
+                                        }
+                                        log("connection info from onDeviceConnected : ");
+                                        log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
+                                        log(out);
+                                    }
+                                });
+                            }
+                        }
+                    });
                     MainViewManager.setConnectedToDevice(device.deviceName + " (" + device.deviceAddress + ")");
                     addFragment(getMessaging());
                 }
@@ -84,6 +109,28 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onSocketsConfigured() {
             log("socket configured");
+            P2PManager.manager.requestConnectionInfo(P2PManager.channel, new WifiP2pManager.ConnectionInfoListener() {
+                @Override
+                public void onConnectionInfoAvailable(final WifiP2pInfo info) {
+
+                    if (info.isGroupOwner) {
+                        P2PManager.manager.requestPeers(P2PManager.channel, new WifiP2pManager.PeerListListener() {
+                            @Override
+                            public void onPeersAvailable(WifiP2pDeviceList peers) {
+                                String out = "connected devices : ";
+                                for (WifiP2pDevice wifiP2pDevice : peers.getDeviceList()) {
+                                    if (wifiP2pDevice.status == WifiP2pDevice.CONNECTED) {
+                                        out += wifiP2pDevice.deviceName + " (" + wifiP2pDevice.deviceAddress + "),";
+                                    }
+                                }
+                                log("connection info from onDeviceConnected : ");
+                                log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
+                                log(out);
+                            }
+                        });
+                    }
+                }
+            });
             /*Todo messageEditText.setEnabled(true);*/
         }
     };
@@ -358,7 +405,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private static void log(String msg) {
-        Log.e("Remote", msg);
+        Log.e("main", msg);
     }
 
     public static void toast(final String msg) {
