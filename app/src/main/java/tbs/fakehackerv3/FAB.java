@@ -41,18 +41,19 @@ public class FAB extends ImageView {
             //Todo
             @Override
             public void onClick(View v) {
-                switch (state) {
-                    case SCANNING:
-                        setState(State.IDLE);
-                        P2PManager.stopScan();
-                        break;
-                    case CONNECTING:
-
-                        break;
-                    case IDLE:
-                        setState(State.SCANNING);
-                        break;
-                }
+//                switch (state) {
+//                    case SCANNING:
+//                        setState(State.IDLE);
+//                        P2PManager.stopScan();
+//                        break;
+//                    case CONNECTING:
+//
+//                        break;
+//                    case IDLE:
+//                        setState(State.SCANNING);
+                        P2PManager.startScan();
+//                        break;
+//                }
             }
         });
     }

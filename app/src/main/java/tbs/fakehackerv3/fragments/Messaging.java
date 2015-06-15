@@ -41,7 +41,6 @@ public class Messaging extends Fragment {
                 P2PManager.setMessage(msg);
             messageEditText.setText("");
             addReceivedMessage(new ReceivedMessage(msg, "Sent : " + String.valueOf(System.currentTimeMillis()), "me"));
-            Log.e("p2p", "message : " + msg);
             notifyDataSetChanged();
         }
     };

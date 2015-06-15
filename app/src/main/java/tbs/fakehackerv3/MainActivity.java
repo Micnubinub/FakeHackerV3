@@ -1,14 +1,14 @@
 package tbs.fakehackerv3;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import java.io.File;
@@ -22,29 +22,13 @@ import tbs.fakehackerv3.fragments.Settings;
 
 
 public class MainActivity extends FragmentActivity {
-    //Todo
-    private final View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent i = null;
-            switch (v.getId()) {
-                case R.id.messaging:
-                    i = new Intent(MainActivity.this, Messaging.class);
-                    break;
-                case R.id.remote:
-                    i = new Intent(MainActivity.this, Remote.class);
-                    break;
-            }
 
-            if (i != null) {
-                startActivity(i);
-            }
-        }
-    };
+    public static WifiP2pDevice connectedDevice;
 
     private static final P2PManager.P2PListener p2pListener = new P2PManager.P2PListener() {
         @Override
         public void onScanStarted() {
+            log("scanning");
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -55,27 +39,55 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public void onMessageReceived(String msg) {
+            log("message received : " + msg);
             final String[] received = msg.split(Message.MESSAGE_SEPARATOR, 3);
+            if (received[0].equals("")) {
+
+            }
+            //TODO split them up into the different categories then
           /*Todo  messages.add(new ReceivedMessage(received[1], "RECEIVED : " + received[2], "random"));
             notifyDataSetChanged();
             Log.e("notified", "msg");*/
         }
 
         @Override
-        public void onDevicesConnected() {
+        public void onDevicesConnected(final WifiP2pDevice device) {
+            connectedDevice = device;
+            //Todo
 
+            log("connected : " + device.deviceName);
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    toast("Connected : " + device.deviceName);
+                    MainViewManager.setStaticText("Connected to");
+                    MainViewManager.setConnectedToDevice(device.deviceName + " (" + device.deviceAddress + ")");
+                    addFragment(getMessaging());
+                }
+            });
         }
 
         @Override
-        public void onDevicesDisconnected() {
+        public void onDevicesDisconnected(String reason) {
+            log("disconnected because of : " + reason);
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MainViewManager.setStaticText("Not connected");
+                    MainViewManager.setConnectedToDevice("");
+                }
+            });
+            nullifyGroupAndDevice();
 
         }
 
         @Override
         public void onSocketsConfigured() {
+            log("socket configured");
             /*Todo messageEditText.setEnabled(true);*/
         }
     };
+
 
     public static P2PManager p2PManager;
     public static Activity context;
@@ -88,10 +100,8 @@ public class MainActivity extends FragmentActivity {
     public static Remote remote;
     public static Messaging messaging;
     public static Settings settings;
-
-    //Custom Views
-    public static FAB fab;
     public static boolean connected;
+    public static WifiP2pGroup currentGroup;
 
 
     @Override
@@ -105,16 +115,27 @@ public class MainActivity extends FragmentActivity {
         // get fragment manager
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
+
     }
 
     public static void addFragment(Fragment fragment) {
+        if (fragment.isInLayout())
+            return;
         fragmentTransaction.add(R.id.container, fragment);
-        fragmentTransaction.commit();
+        try {
+            fragmentTransaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void replaceFragment(Fragment fragment) {
         fragmentTransaction.replace(R.id.container, fragment);
-        fragmentTransaction.commit();
+        try {
+            fragmentTransaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void handleReceivedCommand(String command) {
@@ -296,6 +317,11 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    public static void nullifyGroupAndDevice() {
+        connectedDevice = null;
+        currentGroup = null;
+    }
+
     public static Settings getSettings() {
         if (settings == null) {
             settings = new Settings();
@@ -350,4 +376,9 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        P2PManager.destroy();
+        super.onDestroy();
+    }
 }

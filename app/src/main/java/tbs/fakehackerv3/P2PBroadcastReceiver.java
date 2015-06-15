@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
-import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.util.Log;
@@ -39,13 +38,13 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
                     P2PManager.toast("Please enable Wifi Direct");
             }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-
             // Request available peers from the wifi p2p manager. This is an
             // asynchronous call and the calling activity is notified with a
             // callback on PeerListListener.onPeersAvailable()
             log("peers changed");
             if (wifiP2pManager != null) {
-                wifiP2pManager.requestPeers(mChannel, P2PManager.wifiP2PPeerListener);
+                if (!P2PManager.isActive())
+                    wifiP2pManager.requestPeers(mChannel, P2PManager.wifiP2PPeerListener);
             }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             // Respond to new connection or disconnections
@@ -54,19 +53,12 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
 //                wifiInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
 //                p2PManager.wifiInfo = wifiInfo;
 //            }
-            final NetworkInfo networkState = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-            if (networkState.isConnected()) {
-                wifiP2pManager.requestGroupInfo(p2PManager.channel, new WifiP2pManager.GroupInfoListener() {
-                    @Override
-                    public void onGroupInfoAvailable(WifiP2pGroup wifiP2pGroup) {
-                        if (wifiP2pGroup == null)
-                            wifiP2pManager.requestGroupInfo(p2PManager.channel, this);
 
-                        if (wifiP2pGroup.isGroupOwner())
-                            p2PManager.getServerSocketThreadVoid();
-                        else p2PManager.requestConnectionInfo();
-                    }
-                });
+            final NetworkInfo networkState = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+            log("connection changed : " + (networkState.isConnected() ? "connected" : "not-connected"));
+            if (networkState.isConnected()) {
+                log("connection changed, connected, requesting group info");
+                P2PManager.requestConnectionInfo();
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             // Respond to this device's wifi state changing

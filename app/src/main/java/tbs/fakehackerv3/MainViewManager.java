@@ -3,7 +3,6 @@ package tbs.fakehackerv3;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,15 +36,6 @@ public class MainViewManager {
         container = (FrameLayout) mainView.findViewById(R.id.container);
         connectedToDevice = (TextView) mainView.findViewById(R.id.device_text);
         connectedToStaticText = (TextView) mainView.findViewById(R.id.static_text);
-
-        hamburger.setImageResource(R.drawable.hamburger);
-        hamburger.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        setViewPadding(hamburger, dpToPixels(8));
-        setViewDimen(hamburger, dpToPixels(56), dpToPixels(56));
-
-
-        connectedToStaticText.setText("Not Connected");
-
     }
 
     private static View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -58,17 +48,26 @@ public class MainViewManager {
                 case R.id.fab:
 
                     break;
-
             }
         }
     };
+
+    public static void setConnectedToDevice(String connectedToDeviceText) {
+        if (connectedToDeviceText != null && connectedToDevice != null)
+            connectedToDevice.setText(connectedToDeviceText);
+    }
+
+    public static void setStaticText(String staticText) {
+        if (connectedToStaticText != null && staticText != null)
+            connectedToStaticText.setText(staticText);
+    }
 
     private static void toggleSidePane() {
         isSidePaneOpen = !isSidePaneOpen;
     }
 
     private static void setViewDimen(View v, int w, int h) {
-        v.setLayoutParams(new ViewGroup.LayoutParams(w, h));
+        // v.setLayoutParams(new ViewGroup.LayoutParams(w, h));
     }
 
     private static void setViewPadding(View v, int padding) {
