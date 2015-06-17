@@ -53,7 +53,6 @@ public class MainActivity extends FragmentActivity {
             Log.e("notified", "msg");*/
         }
 
-
         @Override
         public void onDevicesDisconnected(String reason) {
             log("disconnected because of : " + reason);
@@ -79,46 +78,42 @@ public class MainActivity extends FragmentActivity {
                         P2PManager.manager.requestPeers(P2PManager.channel, new WifiP2pManager.PeerListListener() {
                             @Override
                             public void onPeersAvailable(WifiP2pDeviceList peers) {
-                                for (final WifiP2pDevice device : peers.getDeviceList()) {
+                                String out = "connected devices : ";
+                                for (WifiP2pDevice device : peers.getDeviceList()) {
                                     if (device.status == WifiP2pDevice.CONNECTED) {
-                                        connectedDevice = device;
-                                        //Todo
-
-                                        log("connected : " + device.deviceName);
-                                        context.runOnUiThread(new Runnable() {
+                                        toast("Connected : " + device.deviceName);
+                                        MainViewManager.setStaticText("Connected to");
+                                        P2PManager.manager.requestConnectionInfo(P2PManager.channel, new WifiP2pManager.ConnectionInfoListener() {
                                             @Override
-                                            public void run() {
-                                                toast("Connected : " + device.deviceName);
-                                                MainViewManager.setStaticText("Connected to");
-                                                P2PManager.manager.requestConnectionInfo(P2PManager.channel, new WifiP2pManager.ConnectionInfoListener() {
-                                                    @Override
-                                                    public void onConnectionInfoAvailable(final WifiP2pInfo info) {
+                                            public void onConnectionInfoAvailable(final WifiP2pInfo info) {
 
-                                                        if (info.isGroupOwner) {
-                                                            P2PManager.manager.requestPeers(P2PManager.channel, new WifiP2pManager.PeerListListener() {
-                                                                @Override
-                                                                public void onPeersAvailable(WifiP2pDeviceList peers) {
-                                                                    String out = "connected devices : ";
-                                                                    for (WifiP2pDevice wifiP2pDevice : peers.getDeviceList()) {
-                                                                        if (wifiP2pDevice.status == WifiP2pDevice.CONNECTED) {
-                                                                            out += wifiP2pDevice.deviceName + " (" + wifiP2pDevice.deviceAddress + "),";
-                                                                        }
-                                                                    }
-                                                                    log("connection info from onDeviceConnected : ");
-                                                                    log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
-                                                                    log(out);
+                                                if (info.isGroupOwner) {
+                                                    P2PManager.manager.requestPeers(P2PManager.channel, new WifiP2pManager.PeerListListener() {
+                                                        @Override
+                                                        public void onPeersAvailable(WifiP2pDeviceList peers) {
+                                                            String out = "connected devices : ";
+                                                            for (WifiP2pDevice wifiP2pDevice : peers.getDeviceList()) {
+                                                                if (wifiP2pDevice.status == WifiP2pDevice.CONNECTED) {
+                                                                    out += wifiP2pDevice.deviceName + " (" + wifiP2pDevice.deviceAddress + "),";
                                                                 }
-                                                            });
+                                                            }
+                                                            log("connection info from onDeviceConnected : ");
+                                                            log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
+                                                            log(out);
                                                         }
-                                                    }
-                                                });
-                                                MainViewManager.setConnectedToDevice(device.deviceName + " (" + device.deviceAddress + ")");
-                                                addFragment(getMessaging());
+                                                    });
+                                                }
                                             }
                                         });
+                                        MainViewManager.setConnectedToDevice(device.deviceName + " (" + device.deviceAddress + ")");
+                                        addFragment(getMessaging());
                                     }
-                                }
+                                    out += device.deviceName + " (" + device.deviceAddress + "),";
 
+                                }
+                                log("connection info from onDeviceConnected : ");
+                                log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
+                                log(out);
                             }
                         });
                     }
@@ -156,6 +151,7 @@ public class MainActivity extends FragmentActivity {
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
 
+//        showDialog();
     }
 
     public static void addFragment(Fragment fragment) {
@@ -422,5 +418,96 @@ public class MainActivity extends FragmentActivity {
         super.onDestroy();
     }
 
-
+//    public static void showDialog() {
+//        final Dialog dialog = new Dialog(context, R.style.CustomDialog);
+//        dialog.setContentView(R.layout.store_gridview);
+//        dialog.findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        final ArrayList<StoreItem> storeItems = new ArrayList<StoreItem>();
+//        storeItems.add(new StoreItem("item1", R.drawable.cancel));
+//        storeItems.add(new StoreItem("item2", R.drawable.hamburger));
+//        storeItems.add(new StoreItem("item1", R.drawable.cancel));
+//        storeItems.add(new StoreItem("item3", R.drawable.cancel));
+//        storeItems.add(new StoreItem("item1", R.drawable.tick));
+//        storeItems.add(new StoreItem("item21", R.drawable.cancel));
+//        storeItems.add(new StoreItem("item13", R.drawable.send));
+//        storeItems.add(new StoreItem("item11", R.drawable.cancel));
+//        storeItems.add(new StoreItem("item12", R.drawable.bg_circle));
+//        storeItems.add(new StoreItem("item", R.drawable.cancel));
+//        storeItems.add(new StoreItem("item1232", R.drawable.refresh));
+//        storeItems.add(new StoreItem("item12", R.drawable.tick_green));
+//        storeItems.add(new StoreItem("item132", R.drawable.cancel));
+//        storeItems.add(new StoreItem("item21", R.drawable.cancel));
+//        storeItems.add(new StoreItem("item13", R.drawable.send));
+//        storeItems.add(new StoreItem("item11", R.drawable.cancel));
+//        storeItems.add(new StoreItem("item12", R.drawable.bg_circle));
+//        storeItems.add(new StoreItem("item", R.drawable.cancel));
+//        storeItems.add(new StoreItem("item1232", R.drawable.refresh));
+//        storeItems.add(new StoreItem("item12", R.drawable.tick_green));
+//        storeItems.add(new StoreItem("item132", R.drawable.cancel));
+//        storeItems.add(new StoreItem("item91", R.drawable.scanning));
+//
+//        final GridView gridView = (GridView) dialog.findViewById(R.id.grid);
+//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                toast(storeItems.get(position).text);
+//            }
+//        });
+//        gridView.setAdapter(new StoreAdapter(storeItems));
+//        dialog.show();
+//    }
+//
+//    private static class StoreItem {
+//        public final int drawableId;
+//        public final String text;
+//
+//        public StoreItem(String text, int drawableId) {
+//            this.text = text;
+//            this.drawableId = drawableId;
+//        }
+//    }
+//
+//    public static class StoreAdapter extends BaseAdapter {
+//        private ArrayList<StoreItem> items;
+//
+//        public StoreAdapter(ArrayList<StoreItem> storeItems) {
+//            items = storeItems;
+//        }
+//
+//        @Override
+//        public int getCount() {
+//            return items == null ? 0 : items.size();
+//        }
+//
+//        @Override
+//        public Object getItem(int position) {
+//            return null;
+//        }
+//
+//        @Override
+//        public long getItemId(int position) {
+//            return 0;
+//        }
+//
+//        @Override
+//        public View getView(int position, View convertView, ViewGroup parent) {
+//            if (convertView == null) {
+//                convertView = View.inflate(context, R.layout.store_item, null);
+//            }
+//
+//            ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
+//            TextView textView = (TextView) convertView.findViewById(R.id.text);
+//            final StoreItem item = items.get(position);
+//
+//            icon.setImageResource(item.drawableId);
+//            textView.setText(item.text);
+//            return convertView;
+//        }
+//    }
 }
