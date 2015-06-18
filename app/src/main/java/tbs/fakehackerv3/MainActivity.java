@@ -44,6 +44,7 @@ public class MainActivity extends FragmentActivity {
         public void onMessageReceived(String msg) {
             log("message received : " + msg);
             toast("message received : " + msg);
+            setConnected(true);
             final String[] received = msg.split(Message.MESSAGE_SEPARATOR, 3);
             if (received[0].equals("")) {
 
@@ -57,6 +58,7 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onDevicesDisconnected(String reason) {
             log("disconnected because of : " + reason);
+            toast("disconnected because of : " + reason);
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -64,6 +66,7 @@ public class MainActivity extends FragmentActivity {
                     MainViewManager.setConnectedToDevice("");
                 }
             });
+            setConnected(true);
             nullifyGroupAndDevice();
 
         }
@@ -71,10 +74,10 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onSocketsConfigured() {
             log("socket configured");
+            setConnected(true);
             P2PManager.manager.requestConnectionInfo(P2PManager.channel, new WifiP2pManager.ConnectionInfoListener() {
                 @Override
                 public void onConnectionInfoAvailable(final WifiP2pInfo info) {
-
                     if (info.isGroupOwner) {
                         P2PManager.manager.requestPeers(P2PManager.channel, new WifiP2pManager.PeerListListener() {
                             @Override
@@ -83,7 +86,6 @@ public class MainActivity extends FragmentActivity {
                                 for (WifiP2pDevice device : peers.getDeviceList()) {
                                     if (device.status == WifiP2pDevice.CONNECTED) {
                                         toast("Connected : " + device.deviceName);
-                                        MainViewManager.setStaticText("Connected to");
                                         P2PManager.manager.requestConnectionInfo(P2PManager.channel, new WifiP2pManager.ConnectionInfoListener() {
                                             @Override
                                             public void onConnectionInfoAvailable(final WifiP2pInfo info) {
@@ -106,9 +108,9 @@ public class MainActivity extends FragmentActivity {
                                                 }
                                             }
                                         });
-                                        MainViewManager.setConnectedToDevice(device.deviceName + " (" + device.deviceAddress + ")");
-                                        addFragment(getMessaging());
+                                        connectedDevice = device;
                                     }
+
                                     out += device.deviceName + " (" + device.deviceAddress + "),";
 
                                 }
@@ -173,6 +175,32 @@ public class MainActivity extends FragmentActivity {
             fragmentTransaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void setConnected(final boolean connected) {
+        if (MainActivity.connected != connected) {
+            if (connected) {
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (connectedDevice != null) {
+                            MainViewManager.setStaticText("Connected to");
+                            MainViewManager.setConnectedToDevice(connectedDevice.deviceName + " (" + connectedDevice.deviceAddress + ")");
+                            addFragment(getMessaging());
+                        } else {
+                            P2PManager.connectedDeviceNullFix();
+                            log("Connected device is null");
+                            toast("Connected device is null");
+                        }
+                    }
+                });
+            } else {
+                MainViewManager.setStaticText("Not connected");
+                MainViewManager.setConnectedToDevice("");
+                replaceFragment(new Fragment());
+                toast("disConnected");
+            }
         }
     }
 

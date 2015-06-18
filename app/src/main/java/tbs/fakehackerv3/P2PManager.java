@@ -917,6 +917,32 @@ public class P2PManager extends Service {
         return true;
     }
 
+    public static void connectedDeviceNullFix() {
+        manager.requestConnectionInfo(channel, new WifiP2pManager.ConnectionInfoListener() {
+            @Override
+            public void onConnectionInfoAvailable(final WifiP2pInfo info) {
+                if (info.isGroupOwner) {
+                    manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
+                        @Override
+                        public void onPeersAvailable(WifiP2pDeviceList peers) {
+                            for (WifiP2pDevice device : peers.getDeviceList()) {
+                                if (device.status == WifiP2pDevice.CONNECTED) {
+                                    try {
+                                        ((MainActivity) activity).connectedDevice = device;
+                                        ((MainActivity) activity).setConnected(true);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     public static class MainThreadRunnable implements Runnable {
 
         @Override
