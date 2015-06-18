@@ -43,6 +43,7 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onMessageReceived(String msg) {
             log("message received : " + msg);
+            toast("message received : " + msg);
             final String[] received = msg.split(Message.MESSAGE_SEPARATOR, 3);
             if (received[0].equals("")) {
 
@@ -143,9 +144,10 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        p2PManager = P2PManager.getP2PManager(this, p2pListener);
         setContentView(R.layout.main_view);
         mainViewManager = new MainViewManager(findViewById(R.id.main_view));
-        p2PManager = P2PManager.getP2PManager(this, p2pListener);
+
 
         // get fragment manager
         fragmentManager = getSupportFragmentManager();

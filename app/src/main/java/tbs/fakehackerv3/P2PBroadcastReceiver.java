@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.util.Log;
 
 /**
@@ -13,13 +13,13 @@ import android.util.Log;
  */
 public class P2PBroadcastReceiver extends BroadcastReceiver {
     public static WifiP2pManager wifiP2pManager;
-    private Channel mChannel;
     private static P2PManager p2PManager;
+    private static P2PBroadcastReceiverListener listener;
 
-    public P2PBroadcastReceiver(WifiP2pManager manager, Channel channel, P2PManager p2PManager) {
+    public P2PBroadcastReceiver(WifiP2pManager manager, P2PManager p2PManager, P2PBroadcastReceiverListener listener) {
         this.wifiP2pManager = manager;
-        this.mChannel = channel;
         P2PBroadcastReceiver.p2PManager = p2PManager;
+        this.listener = listener;
     }
 
     @Override
@@ -42,24 +42,33 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
             // asynchronous call and the calling activity is notified with a
             // callback on PeerListListener.onPeersAvailable()
 
-            if (wifiP2pManager != null && !P2PManager.isActive() && !P2PManager.tryingToConnect) {
-                if (!P2PManager.isActive())
-                    wifiP2pManager.requestPeers(mChannel, P2PManager.wifiP2PPeerListener);
+            if (listener != null) {
+                listener.onPeersChanged();
             }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             // Respond to new connection or disconnections
-//            WifiP2pInfo wifiInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
-//            while (wifiInfo == null) {
-//                wifiInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
-//                p2PManager.wifiInfo = wifiInfo;
-//            }
+            WifiP2pInfo wifiInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
+            long start = System.currentTimeMillis();
+            while (wifiInfo == null) {
+                wifiInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
+                if (start < (System.currentTimeMillis() - 2000))
+                    break;
+            }
 
             final NetworkInfo networkState = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             log("networkState : " + networkState.toString());
+
             log("connection changed : " + (networkState.isConnected() ? "connected" : "not-connected"));
+
             if (networkState.isConnected() && !P2PManager.isActive() && !P2PManager.tryingToConnect) {
                 log("connection changed, connected, requesting group info");
-                P2PManager.requestConnectionInfo("p2pBroadcast connection changed");
+                if (listener != null) {
+                    listener.onDeviceConnected(wifiInfo);
+                }
+            } else {
+                if (listener != null) {
+                    listener.onDeviceDisconnected();
+                }
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             // Respond to this device's wifi state changing
@@ -67,6 +76,15 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
+
+
+    public interface P2PBroadcastReceiverListener {
+        void onDeviceDisconnected();
+
+        void onDeviceConnected(WifiP2pInfo info);
+
+        void onPeersChanged();
+    }
 
     public static void log(String msg) {
         // MainActivity.addLog(msg);

@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -28,6 +29,7 @@ public class Tools {
 
 
     //public static final String
+    public static final Random random = new Random();
 
     public static void getPackages(Context context) {
 
