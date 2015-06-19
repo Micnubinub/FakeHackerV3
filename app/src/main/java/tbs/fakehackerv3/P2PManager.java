@@ -193,8 +193,7 @@ public class P2PManager extends Service {
 
     private P2PManager(Activity activity) {
         P2PManager.activity = activity;
-
-        if (isServiceRunning())
+        if (isServiceRunning() || isActive() || tryingToConnect)
             return;
         activity.startService(new Intent(activity, P2PManager.class));
         //Todo make a preference and put it in settings

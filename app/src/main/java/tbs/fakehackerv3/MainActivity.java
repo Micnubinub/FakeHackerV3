@@ -125,8 +125,6 @@ public class MainActivity extends FragmentActivity {
             /*Todo messageEditText.setEnabled(true);*/
         }
     };
-
-
     public static P2PManager p2PManager;
     public static Activity context;
     public static FragmentManager fragmentManager;
@@ -141,7 +139,6 @@ public class MainActivity extends FragmentActivity {
     public static boolean connected;
     public static WifiP2pGroup currentGroup;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,7 +146,6 @@ public class MainActivity extends FragmentActivity {
         p2PManager = P2PManager.getP2PManager(this, p2pListener);
         setContentView(R.layout.main_view);
         mainViewManager = new MainViewManager(findViewById(R.id.main_view));
-
 
         // get fragment manager
         fragmentManager = getSupportFragmentManager();

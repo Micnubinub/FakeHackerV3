@@ -5,6 +5,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -267,6 +274,87 @@ public class FileManager {
         return builder.toString();
     }
 
+    public static class FileAdapter extends BaseAdapter {
+        private static ArrayList<MikeFile> files;
+        private Context context;
+
+        public static final AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MainActivity.toast("file clicked : " + files.get(position).toString());
+            }
+        };
+
+        public static final AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                MainActivity.toast("file longClicked : " + files.get(position).toString());
+                return false;
+            }
+        };
+
+        public FileAdapter(ListView listView, ArrayList<MikeFile> files) {
+            this.files = files;
+            this.context = listView.getContext();
+            listView.setOnItemClickListener(onItemClickListener);
+            listView.setOnItemLongClickListener(onItemLongClickListener);
+            listView.setAdapter(this);
+        }
+
+        @Override
+        public int getCount() {
+            return files == null ? 0 : files.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final MikeFile mikeFile = files.get(position);
+            if (convertView == null) {
+                convertView = View.inflate(context, R.layout.file_item, null);
+            }
+            final ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
+            final TextView fileName = (TextView) convertView.findViewById(R.id.file_name);
+            final TextView fileSize = (TextView) convertView.findViewById(R.id.file_size);
+
+            icon.setImageResource(getImageResource(mikeFile.fileType));
+            fileName.setText(mikeFile.name);
+            fileSize.setText(mikeFile.fileSize);
+
+            return convertView;
+
+        }
+    }
+
+
+    public static int getImageResource(FileType type) {
+        int res = R.drawable.file_file;
+
+        switch (type) {
+            case DOCUMENT:
+                res = R.drawable.file_document;
+                break;
+            case MUSIC:
+                res = R.drawable.file_music;
+                break;
+            case PICTURE:
+                res = R.drawable.file_image;
+                break;
+            case VIDEO:
+                res = R.drawable.file_video;
+                break;
+        }
+        return res;
+    }
 
     public class MikeFile {
         public final String path, name, fileSize;
@@ -296,6 +384,11 @@ public class FileManager {
             this.fileType = fileType;
             this.name = name;
             this.path = path;
+        }
+
+        @Override
+        public String toString() {
+            return name + " (" + fileSize + ")";
         }
     }
 
