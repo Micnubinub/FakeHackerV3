@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <Switch
+        <TextView
             android:id="@+id/flash"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -18,17 +18,17 @@
             android:textColor="#555555"
             android:textSize="18sp" />
 
-        <Switch
-            android:id="@+id/wifi"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:padding="12dp"
-            android:text="Wifi"
-            android:textColor="#555555"
-            android:textSize="18sp" />
+        <!--<Switch-->
+        <!--android:id="@+id/wifi"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:enabled="false"-->
+        <!--android:padding="12dp"-->
+        <!--android:text="Wifi"-->
+        <!--android:textColor="#555555"-->
+        <!--android:textSize="18sp" />-->
 
-        <Switch
+        <TextView
             android:id="@+id/bluetooth"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -51,149 +51,92 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
-            android:text="Take picture (front | selfie)"
+            android:text="Take picture (front)"
             android:textColor="#555555"
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/previous"
+            android:id="@+id/media_control"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
-            android:text="Previous Track"
-            android:textColor="#555555"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/play_pause"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Play/Pause"
-            android:textColor="#555555"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/next"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Next track"
-            android:textColor="#555555"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/auto_brightness"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Set brightness Auto"
+            android:text="Media Control"
             android:textColor="#555555"
             android:textSize="18sp" />
 
 
         <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="12dp"
-            android:text="Set Brightness:"
-            android:textColor="#555555"
-            android:textSize="18sp" />
-
-        <SeekBar
             android:id="@+id/brightness"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
             android:padding="12dp"
-            android:text="Set Volume Alarm:"
+            android:text="Brightness"
             android:textColor="#555555"
             android:textSize="18sp" />
 
-        <SeekBar
-            android:id="@+id/volume_alarm"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp" />
+        <!--<TextView-->
+            <!--android:id="@+id/auto_rotation"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="12dp"-->
+            <!--android:text="Auto-rotation"-->
+            <!--android:textColor="#555555"-->
+            <!--android:textSize="18sp" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/screen_timeout"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="12dp"-->
+            <!--android:text="Screen Timeout"-->
+            <!--android:textColor="#555555"-->
+            <!--android:textSize="18sp" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/silent_mode"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="12dp"-->
+            <!--android:text="Silent Mode"-->
+            <!--android:textColor="#555555"-->
+            <!--android:textSize="18sp" />-->
+
 
         <TextView
+            android:id="@+id/alarm_volume"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:padding="12dp"
-            android:text="Set Volume Notification:"
+            android:text="Alarm Volume"
             android:textColor="#555555"
             android:textSize="18sp" />
 
-        <SeekBar
-            android:id="@+id/volume_notification"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp" />
 
         <TextView
+            android:id="@+id/notification_volume"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:padding="12dp"
-            android:text="Set Volume Media:"
+            android:text="Notification Volume"
             android:textColor="#555555"
             android:textSize="18sp" />
 
-        <SeekBar
-            android:id="@+id/volume_media"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp" />
-
         <TextView
+            android:id="@+id/media_volume"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:padding="12dp"
-            android:text="Set Volume Ringer:"
+            android:text="Media Volume"
             android:textColor="#555555"
             android:textSize="18sp" />
 
-        <SeekBar
-            android:id="@+id/volume_ringer"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp" />
-
         <TextView
+            android:id="@+id/ringer_volume"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:padding="12dp"
-            android:text="Set Volume All:"
+            android:text="Ringer Volume"
             android:textColor="#555555"
             android:textSize="18sp" />
-
-        <SeekBar
-            android:id="@+id/volume_all"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp" />
-
-
     </LinearLayout>
 </ScrollView>

@@ -1,10 +1,15 @@
-package tbs.fakehackerv3;
+package tbs.fakehackerv3.fragments;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,20 +23,49 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import tbs.fakehackerv3.MainActivity;
+import tbs.fakehackerv3.Message;
+import tbs.fakehackerv3.P2PManager;
+import tbs.fakehackerv3.R;
+import tbs.fakehackerv3.Tools;
+
 /**
  * Created by root on 31/07/14.
  */
-public class FileManager {
+public class FileManagerFragment extends Fragment {
     public static final String FILE_SEP = ":::";
+    //todo command name + filesep+filepath
+    public static final String COMMAND_DELETE = "COMMAND_DELETE";
+    //todo command name + filesep+filepathFrom+fileSep+fileTo
+    public static final String COMMAND_COPY = "COMMAND_COPY";
+    //todo command name + filesep+filepathFrom+fileSep+fileTo
+    public static final String COMMAND_MOVE = "COMMAND_MOVE";
+    //todo command name + fileSep+fileTo
+    public static final String COMMAND_UPLOAD = "COMMAND_UPLOAD";
+    //todo command name + fileSep+fileFrom
+    public static final String COMMAND_DOWNLOAD = "COMMAND_DOWNLOAD";
+    //Todo parse all the commands
     public static final String FILE_ATTRIBUTE_SEP = "/:/";
-    private static Context context;
+    private static FragmentActivity context;
     private static String currentDirectory = Environment.getExternalStorageDirectory().getPath();
     private static boolean isInFileManagerMode = false;
     private static final Intent share = new Intent(Intent.ACTION_SEND);
     private static ArrayList<File> currentTree;
 
-    public FileManager(Context c) {
-        context = c;
+    public static ListView listView;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = getActivity();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //Todo
+        final View view = inflater.inflate(R.layout.file_manager_fragment, null);
+        return view;
     }
 
     public static boolean isIsInFileManagerMode() {
@@ -39,7 +73,7 @@ public class FileManager {
     }
 
     private static void setIsInFileManagerMode(boolean isInFileManagerMode) {
-        FileManager.isInFileManagerMode = isInFileManagerMode;
+        FileManagerFragment.isInFileManagerMode = isInFileManagerMode;
     }
 
     public static String getCurrentDirectory() {
@@ -50,7 +84,7 @@ public class FileManager {
     }
 
     private static void setCurrentDirectory(String currentDirectory) {
-        FileManager.currentDirectory = currentDirectory;
+        FileManagerFragment.currentDirectory = currentDirectory;
     }
 
     private static void openFile(Context context, String path) {
@@ -101,7 +135,6 @@ public class FileManager {
                 print("   Specified folder is empty.");
             }
         }
-
         return builder.toString();
     }
 
@@ -428,6 +461,18 @@ public class FileManager {
     public enum FileType {
         //Todo do the folders
         MUSIC, PICTURE, GENERIC, VIDEO, DOCUMENT, FOLDER
+    }
+
+    public static void sendMessage(String command) {
+        if (command != null && command.length() > 0) {
+            P2PManager.enqueueMessage(new Message(command, Message.MessageType.SEND_COMMAND));
+        } else {
+            log("please enter a message_background string or please init p2pManager");
+        }
+    }
+
+    private static void log(String msg) {
+        Log.e("File Manager", msg);
     }
 
     public static final String DOCUMENT_EXTENSIONS = "doc,docx,txt,rtf,pdf,odt,wpd,xls,xlsx,ods,ppt,pptx";

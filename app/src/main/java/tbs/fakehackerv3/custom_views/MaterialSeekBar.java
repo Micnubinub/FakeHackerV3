@@ -18,9 +18,10 @@ public class MaterialSeekBar extends View {
     private int lineRight;
     private float line_pos, scaleTo = 1.22f;
     private int r, rDown, rUp, width, scrubberColor, progressColor, progressBackgroundColor;
-    private int max;
+    private int max = 100;
     private float progress, scrubberPosition;
     private OnProgressChangedListener listener;
+    //Todo might have to do a on release listener for the brighness etc
 
     public MaterialSeekBar(Context context) {
         super(context);
@@ -49,7 +50,6 @@ public class MaterialSeekBar extends View {
         paint.setStyle(Paint.Style.FILL);
         paint.setStrokeCap(Paint.Cap.ROUND);
         //setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        setMax(100);
         setScrubberColor(getResources().getColor(R.color.material_green_light));
         setProgressColor(getResources().getColor(R.color.material_green_light));
         //setShadowColor(res.getColor(R.color.black));
@@ -65,7 +65,6 @@ public class MaterialSeekBar extends View {
                         final int touch = (int) (event.getX());
                         if (touch < lineRight && touch > rUp)
                             setProgress(max * ((event.getX() - rUp) / (float) (width - 2 * rUp)));
-
                         r = rUp;
                         break;
                     case MotionEvent.ACTION_UP:
@@ -85,7 +84,6 @@ public class MaterialSeekBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         scrubberPosition = ((width - getPaddingRight() - getPaddingLeft()) * progress / (float) max);
         scrubberPosition = scrubberPosition < rUp ? rUp : scrubberPosition;
         scrubberPosition = scrubberPosition > lineRight ? lineRight : scrubberPosition;
