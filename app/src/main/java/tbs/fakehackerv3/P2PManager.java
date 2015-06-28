@@ -134,7 +134,6 @@ public class P2PManager extends Service {
                 return;
             }
             toast(String.format("connectionInfo > groupF : %b, groupO : %b, host : %s", wifiP2pInfo.groupFormed, wifiP2pInfo.isGroupOwner, wifiP2pInfo.groupOwnerAddress.toString()));
-
             P2PManager.wifiP2pInfo = wifiP2pInfo;
 
             handleWifiP2PInfo(wifiP2pInfo);
@@ -261,7 +260,6 @@ public class P2PManager extends Service {
                 String out = "";
                 //TODO failed to connect
                 switch (reason) {
-
                     case WifiP2pManager.P2P_UNSUPPORTED:
                         out = "UnSupported";
                         break;
@@ -271,7 +269,6 @@ public class P2PManager extends Service {
                     case WifiP2pManager.BUSY:
                         out = "Busy";
                         break;
-
                 }
                 dismissDialog();
                 stopScan();
@@ -397,7 +394,8 @@ public class P2PManager extends Service {
                     }
                 } catch (Exception e) {
                     log("crashed (getClientSocketThread)> " + e.toString());
-//                  e.printStackTrace();
+                    e.printStackTrace();
+
                     try {
                         getClientSocketThreadVoid(hostIP);
                     } catch (Exception w) {
@@ -513,7 +511,7 @@ public class P2PManager extends Service {
                 break;
             case SEND_FILE:
                 log("send file");
-                //Todo message structure >> fileName + sep + file
+                //Todo message_background structure >> fileName + sep + file
                 if (cr == null && (activity != null))
                     cr = activity.getContentResolver();
                 try {
@@ -525,8 +523,8 @@ public class P2PManager extends Service {
                 }
                 break;
             case SEND_MESSAGE:
-                log("send message");
-                //Todo message structure >> timeLong + sep + message
+                log("send message_background");
+                //Todo message_background structure >> timeLong + sep + message_background
                 sendSimpleText(message.getSendableMessage());
                 break;
         }
@@ -540,7 +538,7 @@ public class P2PManager extends Service {
             if (outputStream == null) {
                 getInputAndOutputStream();
             }
-//            log("writing message : " + text);
+//            log("writing message_background : " + text);
             outputStream.write(text.getBytes());
             //Todo check this
             outputStream.flush();
@@ -1062,7 +1060,7 @@ public class P2PManager extends Service {
 
             while (!stop) {
                 try {
-                    //Todo this is to save battery a bit (checks if there's a message to be downloaded 50 times a second)
+                    //Todo this is to save battery a bit (checks if there's a message_background to be downloaded 50 times a second)
                     //Todo if you want things to be instantaneous just delete the whole try catch statement or reduce the sleep
 
 

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_rect"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="Stop Service?"
+        android:textColor="#555555"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="This will kill the connection to the other device, to begin communication you will have to reopen the app and set up the connection"
+        android:textColor="#555555"
+        android:textSize="18sp" />
+
+
+    <LinearLayout
+        android:layout_margin="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/white_button_selector"
+            android:minWidth="110dp"
+            android:padding="8dp"
+            android:text="Stop"
+            android:textColor="#ff555555"
+            android:textSize="18sp" />
+        <Button
+            android:id="@+id/continue_service"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/white_button_selector"
+            android:minWidth="120dp"
+            android:padding="8dp"
+            android:text="Continue"
+            android:textColor="@color/material_blue"
+            android:textSize="18sp" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

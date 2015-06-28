@@ -237,7 +237,7 @@ public class Remote extends Fragment {
         if (cvs != null && cvs.length() > 0) {
             P2PManager.enqueueMessage(new Message(builder.toString(), Message.MessageType.SEND_COMMAND));
         } else {
-            log("please enter a message string or please init p2pManager");
+            log("please enter a message_background string or please init p2pManager");
         }
 
     }

@@ -149,7 +149,7 @@ public class Tools {
     }
 
 
-    public static String fileSize(long size) {
+    public static String getFileSize(long size) {
         String s = String.valueOf(size) + "Bytes";
 
         if (size < 1024)
@@ -403,7 +403,7 @@ public class Tools {
     public static void sendFile(File file) {
         //TODO
         if (MainActivity.p2PManager != null) {
-            //TODO maybe add a prefix >> receiveFile then listen for it when getting a message and makes sure the device
+            //TODO maybe add a prefix >> receiveFile then listen for it when getting a message_background and makes sure the device
             //todo is ready to receive a file
             P2PManager.enqueueMessage(new Message(file.getName(), Message.MessageType.SEND_FILE));
         }
@@ -495,9 +495,34 @@ public class Tools {
         if (cvs != null && cvs.length() > 0 && MainActivity.p2PManager != null) {
             P2PManager.enqueueMessage(new Message(builder.toString(), Message.MessageType.SEND_COMMAND));
         } else {
-            log("please enter a message string or please init p2pManager");
+            log("please enter a message_background string or please init p2pManager");
         }
+    }
 
+    public static void showStopServiceDialog(final Context context) {
+        final Dialog dialog = new Dialog(context, R.style.CustomDialog);
+        //TODO add don't ask again checkbox
+        dialog.setContentView(R.layout.stop_service_dialog);
+        dialog.findViewById(R.id.stop).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    context.stopService(new Intent(context, P2PManager.class));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                dialog.dismiss();
+            }
+        });
+
+        dialog.findViewById(R.id.continue_service).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     private static void log(String msg) {

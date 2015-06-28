@@ -24,10 +24,10 @@ import java.util.Comparator;
 public class FileManager {
     public static final String FILE_SEP = ":::";
     public static final String FILE_ATTRIBUTE_SEP = "/:/";
-
     private static Context context;
     private static String currentDirectory = Environment.getExternalStorageDirectory().getPath();
     private static boolean isInFileManagerMode = false;
+    private static final Intent share = new Intent(Intent.ACTION_SEND);
     private static ArrayList<File> currentTree;
 
     public FileManager(Context c) {
@@ -55,13 +55,11 @@ public class FileManager {
 
     private static void openFile(Context context, String path) {
         try {
-            Intent share = new Intent(Intent.ACTION_SEND);
             share.setType("*/*");
             share.putExtra(Intent.EXTRA_STREAM, Uri.parse(path));
             context.startActivity(Intent.createChooser(share, "Share File"));
         } catch (Exception e) {
             print("Failed to open " + (new File(path).getName()));
-
         }
     }
 
@@ -69,56 +67,46 @@ public class FileManager {
         openFile(context, file.getPath());
     }
 
-    public static void showTree(File dir) {
+    public static String showTree(File dir) {
+        if (!dir.exists()) {
+            //TODO
+        }
         currentDirectory = dir.getPath();
 
-        int i = 0;
-        try {
-            if (dir.listFiles() != null) {
-                if (!(dir.listFiles().length < 1)) {
-                    if (currentTree != null)
-                        currentTree.clear();
-                    else
-                        currentTree = new ArrayList<File>();
+        final StringBuilder builder = new StringBuilder();
+        if (dir.listFiles() != null) {
+            if (!(dir.listFiles().length < 1)) {
+                if (currentTree != null)
+                    currentTree.clear();
+                else
+                    currentTree = new ArrayList<File>();
 
-                    Collections.addAll(currentTree, dir.listFiles());
+                Collections.addAll(currentTree, dir.listFiles());
 
-                    sort(currentTree);
-                    print(" File hierarchy " + dir.getAbsolutePath() + " >");
+                sort(currentTree);
+                print(" File hierarchy " + dir.getAbsolutePath() + " >");
 
-                    for (File file : currentTree) {
-                        ++i;
-                        if (file.isDirectory())
-                            print("   " + i + ".  /" + file.getName() + "/");
-                        else
-                            print("   " + i + ".  " + file.getName());
+                for (int i = 0; i < currentTree.size(); i++) {
+                    final File file = currentTree.get(i);
+
+                    if ((i == currentTree.size() - 1)) {
+                        builder.append(MikeFile.getFileString(file));
+                        builder.append(FILE_SEP);
+                    } else {
+                        builder.append(MikeFile.getFileString(file));
                     }
-                } else {
-                    print("   Specified folder is empty.");
                 }
+            } else {
+                //Todo think about what to do whne the folder is empty
+                print("   Specified folder is empty.");
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            print("Failed to show :" + dir.getPath());
-
         }
+
+        return builder.toString();
     }
 
     private static void showTree(String path) {
         showTree(new File(path));
-    }
-
-    public static void openFolder(String path) {
-        try {
-            openFolder(new File(path));
-        } catch (Exception e) {
-            if (path != null)
-                print("   Failed to open :" + path);
-            else
-                print("   Failed to open folder");
-
-        }
     }
 
     private static void openFolder(File file) {
@@ -138,35 +126,10 @@ public class FileManager {
     }
 
     private static void open(File file) {
-
         if (file.isDirectory())
             openFolder(file);
         else
             openFile(file);
-    }
-
-    private static void showFileDetails(File file) {
-        try {
-
-            print("   Name : " + file.getName());
-            print("   Size : " + RemoteTools.fileSize(file.length()));
-
-
-            print("   Modified : " + RemoteTools.getDate(file.lastModified()));
-
-
-        } catch (Exception e) {
-            print("   Failed to show details of " + file.getPath());
-
-        }
-    }
-
-    public static void showFileDetails(String path) {
-        showFileDetails(new File(path));
-    }
-
-    public static void showFileDetails(int path) {
-        showFileDetails(currentTree.get(path));
     }
 
     public static void createFolder(String path) {
@@ -184,8 +147,6 @@ public class FileManager {
     }
 
     public static void search(String name) {
-
-
     }
 
     public static void delete(int file) {
@@ -197,16 +158,10 @@ public class FileManager {
     }
 
     private static void delete(File file) {
-
         file.delete();
         print(file.getName() + " deleted");
-
         showTree(currentDirectory);
     }
-
-    public static void pop(Context context) {
-    }
-
 
     public static long getFreeSpace(String path) {
         return (new File(path)).getFreeSpace();
@@ -217,7 +172,6 @@ public class FileManager {
     }
 
     public static long getSizeInBytes(String file) {
-
         return (new File(file)).length();
     }
 
@@ -228,29 +182,14 @@ public class FileManager {
 
     public static void createFile(String name) {
         createFile(new File(name));
-
     }
 
     public static void createFile(File file) {
-
         try {
             file.createNewFile();
         } catch (Exception e) {
         }
         showTree(getCurrentDirectory());
-    }
-
-    public static void startFilemanager() {
-        //    help();
-        setIsInFileManagerMode(true);
-        //  showTree(Environment.getExternalStorageDirectory());
-    }
-
-    public static void exitFilemanager() {
-        setIsInFileManagerMode(false);
-        print("Exiting FileManager...");
-        // currentTree.clear();
-        currentTree = null;
     }
 
     private static void print(String string) {
@@ -266,17 +205,27 @@ public class FileManager {
         });
     }
 
-    public static String getCurrentTree() {
-        final StringBuilder builder = new StringBuilder();
-
-
-        //
-        return builder.toString();
-    }
-
     public static class FileAdapter extends BaseAdapter {
         private static ArrayList<MikeFile> files;
+        private static ListView listView;
         private Context context;
+        private static FileAdapter fileAdapter;
+
+        public Context getContext() {
+            return context;
+        }
+
+        public static FileAdapter getFileAdapter() {
+            return fileAdapter;
+        }
+
+        public static ListView getListView() {
+            return listView;
+        }
+
+        public static ArrayList<MikeFile> getFiles() {
+            return files;
+        }
 
         public static final AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
             @Override
@@ -293,12 +242,18 @@ public class FileManager {
             }
         };
 
+        public static void setFiles(ArrayList<MikeFile> files) {
+            FileAdapter.files = files;
+        }
+
         public FileAdapter(ListView listView, ArrayList<MikeFile> files) {
             this.files = files;
             this.context = listView.getContext();
+            this.listView = listView;
             listView.setOnItemClickListener(onItemClickListener);
             listView.setOnItemLongClickListener(onItemLongClickListener);
             listView.setAdapter(this);
+            fileAdapter = this;
         }
 
         @Override
@@ -331,10 +286,8 @@ public class FileManager {
             fileSize.setText(mikeFile.fileSize);
 
             return convertView;
-
         }
     }
-
 
     public static int getImageResource(FileType type) {
         int res = R.drawable.file_file;
@@ -352,13 +305,29 @@ public class FileManager {
             case VIDEO:
                 res = R.drawable.file_video;
                 break;
+            case FOLDER:
+                res = R.drawable.file_folder;
+                break;
         }
         return res;
     }
 
-    public class MikeFile {
+    public static class MikeFile {
         public final String path, name, fileSize;
         public final FileType fileType;
+
+        public static String getFileString(File file) {
+            final StringBuilder builder = new StringBuilder(getFileTypeString(file));
+            //Todo
+            builder.append(FILE_ATTRIBUTE_SEP);
+            builder.append(file.getAbsolutePath());
+            builder.append(FILE_ATTRIBUTE_SEP);
+            builder.append(file.getName());
+            builder.append(FILE_ATTRIBUTE_SEP);
+            builder.append(Tools.getFileSize(file.length()));
+
+            return builder.toString();
+        }
 
         public MikeFile(String mikeFile) {
             final String[] split = mikeFile.split(FILE_ATTRIBUTE_SEP, 4);
@@ -374,6 +343,8 @@ public class FileManager {
                 fileType = FileType.PICTURE;
             } else if (type.equals(String.valueOf(FileType.VIDEO))) {
                 fileType = FileType.VIDEO;
+            } else if (type.equals(String.valueOf(FileType.FOLDER))) {
+                fileType = FileType.FOLDER;
             } else {
                 fileType = FileType.DOCUMENT;
             }
@@ -386,15 +357,49 @@ public class FileManager {
             this.path = path;
         }
 
+
         @Override
         public String toString() {
             return name + " (" + fileSize + ")";
         }
     }
 
+    public static void setReceivedFiles(String files) {
+        final String[] fileA = files.split(FILE_SEP);
+        ArrayList<MikeFile> mikeFiles = FileAdapter.getFiles();
 
-    private static String getFileTypeString(String fileName) {
-        final String ext = getExtension(fileName);
+        if (mikeFiles == null) {
+            mikeFiles = new ArrayList<MikeFile>();
+        }
+
+        for (String s : fileA) {
+            try {
+                mikeFiles.add(new MikeFile(s));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        FileAdapter.setFiles(mikeFiles);
+        if (FileAdapter.getFileAdapter() != null) {
+            try {
+                FileAdapter.getListView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        FileAdapter.getFileAdapter().notifyDataSetChanged();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static String getFileTypeString(File file) {
+        if (file.isDirectory()) {
+            return String.valueOf(FileType.FOLDER);
+        }
+        final String ext = getExtension(file.getName());
         FileType fileType = FileType.GENERIC;
 
         if (MUSIC_EXTENSIONS.contains(ext)) {
@@ -421,7 +426,8 @@ public class FileManager {
     }
 
     public enum FileType {
-        MUSIC, PICTURE, GENERIC, VIDEO, DOCUMENT
+        //Todo do the folders
+        MUSIC, PICTURE, GENERIC, VIDEO, DOCUMENT, FOLDER
     }
 
     public static final String DOCUMENT_EXTENSIONS = "doc,docx,txt,rtf,pdf,odt,wpd,xls,xlsx,ods,ppt,pptx";

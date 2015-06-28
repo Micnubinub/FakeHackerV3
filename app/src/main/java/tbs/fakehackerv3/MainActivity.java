@@ -1,6 +1,7 @@
 package tbs.fakehackerv3;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pGroup;
@@ -12,10 +13,12 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import tbs.fakehackerv3.fragments.CustomAndDownloadedCommands;
 import tbs.fakehackerv3.fragments.Messaging;
@@ -42,8 +45,8 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public void onMessageReceived(String msg) {
-            log("message received : " + msg);
-            toast("message received : " + msg);
+            log("message_background received : " + msg);
+            toast("message_background received : " + msg);
             setConnected(true);
             final String[] received = msg.split(Message.MESSAGE_SEPARATOR, 3);
             if (received[0].equals("")) {
@@ -150,9 +153,9 @@ public class MainActivity extends FragmentActivity {
         // get fragment manager
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
-
 //        showDialog();
     }
+
 
     public static void addFragment(Fragment fragment) {
         if (fragment.isInLayout())
