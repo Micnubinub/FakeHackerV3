@@ -12,7 +12,7 @@ public class Message {
         this.messageType = messageType;
         switch (messageType) {
             case SEND_COMMAND:
-                this.message = message;
+                this.message = String.valueOf(messageType) + message;
                 break;
             case SEND_FILE:
                 this.message = String.valueOf(messageType) + MESSAGE_SEPARATOR + message;

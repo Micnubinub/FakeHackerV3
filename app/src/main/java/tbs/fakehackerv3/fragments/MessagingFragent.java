@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,7 @@ import tbs.fakehackerv3.ReceivedMessage;
 /**
  * Created by Michael on 5/22/2015.
  */
-public class Messaging extends Fragment {
+public class MessagingFragent extends Fragment {
     private static ListView messageList;
     private static EditText messageEditText;
     private static ImageView sendMessage;
@@ -46,6 +45,12 @@ public class Messaging extends Fragment {
     };
     private static final MessageAdapter messageAdapter = new MessageAdapter();
     private static Activity context;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Nullable
     @Override
@@ -127,6 +132,10 @@ public class Messaging extends Fragment {
         }
     }
 
+    public static void handleReceivedMessage(String msg) {
+
+    }
+
     public static void addReceivedMessage(ReceivedMessage message) {
         if (message != null && !messages.contains(message)) {
             messages.add(message);
@@ -137,6 +146,7 @@ public class Messaging extends Fragment {
     public static void addMessageToDataBase(ReceivedMessage message) {
         //TODO
     }
+
     public static void toast(final String msg) {
         if (context != null) {
             try {

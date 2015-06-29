@@ -6,15 +6,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.IOException;
+
+import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.Message;
 import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
+import tbs.fakehackerv3.RemoteTools;
 import tbs.fakehackerv3.StaticValues;
 import tbs.fakehackerv3.custom_views.MaterialCheckBox;
 import tbs.fakehackerv3.custom_views.MaterialSeekBar;
@@ -23,13 +27,14 @@ import tbs.fakehackerv3.custom_views.MaterialSwitch;
 /**
  * Created by Michael on 6/10/2015.
  */
-public class Remote extends Fragment {
+public class RemoteFragment extends Fragment {
 
     private static Context context;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         context = getActivity();
     }
 
@@ -145,6 +150,185 @@ public class Remote extends Fragment {
 
     }
 
+    public static void handleReceivedCommand(String command) {
+        final String[] splitCommand = command.split(Message.MESSAGE_SEPARATOR);
+        final String commandString = splitCommand[1];
+        //TODO check all these
+        if (splitCommand[0].contains(StaticValues.SCHEDULED_RECORDING)) {
+            final long when = Long.parseLong(commandString);
+            final int duration = Integer.parseInt(splitCommand[2]);
+            RemoteTools.record(duration, when);
+        } else if (splitCommand[0].contains(StaticValues.SCHEDULED_COMMAND)) {
+            final long when = Long.parseLong(commandString);
+            //todo
+        } else if (splitCommand[0].contains(StaticValues.TOGGLE_TORCH)) {
+            RemoteTools.toggleTorch();
+        } else if (splitCommand[0].contains(StaticValues.PRESS_HOME)) {
+            //todo
+        } else if (splitCommand[0].contains(StaticValues.PRESS_BACK)) {
+            //todo
+        } else if (splitCommand[0].contains(StaticValues.PRESS_MENU)) {
+            //todo
+        } else if (splitCommand[0].contains(StaticValues.PRESS_VOLUME_UP)) {
+            //todo
+        } else if (splitCommand[0].contains(StaticValues.PRESS_VOLUME_DOWN)) {
+            //todo
+        } else if (splitCommand[0].contains(StaticValues.GET_FOLDER_TREE)) {
+            try {
+                final File file = new File(commandString);
+                if (!file.exists()) {
+                } else if (!file.isDirectory()) {
+
+                } else {
+                    //todo
+                    file.listFiles();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.OPEN_FILE)) {
+            try {
+                final File file = new File(commandString);
+                if (!file.exists()) {
+                } else if (!file.isDirectory()) {
+                } else {
+                    //todo
+                    file.listFiles();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.RECORD_AUDIO)) {
+            try {
+                RemoteTools.record(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                log("record failed > not a number");
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.SET_ALARM_VOLUME)) {
+            try {
+                RemoteTools.setVolumeAlarm(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                log("set alarm failed > not a number");
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.TAKE_PICTURE_BACK)) {
+            RemoteTools.takePictureBack();
+        } else if (splitCommand[0].contains(StaticValues.TAKE_PICTURE_FRONT)) {
+            RemoteTools.takePictureFront();
+        } else if (splitCommand[0].contains(StaticValues.SET_TORCH)) {
+            //todo add this
+        } else if (splitCommand[0].contains(StaticValues.GET_FILE_DETAILS)) {
+            try {
+                final File file = new File(commandString);
+                if (!file.exists()) {
+
+                } else {
+                    //todo
+                    file.length();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.DELETE_FILE)) {
+            try {
+                final File file = new File(commandString);
+                if (!file.exists()) {
+                } else if (!file.isDirectory()) {
+
+                } else {
+                    //todo
+                    file.delete();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.DOWNLOAD_FILE)) {
+            final File file = new File(commandString);
+            if (!file.exists()) {
+
+            } else {
+                if (MainActivity.p2PManager != null)
+                    P2PManager.enqueueMessage(new Message(file.getAbsolutePath(), Message.MessageType.SEND_FILE));
+            }
+        } else if (splitCommand[0].contains(StaticValues.MOVE_FILE)) {
+            final File file = new File(commandString);
+            final File toLocation = new File(splitCommand[2]);
+            final File out = new File(splitCommand[2] + file.getName());
+            if (!file.exists() || !toLocation.exists()) {
+            } else if (!toLocation.isDirectory()) {
+
+            } else {
+                //todo
+                file.renameTo(out);
+            }
+        } else if (splitCommand[0].contains(StaticValues.STREAM_FILE)) {
+//todo
+        } else if (splitCommand[0].contains(StaticValues.CREATE_DIRECTORY)) {
+            final File file = new File(commandString);
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    log("createfile failed > ioexeption");
+                    e.printStackTrace();
+                }
+            }
+        } else if (splitCommand[0].contains(StaticValues.TAKE_SCREENSHOT)) {
+            RemoteTools.getScreenShot();
+        } else if (splitCommand[0].contains(StaticValues.SET_MEDIA_VOLUME)) {
+            try {
+                RemoteTools.setVolumeMedia(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.SET_NOTIFICATION_VOLUME)) {
+            try {
+                RemoteTools.setVolumeNotification(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.SET_RINGER_VOLUME)) {
+            try {
+                RemoteTools.setVolumeRinger(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.SET_BRIGHTNESS)) {
+            try {
+                RemoteTools.setBrightness(Integer.parseInt(commandString));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.SET_BRIGHTNESS_MODE)) {
+            try {
+                RemoteTools.setBrightnessAuto(Integer.parseInt(commandString) > 0);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.SET_BLUETOOTH)) {
+            try {
+                RemoteTools.setBluetooth(Integer.parseInt(commandString) > 0);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } else if (splitCommand[0].contains(StaticValues.SPOOF_TOUCH)) {
+            //todo
+        } else if (splitCommand[0].contains(StaticValues.SPOOF_TOUCH_FINGER_2)) {
+            //todo
+        } else if (splitCommand[0].contains(StaticValues.RECORD_VIDEO_FRONT)) {
+            //todo
+        } else if (splitCommand[0].contains(StaticValues.RECORD_VIDEO_BACK)) {
+            //todo
+        } else if (splitCommand[0].contains(StaticValues.MEDIA_CONTROL_SKIP)) {
+            RemoteTools.skipTrack();
+        } else if (splitCommand[0].contains(StaticValues.MEDIA_CONTROL_PREVIOUS)) {
+            RemoteTools.previousTrack();
+        } else if (splitCommand[0].contains(StaticValues.MEDIA_CONTROL_PLAY_PAUSE)) {
+            RemoteTools.playMusic();
+        }
+    }
+
     private static void log(String msg) {
         Log.e("Remote", msg);
     }
@@ -233,7 +417,7 @@ public class Remote extends Fragment {
         materialSeekBar.setOnProgressChangedListener(new MaterialSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(int max, int progress) {
-                ((TextView) dialog.findViewById(R.id.text)).setText(String.format("Media volume will be set to: %d", progress));
+                ((TextView) dialog.findViewById(R.id.text)).setText(String.format("Media volume will be set to: %d", progress) + "%");
             }
         });
 
@@ -268,7 +452,7 @@ public class Remote extends Fragment {
         materialSeekBar.setOnProgressChangedListener(new MaterialSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(int max, int progress) {
-                ((TextView) dialog.findViewById(R.id.text)).setText(String.format("Notification volume will be set to: %d", progress));
+                ((TextView) dialog.findViewById(R.id.text)).setText(String.format("Notification volume will be set to: %d", progress) + "%");
             }
         });
 
@@ -301,7 +485,7 @@ public class Remote extends Fragment {
         materialSeekBar.setOnProgressChangedListener(new MaterialSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(int max, int progress) {
-                ((TextView) dialog.findViewById(R.id.text)).setText(String.format("Ringtone volume will be set to: %d", progress));
+                ((TextView) dialog.findViewById(R.id.text)).setText(String.format("Ringtone volume will be set to: %d", progress) + "%");
             }
         });
 
@@ -330,13 +514,13 @@ public class Remote extends Fragment {
         ((TextView) dialog.findViewById(R.id.title)).setText("Brightness");
         final MaterialSeekBar materialSeekBar = (MaterialSeekBar) dialog.findViewById(R.id.material_seekbar);
         materialSeekBar.setMax(255);
-        materialSeekBar.setProgress(50);
         materialSeekBar.setOnProgressChangedListener(new MaterialSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(int max, int progress) {
                 ((TextView) dialog.findViewById(R.id.text)).setText("Brightness will be set to : " + (Math.round((progress / (float) max) * 100) + "%"));
             }
         });
+        materialSeekBar.setProgress(50);
         final MaterialCheckBox materialCheckBox = (MaterialCheckBox) dialog.findViewById(R.id.material_checkbox);
         materialCheckBox.setVisibility(View.VISIBLE);
         materialCheckBox.setText("Auto-Brightness");
@@ -409,9 +593,7 @@ public class Remote extends Fragment {
           dialog.show();
       }
   */
-    private static int dpToPixels(int dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
-    }
+
 
 /* Todo   private static void showSleepTimeoutDialog() {
         final Dialog dialog = getDialog();

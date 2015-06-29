@@ -19,6 +19,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,30 +40,35 @@ import tbs.fakehackerv3.Tools;
  */
 public class FileManagerFragment extends Fragment {
     public static final String FILE_SEP = ":::";
-    //todo command name + filesep+filepath
+    public static final String COMMAND_BROWSE = "COMMAND_BROWSE";
+    public static final String COMMAND_OPEN = "COMMAND_OPEN";
     public static final String COMMAND_DELETE = "COMMAND_DELETE";
-    //todo command name + filesep+filepathFrom+fileSep+fileTo
     public static final String COMMAND_COPY = "COMMAND_COPY";
-    //todo command name + filesep+filepathFrom+fileSep+fileTo
     public static final String COMMAND_MOVE = "COMMAND_MOVE";
-    //todo command name + fileSep+fileTo
     public static final String COMMAND_UPLOAD = "COMMAND_UPLOAD";
-    //todo command name + fileSep+fileFrom
     public static final String COMMAND_DOWNLOAD = "COMMAND_DOWNLOAD";
-    //Todo parse all the commands
+
+    public static final String RESPONSE_BROWSE = "RESPONSE_BROWSE";
+    public static final String RESPONSE_OPEN = "RESPONSE_OPEN";
+    public static final String RESPONSE_DELETE = "RESPONSE_DELETE";
+    public static final String RESPONSE_COPY = "RESPONSE_COPY";
+    public static final String RESPONSE_MOVE = "RESPONSE_MOVE";
+    public static final String RESPONSE_UPLOAD = "RESPONSE_UPLOAD";
+    public static final String RESPONSE_DOWNLOAD = "RESPONSE_DOWNLOAD";
+
     public static final String FILE_ATTRIBUTE_SEP = "/:/";
     private static FragmentActivity context;
     private static String currentDirectory = Environment.getExternalStorageDirectory().getPath();
     private static boolean isInFileManagerMode = false;
     private static final Intent share = new Intent(Intent.ACTION_SEND);
     private static ArrayList<File> currentTree;
-
     public static ListView listView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getActivity();
+        setRetainInstance(true);
     }
 
     @Nullable
@@ -65,6 +76,8 @@ public class FileManagerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Todo
         final View view = inflater.inflate(R.layout.file_manager_fragment, null);
+        listView = (ListView) view.findViewById(R.id.list);
+        sendMessage(COMMAND_BROWSE + FILE_SEP);
         return view;
     }
 
@@ -93,7 +106,7 @@ public class FileManagerFragment extends Fragment {
             share.putExtra(Intent.EXTRA_STREAM, Uri.parse(path));
             context.startActivity(Intent.createChooser(share, "Share File"));
         } catch (Exception e) {
-            print("Failed to open " + (new File(path).getName()));
+            print("Failed to open " + path);
         }
     }
 
@@ -104,8 +117,10 @@ public class FileManagerFragment extends Fragment {
     public static String showTree(File dir) {
         if (!dir.exists()) {
             //TODO
+            currentDirectory = Environment.getExternalStorageDirectory().getPath();
+        } else {
+            currentDirectory = dir.getPath();
         }
-        currentDirectory = dir.getPath();
 
         final StringBuilder builder = new StringBuilder();
         if (dir.listFiles() != null) {
@@ -264,6 +279,11 @@ public class FileManagerFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MainActivity.toast("file clicked : " + files.get(position).toString());
+                final MikeFile file = files.get(position);
+
+                if (file.fileType == FileType.FOLDER)
+                    sendMessage(COMMAND_BROWSE + FILE_SEP + file.path);
+                else sendMessage(COMMAND_OPEN + FILE_SEP + file.path);
             }
         };
 
@@ -271,6 +291,17 @@ public class FileManagerFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 MainActivity.toast("file longClicked : " + files.get(position).toString());
+//    Todo mke dialog            //todo command name + filesep+filepath
+//                sendMessage(COMMAND_BROWSE + FILE_SEP + files.get(position).path);
+//                //todo command name + filesep+filepath
+//                open(new File(split[1]));
+//                //todo command name + filesep+filepath
+//                delete(new File(split[1]));
+//                //todo command name + filesep+filepathFrom+fileSep+fileTo
+//                copyFile(new File(split[1]), new File(split[2]));
+//                //todo command name + filesep+filepathFrom+fileSep+fileTo
+//                moveFile(new File(split[1]), new File(split[2]));
+//                //TODO handle upload and download
                 return false;
             }
         };
@@ -286,6 +317,7 @@ public class FileManagerFragment extends Fragment {
             listView.setOnItemClickListener(onItemClickListener);
             listView.setOnItemLongClickListener(onItemLongClickListener);
             listView.setAdapter(this);
+
             fileAdapter = this;
         }
 
@@ -397,12 +429,19 @@ public class FileManagerFragment extends Fragment {
         }
     }
 
-    public static void setReceivedFiles(String files) {
+    public static void parseReceivedFiles(String files) {
         final String[] fileA = files.split(FILE_SEP);
         ArrayList<MikeFile> mikeFiles = FileAdapter.getFiles();
 
         if (mikeFiles == null) {
-            mikeFiles = new ArrayList<MikeFile>();
+            mikeFiles = new ArrayList<MikeFile>(fileA.length);
+        } else {
+            try {
+                mikeFiles.clear();
+                mikeFiles.ensureCapacity(fileA.length);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         for (String s : fileA) {
@@ -425,6 +464,109 @@ public class FileManagerFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static void handleMessage(String msg) {
+        if (msg == null || msg.length() < 1) {
+            log("handleMessage > msg == null or len < 1");
+            return;
+        }
+
+        if (msg.startsWith("COMMAND")) {
+            handleCommand(msg);
+        } else {
+            handleResponse(msg);
+        }
+    }
+
+    public static void copyFile(File src, File dst) {
+        try {
+            final FileInputStream inStream = new FileInputStream(src);
+            final FileOutputStream outStream = new FileOutputStream(dst);
+            final FileChannel inChannel = inStream.getChannel();
+            final FileChannel outChannel = outStream.getChannel();
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+            inStream.close();
+            outStream.close();
+        } catch (IOException e) {
+            try {
+                final InputStream in = new FileInputStream(src);
+                final OutputStream out = new FileOutputStream(dst);
+
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+            } catch (Exception e1) {
+                log("failed to copy file > from " + src.getAbsolutePath() + " to " + dst.getAbsolutePath());
+                e.printStackTrace();
+                e1.printStackTrace();
+            }
+        }
+    }
+
+    public static void moveFile(File from, File to) {
+        try {
+            from.renameTo(to);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void handleCommand(String msg) {
+        final String[] split = msg.split(FILE_SEP);
+        if (msg.startsWith(COMMAND_BROWSE)) {
+            //todo command name + filesep+filepath
+            sendMessage(RESPONSE_BROWSE + FILE_SEP + showTree(new File(split[1])));
+        } else if (msg.startsWith(COMMAND_OPEN)) {
+            //todo command name + filesep+filepath
+            open(new File(split[1]));
+        } else if (msg.startsWith(COMMAND_DELETE)) {
+            //todo command name + filesep+filepath
+            delete(new File(split[1]));
+        } else if (msg.startsWith(COMMAND_COPY)) {
+            //todo command name + filesep+filepathFrom+fileSep+fileTo
+            copyFile(new File(split[1]), new File(split[2]));
+        } else if (msg.startsWith(COMMAND_MOVE)) {
+            //todo command name + filesep+filepathFrom+fileSep+fileTo
+            moveFile(new File(split[1]), new File(split[2]));
+        } else if (msg.startsWith(COMMAND_DOWNLOAD)) {
+            //todo command name + fileSep+fileTo
+
+        } else if (msg.startsWith(COMMAND_UPLOAD)) {
+            //todo command name + fileSep+fileFrom
+
+        }
+    }
+
+    public static void handleResponse(String msg) {
+        if (msg.startsWith(RESPONSE_BROWSE)) {
+            //todo RESPONSE name + filesep+filepath
+            final String[] split = msg.split(FILE_SEP, 2);
+            parseReceivedFiles(split[1]);
+        } else if (msg.startsWith(RESPONSE_OPEN)) {
+            //todo RESPONSE name + filesep+filepath
+
+        } else if (msg.startsWith(RESPONSE_DELETE)) {
+            //todo RESPONSE name + filesep+filepath
+
+        } else if (msg.startsWith(RESPONSE_COPY)) {
+            //todo RESPONSE name + filesep+filepathFrom+fileSep+fileTo
+
+        } else if (msg.startsWith(RESPONSE_MOVE)) {
+            //todo RESPONSE name + filesep+filepathFrom+fileSep+fileTo
+
+        } else if (msg.startsWith(RESPONSE_DOWNLOAD)) {
+            //todo RESPONSE name + fileSep+fileTo
+
+        } else if (msg.startsWith(RESPONSE_UPLOAD)) {
+            //todo RESPONSE name + fileSep+fileFrom
+
         }
     }
 
