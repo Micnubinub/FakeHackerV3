@@ -60,8 +60,8 @@ public class FileManagerFragment extends Fragment {
     private static FragmentActivity context;
     private static String currentDirectory = Environment.getExternalStorageDirectory().getPath();
     private static boolean isInFileManagerMode = false;
-    private static final Intent share = new Intent(Intent.ACTION_VIEW);
     private static ArrayList<File> currentTree;
+    private static ArrayList<MikeFile> files;
     public static ListView listView;
 
     @Override
@@ -69,7 +69,6 @@ public class FileManagerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         context = getActivity();
         setRetainInstance(true);
-
     }
 
     public void init() {
@@ -83,7 +82,8 @@ public class FileManagerFragment extends Fragment {
         //Todo
         final View view = inflater.inflate(R.layout.file_manager_fragment, null);
         listView = (ListView) view.findViewById(R.id.list);
-        listView.setAdapter(new FileAdapter(listView, new ArrayList<MikeFile>()));
+        files = new ArrayList<MikeFile>();
+        listView.setAdapter(new FileAdapter(listView));
         sendFileCommand(COMMAND_BROWSE + FILE_SEP);
         return view;
     }
@@ -108,6 +108,7 @@ public class FileManagerFragment extends Fragment {
     }
 
     private static void openFile(Context context, MikeFile mikeFile) {
+        final Intent share = new Intent(Intent.ACTION_VIEW);
         try {
             switch (mikeFile.fileType) {
                 case DOCUMENT:
@@ -123,7 +124,7 @@ public class FileManagerFragment extends Fragment {
                     share.setType("video/*");
                     break;
                 case PICTURE:
-                    share.setType("imsge/*");
+                    share.setType("image/*");
                     break;
             }
 
@@ -278,9 +279,7 @@ public class FileManagerFragment extends Fragment {
     }
 
     public static class FileAdapter extends BaseAdapter {
-        private static ArrayList<MikeFile> files;
         private static ListView listView;
-        private Context context;
         private static FileAdapter fileAdapter;
 
         public Context getContext() {
@@ -293,10 +292,6 @@ public class FileManagerFragment extends Fragment {
 
         public static ListView getListView() {
             return listView;
-        }
-
-        public static ArrayList<MikeFile> getFiles() {
-            return files;
         }
 
         public static final AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
@@ -330,33 +325,8 @@ public class FileManagerFragment extends Fragment {
             }
         };
 
-        public static void setFiles(ArrayList<MikeFile> files) {
-            if (listView == null) {
-                log("listview null");
-            }
-            if (fileAdapter == null) {
-                log("fileAdapter null");
-            }
-            FileAdapter.files = files;
-            if (listView == null)
-                return;
 
-
-            listView.post(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        getFileAdapter().notifyDataSetChanged();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-
-        public FileAdapter(ListView listView, ArrayList<MikeFile> files) {
-            this.files = files;
-            this.context = listView.getContext();
+        public FileAdapter(ListView listView) {
             this.listView = listView;
             listView.setOnItemClickListener(onItemClickListener);
             listView.setOnItemLongClickListener(onItemLongClickListener);
@@ -393,10 +363,24 @@ public class FileManagerFragment extends Fragment {
             icon.setImageResource(getImageResource(mikeFile.fileType));
             fileName.setText(mikeFile.name);
             fileSize.setText(mikeFile.fileSize);
-
             return convertView;
         }
     }
+
+    public static void updateAdapter() {
+        context.runOnUiThread(update);
+    }
+
+    private static final Runnable update = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                FileAdapter.getFileAdapter().notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     public static int getImageResource(FileType type) {
         int res = R.drawable.file_file;
@@ -488,30 +472,38 @@ public class FileManagerFragment extends Fragment {
 
     public static void parseReceivedFiles(String files) {
         final String[] fileA = files.split(FILE_SEP);
-        ArrayList<MikeFile> mikeFiles = FileAdapter.getFiles();
 
-        if (mikeFiles == null) {
-            mikeFiles = new ArrayList<MikeFile>(fileA.length);
+
+        if (FileManagerFragment.files == null) {
+            FileManagerFragment.files = new ArrayList<MikeFile>(fileA.length);
         } else {
             try {
-                mikeFiles.clear();
-                mikeFiles.ensureCapacity(fileA.length);
+                FileManagerFragment.files.clear();
+                updateAdapter();
+                FileManagerFragment.files.ensureCapacity(fileA.length);
+                updateAdapter();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        for (String s : fileA) {
-            try {
-                mikeFiles.add(new MikeFile(s));
-            } catch (Exception e) {
-                e.printStackTrace();
+        updateAdapter();
+
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (String s : fileA) {
+                    try {
+                        FileManagerFragment.files.add(new MikeFile(s));
+                        updateAdapter();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        }
+        });
 
-        log("receivedFiles > " + mikeFiles.toString());
-
-        FileAdapter.setFiles(mikeFiles);
+        log("receivedFiles > " + FileManagerFragment.files.toString());
 
     }
 
@@ -712,6 +704,7 @@ public class FileManagerFragment extends Fragment {
         LogFragment.log(msg);
         Log.e("File Manager", msg);
     }
+
 
     public static final String[] DOCUMENT_EXTENSIONS = {"doc", "docx", "txt", "rtf", "pdf", "odt", "wpd", "xls", "xlsx", "ods", "ppt", "pptx"};
     public static final String[] VIDEO_EXTENSIONS = {"webm", "mkv", "flv", "vob", "ogv", "ogg", "drc", "mng", "avi", "mov", "qt", "wmv", "yuv", "rm", "rmvb", "asf", "mp4", "m4p", "m4v", "mpg", "mp2", "mpeg", "mpe", "mpv", "m2v", "svi", "3gp", "3g2", "mxf", "roq", "nsv"};

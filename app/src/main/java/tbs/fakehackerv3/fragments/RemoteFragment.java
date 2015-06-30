@@ -664,14 +664,10 @@ public class RemoteFragment extends Fragment {
     private static void showMusicPlayerDialog() {
         final Dialog dialog = getDialog();
         dialog.setContentView(R.layout.media_control);
-        ((TextView) dialog.findViewById(R.id.title)).setText("Media Control");
-        //Todo get the values from this and add them to the profile service
-
         final View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()) {
-
                     case R.id.next:
                         sendCommand(StaticValues.MEDIA_CONTROL_SKIP, "");
                         break;

@@ -16,7 +16,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:padding="8dp"
-        android:text="Title"
+        android:text="Media Control"
         android:textColor="@color/dark_grey_text"
         android:textSize="22sp"
         android:textStyle="bold" />
@@ -30,6 +30,7 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:background="@drawable/white_button_selector"
             android:id="@+id/previous"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -38,6 +39,7 @@
             android:src="@drawable/prev" />
 
         <ImageView
+            android:background="@drawable/white_button_selector"
             android:id="@+id/play_pause"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -46,6 +48,7 @@
             android:src="@drawable/play_pause" />
 
         <ImageView
+            android:background="@drawable/white_button_selector"
             android:id="@+id/next"
             android:layout_width="48dp"
             android:layout_height="48dp"

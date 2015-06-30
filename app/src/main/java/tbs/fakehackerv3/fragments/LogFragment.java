@@ -71,20 +71,18 @@ public class LogFragment extends Fragment {
         }
     }
 
-    private static final Runnable update = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                adapter.notifyDataSetChanged();
-            } catch (Exception e) {
-                e.printStackTrace();
+    public static void log(final String string) {
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                logs.add(string);
+                try {
+                    adapter.notifyDataSetChanged();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
-    };
-
-    public static void log(String string) {
-        logs.add(string);
-        context.runOnUiThread(update);
+        });
     }
 
     public static class ViewHolder {

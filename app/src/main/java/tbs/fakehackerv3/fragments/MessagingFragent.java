@@ -1,9 +1,9 @@
 package tbs.fakehackerv3.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -46,12 +46,14 @@ public class MessagingFragent extends Fragment {
             notifyDataSetChanged();
         }
     };
+
     private static final MessageAdapter messageAdapter = new MessageAdapter();
-    private static Activity context;
+    private static FragmentActivity context;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = getActivity();
         setRetainInstance(true);
     }
 
@@ -59,7 +61,7 @@ public class MessagingFragent extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Todo
-        context = getActivity();
+
         final View v = View.inflate(getActivity(), R.layout.messaging_fragment, null);
         sendMessage = (ImageView) v.findViewById(R.id.send);
         messageEditText = (EditText) v.findViewById(R.id.message);
@@ -87,14 +89,16 @@ public class MessagingFragent extends Fragment {
         return v;
     }
 
+    private static final Runnable update = new Runnable() {
+        @Override
+        public void run() {
+            messageAdapter.notifyDataSetChanged();
+        }
+    };
+
     private static void notifyDataSetChanged() {
         try {
-            context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    messageAdapter.notifyDataSetChanged();
-                }
-            });
+            context.runOnUiThread(update);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -147,9 +151,9 @@ public class MessagingFragent extends Fragment {
         String[] split = msg.split(Message.MESSAGE_SEPARATOR);
         if (MainActivity.connectedDevice == null) {
             P2PManager.connectedDeviceNullFix();
-            messages.add(new ReceivedMessage(split[0], "Received : " + split[1], "Incognito"));
+            addReceivedMessage(new ReceivedMessage(split[0], "Received : " + split[1], "Incognito"));
         } else {
-            messages.add(new ReceivedMessage(split[0], "Received : " + split[1], MainActivity.connectedDevice.deviceName));
+            addReceivedMessage(new ReceivedMessage(split[0], "Received : " + split[1], MainActivity.connectedDevice.deviceName));
         }
     }
 
@@ -158,12 +162,18 @@ public class MessagingFragent extends Fragment {
         LogFragment.log(msg);
     }
 
-    public static void addReceivedMessage(ReceivedMessage message) {
-        if (message != null && !messages.contains(message)) {
-            messages.add(message);
-            addMessageToDataBase(message);
-            notifyDataSetChanged();
-        }
+    public static void addReceivedMessage(final ReceivedMessage message) {
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (message != null && !messages.contains(message)) {
+                    messages.add(message);
+                    notifyDataSetChanged();
+                    addMessageToDataBase(message);
+
+                }
+            }
+        });
     }
 
     public static void addMessageToDataBase(ReceivedMessage message) {
