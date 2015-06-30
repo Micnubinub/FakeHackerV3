@@ -8,6 +8,8 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
+import tbs.fakehackerv3.fragments.LogFragment;
+
 /**
  * Created by Michael on 5/12/2015.
  */
@@ -88,6 +90,7 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
 
     public static void log(String msg) {
         // MainActivity.addLog(msg);
+        LogFragment.log(msg);
         Log.e("p2p", "broadcast : " + msg);
     }
 }

@@ -34,6 +34,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import tbs.fakehackerv3.fragments.LogFragment;
+
 /**
  * Created by Michael on 5/16/2015.
  */
@@ -621,6 +623,7 @@ public class P2PManager extends Service {
 
     public static void log(String msg) {
         Log.e("p2p", msg);
+        LogFragment.log(msg);
     }
 
     public static Socket getSocket() {
@@ -1024,17 +1027,8 @@ public class P2PManager extends Service {
 
         @Override
         public void run() {
-            log("listener1");
             // Todo receive file             byte buf[] = new byte[1024];
 //         try {
-//                /**
-//                 * Create a socketFromServer socketFromServer with the host,
-//                 * port, and timeout information.
-//                 */
-//                /**
-//                 * Create a byte stream from a JPEG file and pipe it to the output stream
-//                 * of the socketFromServer. This data will be retrieved by the server device.
-//                 */
 //                final OutputStream outputStream = getSocket().getOutputStream();
 //                final InputStream inputStream = cr.openInputStream(Uri.parse(Environment.getExternalStorageDirectory().getPath() + "a014.jpg"));
 //                while ((len = inputStream.read(buf)) != -1) {
@@ -1042,13 +1036,10 @@ public class P2PManager extends Service {
 //                }
 //                outputStream.close();
 //                inputStream.close();
-//            } catch (FileNotFoundException e) {
-//                //catch logic
-//            } catch (IOException e) {
+//            } catch (Exception e) {
 //                //catch logic
 //            }
             dismissDialog();
-
 
             stop = false;
 
@@ -1105,10 +1096,6 @@ public class P2PManager extends Service {
     }
 
     public static class P2PAdapter extends BaseAdapter {
-        public P2PAdapter() {
-
-        }
-
         @Override
         public int getCount() {
             return peers == null ? 0 : peers.size();
@@ -1126,7 +1113,8 @@ public class P2PManager extends Service {
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            view = View.inflate(activity, R.layout.device_list_item, null);
+            if (view == null)
+                view = View.inflate(activity, R.layout.device_list_item, null);
             final WifiP2pDevice device = ((WifiP2pDevice) peers.toArray()[i]);
             ((TextView) view.findViewById(R.id.device_name)).setText(device.deviceName + " (" + device.deviceAddress + ")");
             final TextView deviceStatus = ((TextView) view.findViewById(R.id.device_status));
@@ -1152,7 +1140,6 @@ public class P2PManager extends Service {
                     deviceStatus.setTextColor(0xff259b24);
                     break;
             }
-
             return view;
         }
     }

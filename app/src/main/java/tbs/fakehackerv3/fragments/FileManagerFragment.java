@@ -45,9 +45,9 @@ public class FileManagerFragment extends Fragment {
     public static final String COMMAND_DELETE = "COMMAND_DELETE";
     public static final String COMMAND_COPY = "COMMAND_COPY";
     public static final String COMMAND_MOVE = "COMMAND_MOVE";
+    public static final String COMMAND_OPEN_PARENT = "/.../";
     public static final String COMMAND_UPLOAD = "COMMAND_UPLOAD";
     public static final String COMMAND_DOWNLOAD = "COMMAND_DOWNLOAD";
-
     public static final String RESPONSE_BROWSE = "RESPONSE_BROWSE";
     public static final String RESPONSE_OPEN = "RESPONSE_OPEN";
     public static final String RESPONSE_DELETE = "RESPONSE_DELETE";
@@ -60,7 +60,7 @@ public class FileManagerFragment extends Fragment {
     private static FragmentActivity context;
     private static String currentDirectory = Environment.getExternalStorageDirectory().getPath();
     private static boolean isInFileManagerMode = false;
-    private static final Intent share = new Intent(Intent.ACTION_SEND);
+    private static final Intent share = new Intent(Intent.ACTION_VIEW);
     private static ArrayList<File> currentTree;
     public static ListView listView;
 
@@ -107,18 +107,35 @@ public class FileManagerFragment extends Fragment {
         FileManagerFragment.currentDirectory = currentDirectory;
     }
 
-    private static void openFile(Context context, String path) {
+    private static void openFile(Context context, MikeFile mikeFile) {
         try {
-            share.setType("*/*");
-            share.putExtra(Intent.EXTRA_STREAM, Uri.parse(path));
+            switch (mikeFile.fileType) {
+                case DOCUMENT:
+                    share.setType("text/*");
+                    break;
+                case GENERIC:
+                    share.setType("*/*");
+                    break;
+                case MUSIC:
+                    share.setType("audio/*");
+                    break;
+                case VIDEO:
+                    share.setType("video/*");
+                    break;
+                case PICTURE:
+                    share.setType("imsge/*");
+                    break;
+            }
+
+            share.putExtra(Intent.EXTRA_STREAM, Uri.parse(mikeFile.path));
             context.startActivity(Intent.createChooser(share, "Share File"));
         } catch (Exception e) {
-            print("Failed to open " + path);
+            print("Failed to open " + mikeFile.toString());
         }
     }
 
-    private static void openFile(File file) {
-        openFile(context, file.getPath());
+    private static void openFile(MikeFile file) {
+        openFile(context, file);
     }
 
     public static String showTree(File dir) {
@@ -172,22 +189,11 @@ public class FileManagerFragment extends Fragment {
         showTree(file);
     }
 
-    public static void open(int path) {
-        if (currentTree.get(path - 1).isDirectory())
-            openFolder(currentTree.get(path - 1));
-        else
-            openFile(currentTree.get(path - 1));
-    }
-
-    public static void open(String path) {
-        open(new File(path));
-    }
-
     private static void open(File file) {
         if (file.isDirectory())
             openFolder(file);
         else
-            openFile(file);
+            openFile(new MikeFile(MikeFile.getFileString(file)));
     }
 
     public static void createFolder(String path) {
@@ -258,7 +264,15 @@ public class FileManagerFragment extends Fragment {
         Collections.sort(list, new Comparator<File>() {
             @Override
             public int compare(File file, File file2) {
-                return file.getName().compareToIgnoreCase(file2.getName());
+                int i;
+                if (file.isDirectory() && !file2.isDirectory()) {
+                    i = -1;
+                } else if (!file.isDirectory() && file2.isDirectory()) {
+                    i = 1;
+                } else {
+                    i = file.getName().compareToIgnoreCase(file2.getName());
+                }
+                return i;
             }
         });
     }
@@ -424,6 +438,19 @@ public class FileManagerFragment extends Fragment {
             return builder.toString();
         }
 
+        public static String getParentFileString(File file) {
+            final StringBuilder builder = new StringBuilder(getFileTypeString(file));
+            //Todo
+            builder.append(FILE_ATTRIBUTE_SEP);
+            builder.append(COMMAND_OPEN_PARENT);
+            builder.append(FILE_ATTRIBUTE_SEP);
+            builder.append(COMMAND_OPEN_PARENT);
+            builder.append(FILE_ATTRIBUTE_SEP);
+            builder.append("...");
+            return builder.toString();
+        }
+
+
         public MikeFile(String mikeFile) {
             final String[] split = mikeFile.split(FILE_ATTRIBUTE_SEP, 4);
             this.fileSize = split[3];
@@ -545,10 +572,16 @@ public class FileManagerFragment extends Fragment {
         final String[] split = msg.split(FILE_SEP);
         if (msg.startsWith(COMMAND_BROWSE)) {
             //todo command name + filesep+filepath
-            if (split.length < 2 || split[1] == null || split[1].length() < 1)
+            if (split.length < 2 || split[1] == null || split[1].length() < 1) {
                 sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(Environment.getExternalStorageDirectory().getPath())));
-            else
-                sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(split[1])));
+            } else {
+                final String input = split[1];
+                if (input.startsWith(COMMAND_OPEN_PARENT)) {
+                    sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(currentDirectory).getParentFile()));
+                } else {
+                    sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(input)));
+                }
+            }
         } else if (msg.startsWith(COMMAND_OPEN)) {
             //todo command name + filesep+filepath
             open(new File(split[1]));
@@ -602,17 +635,53 @@ public class FileManagerFragment extends Fragment {
         }
         final String ext = getExtension(file.getName());
         FileType fileType = FileType.GENERIC;
-//Todo fix this .contain bull, cause its buggy
-        if (MUSIC_EXTENSIONS.contains(ext)) {
+
+        if (isMusic(ext)) {
             fileType = FileType.MUSIC;
-        } else if (PICTURE_EXTENSIONS.contains(ext)) {
+        } else if (isPicture(ext)) {
             fileType = FileType.PICTURE;
-        } else if (VIDEO_EXTENSIONS.contains(ext)) {
+        } else if (isVideo(ext)) {
             fileType = FileType.VIDEO;
-        } else if (DOCUMENT_EXTENSIONS.contains(ext)) {
+        } else if (isDocument(ext)) {
             fileType = FileType.DOCUMENT;
         }
         return String.valueOf(fileType);
+    }
+
+    public static boolean isVideo(String extention) {
+        for (String videoExtension : VIDEO_EXTENSIONS) {
+            if (videoExtension.equals(extention)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isDocument(String extention) {
+        for (String documentExt : DOCUMENT_EXTENSIONS) {
+            if (documentExt.equals(extention)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isPicture(String extention) {
+        for (String pictureExt : PICTURE_EXTENSIONS) {
+            if (pictureExt.equals(extention)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isMusic(String extention) {
+        for (String musicExt : MUSIC_EXTENSIONS) {
+            if (musicExt.equals(extention)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static String getExtension(String fileName) {
@@ -640,11 +709,12 @@ public class FileManagerFragment extends Fragment {
     }
 
     private static void log(String msg) {
+        LogFragment.log(msg);
         Log.e("File Manager", msg);
     }
 
-    public static final String DOCUMENT_EXTENSIONS = "doc,docx,txt,rtf,pdf,odt,wpd,xls,xlsx,ods,ppt,pptx";
-    public static final String VIDEO_EXTENSIONS = "webm,mkv,flv,vob,ogv,ogg,drc,mng,avi,mov,qt,wmv,yuv,rm,rmvb,asf,mp4,m4p,m4v,mpg,mp2,mpeg,mpe,mpv,m2v,svi,3gp,3g2,mxf,roq,nsv";
-    public static final String PICTURE_EXTENSIONS = "jpg,jpeg,tif,gif,png,raw";
-    public static final String MUSIC_EXTENSIONS = "3gp,act,aiff,aac,amr,au,awb,dct,dss,dvf,flac,gsm,,m4a,m4p,mmf,mp3,mpc,msv,ogg,oga,opus,ra,rm,raw,sln,tta,vox,wav,wma,wv,webm";
+    public static final String[] DOCUMENT_EXTENSIONS = {"doc", "docx", "txt", "rtf", "pdf", "odt", "wpd", "xls", "xlsx", "ods", "ppt", "pptx"};
+    public static final String[] VIDEO_EXTENSIONS = {"webm", "mkv", "flv", "vob", "ogv", "ogg", "drc", "mng", "avi", "mov", "qt", "wmv", "yuv", "rm", "rmvb", "asf", "mp4", "m4p", "m4v", "mpg", "mp2", "mpeg", "mpe", "mpv", "m2v", "svi", "3gp", "3g2", "mxf", "roq", "nsv"};
+    public static final String[] PICTURE_EXTENSIONS = {"jpg", "jpeg", "tif", "gif", "png", "raw"};
+    public static final String[] MUSIC_EXTENSIONS = {"3gp", "act", "aiff", "aac", "amr", "au", "awb", "dct", "dss", "dvf", "flac", "gsm", "", "m4a", "m4p", "mmf", "mp3", "mpc", "msv", "ogg", "oga", "opus", "ra", "rm", "raw", "sln", "tta", "vox", "wav", "wma", "wv", "webm"};
 }

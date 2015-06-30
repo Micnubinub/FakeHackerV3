@@ -335,6 +335,7 @@ public class RemoteFragment extends Fragment {
     }
 
     private static void log(String msg) {
+        LogFragment.log(msg);
         Log.e("Remote", msg);
     }
 

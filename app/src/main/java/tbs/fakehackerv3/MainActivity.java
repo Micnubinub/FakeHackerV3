@@ -18,10 +18,10 @@ import android.widget.Toast;
 import tbs.fakehackerv3.custom_views.PagerSlidingTabStrip;
 import tbs.fakehackerv3.fragments.CustomAndDownloadedCommands;
 import tbs.fakehackerv3.fragments.FileManagerFragment;
+import tbs.fakehackerv3.fragments.LogFragment;
 import tbs.fakehackerv3.fragments.MessagingFragent;
 import tbs.fakehackerv3.fragments.OnlineRepo;
 import tbs.fakehackerv3.fragments.RemoteFragment;
-import tbs.fakehackerv3.fragments.RemoteMaterial;
 import tbs.fakehackerv3.fragments.Settings;
 
 
@@ -212,6 +212,7 @@ public class MainActivity extends FragmentActivity {
 
     private static void log(String msg) {
         Log.e("main", msg);
+        LogFragment.log(msg);
     }
 
     public static void toast(final String msg) {
@@ -238,8 +239,8 @@ public class MainActivity extends FragmentActivity {
     private void setUpFragments() {
         fragments[0] = new MessagingFragent();
         fragments[1] = new RemoteFragment();
-        fragments[2] = new RemoteMaterial();
-        fragments[3] = new FileManagerFragment();
+        fragments[2] = new FileManagerFragment();
+        fragments[3] = new LogFragment();
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.view_pager);
@@ -256,7 +257,7 @@ public class MainActivity extends FragmentActivity {
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
-        private final String[] TITLES = {"Messaging", "Remote", "Remote Material", "File Manager"};
+        private final String[] TITLES = {"Messaging", "Remote", "File Manager", "Log"};
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);

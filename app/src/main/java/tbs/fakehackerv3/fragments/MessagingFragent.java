@@ -155,6 +155,7 @@ public class MessagingFragent extends Fragment {
 
     public static void log(String msg) {
         Log.e("Messaging Fragment", msg);
+        LogFragment.log(msg);
     }
 
     public static void addReceivedMessage(ReceivedMessage message) {

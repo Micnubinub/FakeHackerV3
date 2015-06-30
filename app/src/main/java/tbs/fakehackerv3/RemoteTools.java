@@ -160,15 +160,14 @@ public class RemoteTools {
     private static Context context() {
         if (context == null)
             context = P2PManager.getContext();
+        if (context == null) {
+            context = MainActivity.context;
+        }
         return context;
     }
 
     private static AlarmManager getAlarmManager() {
         return (AlarmManager) context().getSystemService(Context.ALARM_SERVICE);
-    }
-
-    public static void sendMessage(String message) {
-
     }
 
     public static void getPackages(Context context) {
@@ -205,7 +204,7 @@ public class RemoteTools {
     public static void launchInt(Context context, int ii) {
         ii = ii - 1 > 0 ? ii - 1 : 0;
 
-        PackageManager packageManager = context.getPackageManager();
+        final PackageManager packageManager = context.getPackageManager();
         final Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> list = packageManager.queryIntentActivities(i, 0);
@@ -215,8 +214,7 @@ public class RemoteTools {
     }
 
     public static void launchPackage(Context context, String packageName) {
-        PackageManager packageManager = context.getPackageManager();
-        Intent LaunchApp = packageManager.getLaunchIntentForPackage(packageName);
+        Intent LaunchApp = context.getPackageManager().getLaunchIntentForPackage(packageName);
         context.startActivity(LaunchApp);
     }
 
@@ -239,7 +237,7 @@ public class RemoteTools {
     public static ArrayList<String> getBroadcastRecievers(Context context) {
         //Todo
 
-        PackageManager packageManager = context.getPackageManager();
+        final PackageManager packageManager = context.getPackageManager();
         final Intent i = new Intent(Intent.ACTION_MAIN, null);
         List<ResolveInfo> list = packageManager.queryBroadcastReceivers(i, 0);
         ArrayList<String> pacs = new ArrayList<String>(list.size());
@@ -281,7 +279,7 @@ public class RemoteTools {
             }
 
         } catch (Exception e) {
-            Log.e("p2p","toggle Torch");
+            Log.e("p2p", "toggle Torch");
             e.printStackTrace();
         }
 
