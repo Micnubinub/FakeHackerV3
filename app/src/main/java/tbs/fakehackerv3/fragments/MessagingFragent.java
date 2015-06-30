@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import tbs.fakehackerv3.MainActivity;
+import tbs.fakehackerv3.Message;
 import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
 import tbs.fakehackerv3.ReceivedMessage;
@@ -37,7 +40,7 @@ public class MessagingFragent extends Fragment {
             final String msg = messageEditText.getText().toString();
 
             if (msg.length() > 0)
-                P2PManager.setMessage(msg);
+                P2PManager.sendSimpleMessage(msg);
             messageEditText.setText("");
             addReceivedMessage(new ReceivedMessage(msg, "Sent : " + String.valueOf(System.currentTimeMillis()), "me"));
             notifyDataSetChanged();
@@ -80,6 +83,7 @@ public class MessagingFragent extends Fragment {
         });
         sendMessage.setOnClickListener(sendMessageClickListener);
         messageList.setAdapter(messageAdapter);
+        P2PManager.enqueueMessage(new Message("mikeCheck 1,2,1,2", Message.MessageType.SEND_MESSAGE));
         return v;
     }
 
@@ -94,6 +98,12 @@ public class MessagingFragent extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void init() {
+        //TODO
+        getView().setVisibility(View.VISIBLE);
+
     }
 
     private static final ArrayList<ReceivedMessage> messages = new ArrayList<ReceivedMessage>();
@@ -133,13 +143,25 @@ public class MessagingFragent extends Fragment {
     }
 
     public static void handleReceivedMessage(String msg) {
+        log("handleRecMsg > " + msg);
+        String[] split = msg.split(Message.MESSAGE_SEPARATOR);
+        if (MainActivity.connectedDevice == null) {
+            P2PManager.connectedDeviceNullFix();
+            messages.add(new ReceivedMessage(split[0], "Received : " + split[1], "Incognito"));
+        } else {
+            messages.add(new ReceivedMessage(split[0], "Received : " + split[1], MainActivity.connectedDevice.deviceName));
+        }
+    }
 
+    public static void log(String msg) {
+        Log.e("Messaging Fragment", msg);
     }
 
     public static void addReceivedMessage(ReceivedMessage message) {
         if (message != null && !messages.contains(message)) {
             messages.add(message);
             addMessageToDataBase(message);
+            notifyDataSetChanged();
         }
     }
 

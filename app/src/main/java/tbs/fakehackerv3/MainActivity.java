@@ -21,6 +21,7 @@ import tbs.fakehackerv3.fragments.FileManagerFragment;
 import tbs.fakehackerv3.fragments.MessagingFragent;
 import tbs.fakehackerv3.fragments.OnlineRepo;
 import tbs.fakehackerv3.fragments.RemoteFragment;
+import tbs.fakehackerv3.fragments.RemoteMaterial;
 import tbs.fakehackerv3.fragments.Settings;
 
 
@@ -45,10 +46,6 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public void onMessageReceived(String msg) {
-            log("message_background received : " + msg);
-            toast("message_background received : " + msg);
-            setConnected(true);
-
             final String[] received = msg.split(Message.MESSAGE_SEPARATOR, 2);
             if (received[0].equals(String.valueOf(Message.MessageType.SEND_COMMAND))) {
                 RemoteFragment.handleReceivedCommand(received[1]);
@@ -74,7 +71,7 @@ public class MainActivity extends FragmentActivity {
                     MainViewManager.setConnectedToDevice("");
                 }
             });
-            setConnected(true);
+            setConnected(false);
             nullifyGroupAndDevice();
 
         }
@@ -97,7 +94,6 @@ public class MainActivity extends FragmentActivity {
                                         P2PManager.manager.requestConnectionInfo(P2PManager.channel, new WifiP2pManager.ConnectionInfoListener() {
                                             @Override
                                             public void onConnectionInfoAvailable(final WifiP2pInfo info) {
-
                                                 if (info.isGroupOwner) {
                                                     P2PManager.manager.requestPeers(P2PManager.channel, new WifiP2pManager.PeerListListener() {
                                                         @Override
@@ -139,8 +135,6 @@ public class MainActivity extends FragmentActivity {
     //Fragments
     public static CustomAndDownloadedCommands customAndDownloadedCommands;
     public static OnlineRepo onlineRepo;
-    public static RemoteFragment remote;
-    public static MessagingFragent messaging;
     public static Settings settings;
     public static boolean connected;
     public static WifiP2pGroup currentGroup;
@@ -166,11 +160,19 @@ public class MainActivity extends FragmentActivity {
                         if (connectedDevice != null) {
                             MainViewManager.setStaticText("Connected to");
                             MainViewManager.setConnectedToDevice(connectedDevice.deviceName + " (" + connectedDevice.deviceAddress + ")");
+                            for (Fragment fragment : fragments) {
+                                if (fragment instanceof MessagingFragent) {
+                                    ((MessagingFragent) fragment).init();
+                                } else if (fragment instanceof FileManagerFragment) {
+                                    ((FileManagerFragment) fragment).init();
+                                } else if (fragment instanceof RemoteFragment) {
+                                    ((RemoteFragment) fragment).init();
+                                }
+                            }
                         } else {
                             P2PManager.connectedDeviceNullFix();
-                            log("Connected device is null");
-                            toast("Connected device is null");
                         }
+
                     }
                 });
             } else {
@@ -208,8 +210,6 @@ public class MainActivity extends FragmentActivity {
         return customAndDownloadedCommands;
     }
 
-
-
     private static void log(String msg) {
         Log.e("main", msg);
     }
@@ -238,11 +238,12 @@ public class MainActivity extends FragmentActivity {
     private void setUpFragments() {
         fragments[0] = new MessagingFragent();
         fragments[1] = new RemoteFragment();
-        fragments[2] = new FileManagerFragment();
+        fragments[2] = new RemoteMaterial();
+        fragments[3] = new FileManagerFragment();
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.view_pager);
-        pager.setOffscreenPageLimit(3);
+        pager.setOffscreenPageLimit(4);
 
         pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
 
@@ -251,11 +252,11 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-    private static final Fragment[] fragments = new Fragment[3];
+    private static final Fragment[] fragments = new Fragment[4];
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
-        private final String[] TITLES = {"Messaging", "Remote", "File Manager"};
+        private final String[] TITLES = {"Messaging", "Remote", "Remote Material", "File Manager"};
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);

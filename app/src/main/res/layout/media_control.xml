@@ -55,7 +55,6 @@
 
     </LinearLayout>
 
-
     <include
         android:id="@+id/save_cancel"
         layout="@layout/save_cancel"
@@ -65,7 +64,6 @@
         android:layout_below="@+id/container"
         android:layout_marginBottom="4dp"
         android:layout_marginRight="4dp" />
-
 
 </RelativeLayout>
 

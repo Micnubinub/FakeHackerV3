@@ -54,7 +54,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private float currentPositionOffset = 0f;
     private Paint rectPaint;
     private Paint dividerPaint;
-    private int indicatorColor = 0xFF666666;
+    private int indicatorColor = 0xFFaaaaaa;
     private int underlineColor = 0x1A111111;
     private int dividerColor = 0x1A111111;
     private boolean shouldExpand = false;
@@ -67,7 +67,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private int dividerWidth = 1;
     private int tabBackgroundResId;
     private int tabTextSize = 16;
-    private int tabTextColor = 0xFFdddddd;
+    private int tabTextColor = 0xFFfefefe;
     private int lastScrollX = 0;
     private Locale locale;
 
@@ -91,7 +91,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         tabsContainer.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         addView(tabsContainer);
 
-        DisplayMetrics dm = getResources().getDisplayMetrics();
+        final DisplayMetrics dm = getResources().getDisplayMetrics();
 
         scrollOffset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, scrollOffset, dm);
         indicatorHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, indicatorHeight, dm);

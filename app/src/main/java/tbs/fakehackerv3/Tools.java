@@ -156,22 +156,22 @@ public class Tools {
             return s;
 
         if (size > 1024 && size < Math.pow(2, 20)) {
-            s = String.format("%.3f", size / 1024) + "KB";
+            s = String.format("%.3f", size / 1024f) + "KB";
             return s;
         }
 
         if (size > Math.pow(2, 20) && size < Math.pow(2, 30)) {
-            s = String.format("%.3f", size / Math.pow(2, 20)) + "MB";
+            s = String.format("%.3f", size / 1048576f) + "MB";
             return s;
         }
 
         if (size > Math.pow(2, 30) && size < Math.pow(2, 40)) {
-            s = String.format("%.3f", size / Math.pow(2, 30)) + "GB";
+            s = String.format("%.3f", size / 1073741824f) + "GB";
             return s;
         }
 
         if (size > Math.pow(2, 40)) {
-            s = String.format("%.3f", size / Math.pow(2, 40)) + "TB";
+            s = String.format("%.3f", size / 1099511627776f) + "TB";
             return s;
         }
 

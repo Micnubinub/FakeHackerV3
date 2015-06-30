@@ -69,6 +69,12 @@ public class FileManagerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         context = getActivity();
         setRetainInstance(true);
+
+    }
+
+    public void init() {
+        //TODO
+
     }
 
     @Nullable
@@ -77,7 +83,8 @@ public class FileManagerFragment extends Fragment {
         //Todo
         final View view = inflater.inflate(R.layout.file_manager_fragment, null);
         listView = (ListView) view.findViewById(R.id.list);
-        sendMessage(COMMAND_BROWSE + FILE_SEP);
+        listView.setAdapter(new FileAdapter(listView, new ArrayList<MikeFile>()));
+        sendFileCommand(COMMAND_BROWSE + FILE_SEP);
         return view;
     }
 
@@ -118,37 +125,40 @@ public class FileManagerFragment extends Fragment {
         if (!dir.exists()) {
             //TODO
             currentDirectory = Environment.getExternalStorageDirectory().getPath();
+            dir = new File(currentDirectory);
         } else {
             currentDirectory = dir.getPath();
         }
 
         final StringBuilder builder = new StringBuilder();
-        if (dir.listFiles() != null) {
-            if (!(dir.listFiles().length < 1)) {
-                if (currentTree != null)
+        final File[] files = dir.listFiles();
+        if (files != null) {
+            if (!(files.length < 1)) {
+                if (currentTree != null) {
                     currentTree.clear();
-                else
+                    currentTree.ensureCapacity(files.length);
+                } else
                     currentTree = new ArrayList<File>();
 
                 Collections.addAll(currentTree, dir.listFiles());
-
                 sort(currentTree);
-                print(" File hierarchy " + dir.getAbsolutePath() + " >");
 
-                for (int i = 0; i < currentTree.size(); i++) {
-                    final File file = currentTree.get(i);
-
-                    if ((i == currentTree.size() - 1)) {
+                for (int i = 0; i < files.length; i++) {
+                    final File file = files[i];
+                    if ((i < files.length - 1)) {
                         builder.append(MikeFile.getFileString(file));
                         builder.append(FILE_SEP);
                     } else {
                         builder.append(MikeFile.getFileString(file));
                     }
                 }
+
+                currentTree.clear();
             } else {
                 //Todo think about what to do whne the folder is empty
                 print("   Specified folder is empty.");
             }
+
         }
         return builder.toString();
     }
@@ -282,8 +292,8 @@ public class FileManagerFragment extends Fragment {
                 final MikeFile file = files.get(position);
 
                 if (file.fileType == FileType.FOLDER)
-                    sendMessage(COMMAND_BROWSE + FILE_SEP + file.path);
-                else sendMessage(COMMAND_OPEN + FILE_SEP + file.path);
+                    sendFileCommand(COMMAND_BROWSE + FILE_SEP + file.path);
+                else sendFileCommand(COMMAND_OPEN + FILE_SEP + file.path);
             }
         };
 
@@ -292,7 +302,7 @@ public class FileManagerFragment extends Fragment {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 MainActivity.toast("file longClicked : " + files.get(position).toString());
 //    Todo mke dialog            //todo command name + filesep+filepath
-//                sendMessage(COMMAND_BROWSE + FILE_SEP + files.get(position).path);
+//                sendFileCommand(COMMAND_BROWSE + FILE_SEP + files.get(position).path);
 //                //todo command name + filesep+filepath
 //                open(new File(split[1]));
 //                //todo command name + filesep+filepath
@@ -307,7 +317,27 @@ public class FileManagerFragment extends Fragment {
         };
 
         public static void setFiles(ArrayList<MikeFile> files) {
+            if (listView == null) {
+                log("listview null");
+            }
+            if (fileAdapter == null) {
+                log("fileAdapter null");
+            }
             FileAdapter.files = files;
+            if (listView == null)
+                return;
+
+
+            listView.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        getFileAdapter().notifyDataSetChanged();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
 
         public FileAdapter(ListView listView, ArrayList<MikeFile> files) {
@@ -452,22 +482,14 @@ public class FileManagerFragment extends Fragment {
             }
         }
 
+        log("receivedFiles > " + mikeFiles.toString());
+
         FileAdapter.setFiles(mikeFiles);
-        if (FileAdapter.getFileAdapter() != null) {
-            try {
-                FileAdapter.getListView().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        FileAdapter.getFileAdapter().notifyDataSetChanged();
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+
     }
 
     public static void handleMessage(String msg) {
+        log("handleFileManagerMsg > " + msg);
         if (msg == null || msg.length() < 1) {
             log("handleMessage > msg == null or len < 1");
             return;
@@ -519,10 +541,14 @@ public class FileManagerFragment extends Fragment {
     }
 
     public static void handleCommand(String msg) {
+        log("handleCommands");
         final String[] split = msg.split(FILE_SEP);
         if (msg.startsWith(COMMAND_BROWSE)) {
             //todo command name + filesep+filepath
-            sendMessage(RESPONSE_BROWSE + FILE_SEP + showTree(new File(split[1])));
+            if (split.length < 2 || split[1] == null || split[1].length() < 1)
+                sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(Environment.getExternalStorageDirectory().getPath())));
+            else
+                sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(split[1])));
         } else if (msg.startsWith(COMMAND_OPEN)) {
             //todo command name + filesep+filepath
             open(new File(split[1]));
@@ -576,7 +602,7 @@ public class FileManagerFragment extends Fragment {
         }
         final String ext = getExtension(file.getName());
         FileType fileType = FileType.GENERIC;
-
+//Todo fix this .contain bull, cause its buggy
         if (MUSIC_EXTENSIONS.contains(ext)) {
             fileType = FileType.MUSIC;
         } else if (PICTURE_EXTENSIONS.contains(ext)) {
@@ -605,9 +631,9 @@ public class FileManagerFragment extends Fragment {
         MUSIC, PICTURE, GENERIC, VIDEO, DOCUMENT, FOLDER
     }
 
-    public static void sendMessage(String command) {
+    public static void sendFileCommand(String command) {
         if (command != null && command.length() > 0) {
-            P2PManager.enqueueMessage(new Message(command, Message.MessageType.SEND_COMMAND));
+            P2PManager.enqueueMessage(new Message(command, Message.MessageType.SEND_FILE));
         } else {
             log("please enter a message_background string or please init p2pManager");
         }

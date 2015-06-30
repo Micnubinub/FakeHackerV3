@@ -24,6 +24,7 @@
         android:layout_marginTop="8dp"
         android:layout_toRightOf="@+id/icon"
         android:text="Music"
+        android:textColor="#fff"
         android:textSize="18sp" />
 
     <TextView
@@ -38,6 +39,7 @@
         android:layout_toRightOf="@+id/icon"
         android:padding="4dp"
         android:text="22kb"
+        android:textColor="#fff"
         android:textSize="16sp"
         android:textStyle="italic" />
 

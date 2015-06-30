@@ -73,9 +73,9 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"></RelativeLayout>
+    <!--<RelativeLayout-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="fill_parent"></RelativeLayout>-->
 
     <LinearLayout
         android:id="@+id/side_pane"
@@ -95,5 +95,8 @@
         android:paddingBottom="8dp"
         android:paddingLeft="7dp"
         android:paddingRight="8dp"
-        android:paddingTop="4dp" />
+        android:paddingTop="4dp">
+
+        <requestFocus />
+    </tbs.fakehackerv3.FAB>
 </RelativeLayout>

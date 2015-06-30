@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="Flash Light"
-            android:textColor="#555555"
+            android:textColor="#fff"
             android:textSize="18sp" />
 
         <!--<Switch-->
@@ -25,7 +25,7 @@
         <!--android:enabled="false"-->
         <!--android:padding="12dp"-->
         <!--android:text="Wifi"-->
-        <!--android:textColor="#555555"-->
+        <!--android:textColor="#fff"-->
         <!--android:textSize="18sp" />-->
 
         <TextView
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="Bluetooth"
-            android:textColor="#555555"
+            android:textColor="#fff"
             android:textSize="18sp" />
 
         <TextView
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="Take picture (back)"
-            android:textColor="#555555"
+            android:textColor="#fff"
             android:textSize="18sp" />
 
         <TextView
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="Take picture (front)"
-            android:textColor="#555555"
+            android:textColor="#fff"
             android:textSize="18sp" />
 
         <TextView
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="Media Control"
-            android:textColor="#555555"
+            android:textColor="#fff"
             android:textSize="18sp" />
 
 
@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="Brightness"
-            android:textColor="#555555"
+            android:textColor="#fff"
             android:textSize="18sp" />
 
         <!--<TextView-->
@@ -80,7 +80,7 @@
             <!--android:layout_height="wrap_content"-->
             <!--android:padding="12dp"-->
             <!--android:text="Auto-rotation"-->
-            <!--android:textColor="#555555"-->
+            <!--android:textColor="#fff"-->
             <!--android:textSize="18sp" />-->
 
         <!--<TextView-->
@@ -89,7 +89,7 @@
             <!--android:layout_height="wrap_content"-->
             <!--android:padding="12dp"-->
             <!--android:text="Screen Timeout"-->
-            <!--android:textColor="#555555"-->
+            <!--android:textColor="#fff"-->
             <!--android:textSize="18sp" />-->
 
         <!--<TextView-->
@@ -98,7 +98,7 @@
             <!--android:layout_height="wrap_content"-->
             <!--android:padding="12dp"-->
             <!--android:text="Silent Mode"-->
-            <!--android:textColor="#555555"-->
+            <!--android:textColor="#fff"-->
             <!--android:textSize="18sp" />-->
 
 
@@ -108,7 +108,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="Alarm Volume"
-            android:textColor="#555555"
+            android:textColor="#fff"
             android:textSize="18sp" />
 
 
@@ -118,7 +118,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="Notification Volume"
-            android:textColor="#555555"
+            android:textColor="#fff"
             android:textSize="18sp" />
 
         <TextView
@@ -127,7 +127,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="Media Volume"
-            android:textColor="#555555"
+            android:textColor="#fff"
             android:textSize="18sp" />
 
         <TextView
@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="Ringer Volume"
-            android:textColor="#555555"
+            android:textColor="#fff"
             android:textSize="18sp" />
     </LinearLayout>
 </ScrollView>

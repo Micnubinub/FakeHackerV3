@@ -16,7 +16,6 @@ public class MainViewManager {
     private static View mainView;
     public static FAB fab;
     public static LinearLayout sidePane;
-    public static FrameLayout container;
     private static ImageView hamburger;
     private static Context context;
     private static TextView connectedToStaticText, connectedToDevice;
@@ -33,7 +32,6 @@ public class MainViewManager {
         sidePane = (LinearLayout) mainView.findViewById(R.id.side_pane);
         fab = (FAB) mainView.findViewById(R.id.fab);
         hamburger = (ImageView) mainView.findViewById(R.id.hamburger);
-        container = (FrameLayout) mainView.findViewById(R.id.container);
         connectedToDevice = (TextView) mainView.findViewById(R.id.device_text);
         connectedToStaticText = (TextView) mainView.findViewById(R.id.static_text);
     }

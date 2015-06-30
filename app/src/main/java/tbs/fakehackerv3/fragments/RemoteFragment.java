@@ -38,6 +38,11 @@ public class RemoteFragment extends Fragment {
         context = getActivity();
     }
 
+    public void init() {
+        //TODO
+        getView().setVisibility(View.VISIBLE);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -147,10 +152,10 @@ public class RemoteFragment extends Fragment {
         } else {
             log("please enter a message_background string or please init p2pManager");
         }
-
     }
 
     public static void handleReceivedCommand(String command) {
+        log("handleRecComm > " + command);
         final String[] splitCommand = command.split(Message.MESSAGE_SEPARATOR);
         final String commandString = splitCommand[1];
         //TODO check all these
@@ -657,7 +662,7 @@ public class RemoteFragment extends Fragment {
 
     private static void showMusicPlayerDialog() {
         final Dialog dialog = getDialog();
-        dialog.setContentView(R.layout.radio_group);
+        dialog.setContentView(R.layout.media_control);
         ((TextView) dialog.findViewById(R.id.title)).setText("Media Control");
         //Todo get the values from this and add them to the profile service
 
