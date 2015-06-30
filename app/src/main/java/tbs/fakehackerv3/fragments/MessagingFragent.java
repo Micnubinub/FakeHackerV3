@@ -29,9 +29,18 @@ import tbs.fakehackerv3.ReceivedMessage;
  * Created by Michael on 5/22/2015.
  */
 public class MessagingFragent extends Fragment {
+    private static final MessageAdapter messageAdapter = new MessageAdapter();
+    private static final Runnable update = new Runnable() {
+        @Override
+        public void run() {
+            messageAdapter.notifyDataSetChanged();
+        }
+    };
+    private static final ArrayList<ReceivedMessage> messages = new ArrayList<ReceivedMessage>();
     private static ListView messageList;
     private static EditText messageEditText;
     private static ImageView sendMessage;
+    private static FragmentActivity context;
     private static final View.OnClickListener sendMessageClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -47,102 +56,11 @@ public class MessagingFragent extends Fragment {
         }
     };
 
-    private static final MessageAdapter messageAdapter = new MessageAdapter();
-    private static FragmentActivity context;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        context = getActivity();
-        setRetainInstance(true);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //Todo
-
-        final View v = View.inflate(getActivity(), R.layout.messaging_fragment, null);
-        sendMessage = (ImageView) v.findViewById(R.id.send);
-        messageEditText = (EditText) v.findViewById(R.id.message);
-        messageList = (ListView) v.findViewById(R.id.list);
-
-        messageEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                sendMessage.setEnabled(messageEditText.getText().toString().length() > 0);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        sendMessage.setOnClickListener(sendMessageClickListener);
-        messageList.setAdapter(messageAdapter);
-        P2PManager.enqueueMessage(new Message("mikeCheck 1,2,1,2", Message.MessageType.SEND_MESSAGE));
-        return v;
-    }
-
-    private static final Runnable update = new Runnable() {
-        @Override
-        public void run() {
-            messageAdapter.notifyDataSetChanged();
-        }
-    };
-
     private static void notifyDataSetChanged() {
         try {
             context.runOnUiThread(update);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    public void init() {
-        //TODO
-        getView().setVisibility(View.VISIBLE);
-
-    }
-
-    private static final ArrayList<ReceivedMessage> messages = new ArrayList<ReceivedMessage>();
-
-    private static class MessageAdapter extends BaseAdapter {
-        @Override
-        public int getCount() {
-            return messages == null ? 0 : messages.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = View.inflate(context, R.layout.message_item, null);
-            }
-            final TextView body = (TextView) convertView.findViewById(R.id.body);
-            final TextView when = (TextView) convertView.findViewById(R.id.received_when);
-            final TextView sentBy = (TextView) convertView.findViewById(R.id.sent_by);
-
-            final ReceivedMessage message = messages.get(position);
-
-            body.setText(message.message);
-            when.setText(message.when);
-            sentBy.setText(message.from);
-            return convertView;
         }
     }
 
@@ -192,6 +110,85 @@ public class MessagingFragent extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = getActivity();
+        setRetainInstance(true);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //Todo
+
+        final View v = View.inflate(getActivity(), R.layout.messaging_fragment, null);
+        sendMessage = (ImageView) v.findViewById(R.id.send);
+        messageEditText = (EditText) v.findViewById(R.id.message);
+        messageList = (ListView) v.findViewById(R.id.list);
+
+        messageEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                sendMessage.setEnabled(messageEditText.getText().toString().length() > 0);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        sendMessage.setOnClickListener(sendMessageClickListener);
+        messageList.setAdapter(messageAdapter);
+        P2PManager.enqueueMessage(new Message("mikeCheck 1,2,1,2", Message.MessageType.MESSAGE));
+        return v;
+    }
+
+    public void init() {
+        //TODO
+        getView().setVisibility(View.VISIBLE);
+
+    }
+
+    private static class MessageAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return messages == null ? 0 : messages.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = View.inflate(context, R.layout.message_item, null);
+            }
+            final TextView body = (TextView) convertView.findViewById(R.id.body);
+            final TextView when = (TextView) convertView.findViewById(R.id.received_when);
+            final TextView sentBy = (TextView) convertView.findViewById(R.id.sent_by);
+
+            final ReceivedMessage message = messages.get(position);
+
+            body.setText(message.message);
+            when.setText(message.when);
+            sentBy.setText(message.from);
+            return convertView;
         }
     }
 

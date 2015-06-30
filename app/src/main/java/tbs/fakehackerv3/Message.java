@@ -5,41 +5,27 @@ package tbs.fakehackerv3;
  */
 public class Message {
     public static final String MESSAGE_SEPARATOR = "///,///,///";
-    private String message;
     public MessageType messageType;
+    private String message;
 
     public Message(String message, MessageType messageType) {
         this.messageType = messageType;
         switch (messageType) {
-            case SEND_COMMAND:
+            case COMMAND:
                 this.message = message;
                 break;
-            case SEND_FILE:
+            case FILE:
                 this.message = String.valueOf(messageType) + MESSAGE_SEPARATOR + message;
                 break;
-            case SEND_MESSAGE:
+            case MESSAGE:
                 if (message == null || message.length() < 1) {
                     message = "nothing to see here";
                 }
                 this.message = String.valueOf(messageType) + MESSAGE_SEPARATOR + message + MESSAGE_SEPARATOR + String.valueOf(System.currentTimeMillis());
                 break;
-        }
-    }
-
-    public void setMessage(String messageStringWithSep) {
-        final String[] msg = messageStringWithSep.split(MESSAGE_SEPARATOR);
-        if (msg.length < 1) {
-
-        } else {
-
-            if (msg[0].contains("SEND_MESSAGE")) {
-                messageType = MessageType.SEND_MESSAGE;
-            } else if (msg[0].contains("SEND_FILE")) {
-                messageType = MessageType.SEND_FILE;
-            } else if (msg[0].contains("SEND_COMMAND")) {
-                messageType = MessageType.SEND_COMMAND;
-            }
-            this.message = msg[1];
+            case CONFIRMATION:
+                this.message = message;
+                break;
         }
     }
 
@@ -51,8 +37,29 @@ public class Message {
         return message.split(MESSAGE_SEPARATOR)[1];
     }
 
-    public enum MessageType {
-        SEND_MESSAGE, SEND_FILE, SEND_COMMAND
+    public void setMessage(String messageStringWithSep) {
+        final String[] msg = messageStringWithSep.split(MESSAGE_SEPARATOR);
+        if (msg.length < 1) {
+
+        } else {
+
+            if (msg[0].contains("MESSAGE")) {
+                messageType = MessageType.MESSAGE;
+            } else if (msg[0].contains("FILE")) {
+                messageType = MessageType.FILE;
+            } else if (msg[0].contains("COMMAND")) {
+                messageType = MessageType.COMMAND;
+            }
+            this.message = msg[1];
+        }
     }
 
+    @Override
+    public String toString() {
+        return message;
+    }
+
+    public enum MessageType {
+        MESSAGE, FILE, COMMAND, CONFIRMATION
+    }
 }

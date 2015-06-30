@@ -27,11 +27,17 @@ import tbs.fakehackerv3.fragments.Settings;
 
 public class MainActivity extends FragmentActivity {
 
+    private static final Fragment[] fragments = new Fragment[4];
     public static WifiP2pDevice connectedDevice;
-    private static PagerSlidingTabStrip tabs;
-    private static ViewPager pager;
-    private static MyPagerAdapter pagerAdapter;
-
+    public static P2PManager p2PManager;
+    public static Activity context;
+    public static MainViewManager mainViewManager;
+    //Fragments
+    public static CustomAndDownloadedCommands customAndDownloadedCommands;
+    public static OnlineRepo onlineRepo;
+    public static Settings settings;
+    public static boolean connected;
+    public static WifiP2pGroup currentGroup;
     private static final P2PManager.P2PListener p2pListener = new P2PManager.P2PListener() {
         @Override
         public void onScanStarted() {
@@ -47,11 +53,11 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onMessageReceived(String msg) {
             final String[] received = msg.split(Message.MESSAGE_SEPARATOR, 2);
-            if (received[0].equals(String.valueOf(Message.MessageType.SEND_COMMAND))) {
+            if (received[0].equals(String.valueOf(Message.MessageType.COMMAND))) {
                 RemoteFragment.handleReceivedCommand(received[1]);
-            } else if (received[0].equals(String.valueOf(Message.MessageType.SEND_MESSAGE))) {
+            } else if (received[0].equals(String.valueOf(Message.MessageType.MESSAGE))) {
                 MessagingFragent.handleReceivedMessage(received[1]);
-            } else if (received[0].equals(String.valueOf(Message.MessageType.SEND_FILE))) {
+            } else if (received[0].equals(String.valueOf(Message.MessageType.FILE))) {
                 FileManagerFragment.handleMessage(received[1]);
             }
             //TODO split them up into the different categories then
@@ -129,27 +135,9 @@ public class MainActivity extends FragmentActivity {
             /*Todo messageEditText.setEnabled(true);*/
         }
     };
-    public static P2PManager p2PManager;
-    public static Activity context;
-    public static MainViewManager mainViewManager;
-    //Fragments
-    public static CustomAndDownloadedCommands customAndDownloadedCommands;
-    public static OnlineRepo onlineRepo;
-    public static Settings settings;
-    public static boolean connected;
-    public static WifiP2pGroup currentGroup;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        context = this;
-        p2PManager = P2PManager.getP2PManager(this, p2pListener);
-        setContentView(R.layout.main_view);
-        mainViewManager = new MainViewManager(findViewById(R.id.main_view));
-
-        setUpFragments();
-//        showDialog();
-    }
+    private static PagerSlidingTabStrip tabs;
+    private static ViewPager pager;
+    private static MyPagerAdapter pagerAdapter;
 
     public static void setConnected(final boolean connected) {
         if (MainActivity.connected != connected) {
@@ -231,6 +219,18 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = this;
+        p2PManager = P2PManager.getP2PManager(this, p2pListener);
+        setContentView(R.layout.main_view);
+        mainViewManager = new MainViewManager(findViewById(R.id.main_view));
+
+        setUpFragments();
+//        showDialog();
+    }
+
+    @Override
     protected void onDestroy() {
         P2PManager.destroy();
         super.onDestroy();
@@ -252,8 +252,6 @@ public class MainActivity extends FragmentActivity {
         tabs.setViewPager(pager);
 
     }
-
-    private static final Fragment[] fragments = new Fragment[4];
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 

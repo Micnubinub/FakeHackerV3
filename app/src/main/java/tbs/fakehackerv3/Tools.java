@@ -191,13 +191,13 @@ public class Tools {
 
     public static void handleMessage(Message message) {
         switch (message.messageType) {
-            case SEND_MESSAGE:
+            case MESSAGE:
                 handleReceivedMessage(message.getMessage());
                 break;
-            case SEND_FILE:
+            case FILE:
                 handleReceiveFile(message.getMessage());
                 break;
-            case SEND_COMMAND:
+            case COMMAND:
                 handleReceivedCommand(message.getMessage());
                 break;
         }
@@ -311,7 +311,7 @@ public class Tools {
                 file.mkdirs();
             } else {
                 if (MainActivity.p2PManager != null)
-                    P2PManager.enqueueMessage(new Message(file.getAbsolutePath(), Message.MessageType.SEND_FILE));
+                    P2PManager.enqueueMessage(new Message(file.getAbsolutePath(), Message.MessageType.FILE));
             }
         } else if (splitCommand[1].contains(StaticValues.MOVE_FILE)) {
             final File file = new File(commandString);
@@ -397,7 +397,7 @@ public class Tools {
     public static void sendMessage(String message) {
         //TODO
         if (MainActivity.p2PManager != null)
-            P2PManager.enqueueMessage(new Message(message, Message.MessageType.SEND_MESSAGE));
+            P2PManager.enqueueMessage(new Message(message, Message.MessageType.MESSAGE));
     }
 
     public static void sendFile(File file) {
@@ -405,14 +405,14 @@ public class Tools {
         if (MainActivity.p2PManager != null) {
             //TODO maybe add a prefix >> receiveFile then listen for it when getting a message_background and makes sure the device
             //todo is ready to receive a file
-            P2PManager.enqueueMessage(new Message(file.getName(), Message.MessageType.SEND_FILE));
+            P2PManager.enqueueMessage(new Message(file.getName(), Message.MessageType.FILE));
         }
     }
 
     public static void sendCommand(String commandType, String cvs) {
         //TODO
 
-        final StringBuilder builder = new StringBuilder(String.valueOf(Message.MessageType.SEND_COMMAND));
+        final StringBuilder builder = new StringBuilder(String.valueOf(Message.MessageType.COMMAND));
         builder.append(Message.MESSAGE_SEPARATOR);
         builder.append(commandType);
         builder.append(Message.MESSAGE_SEPARATOR);
@@ -493,7 +493,7 @@ public class Tools {
         }
 
         if (cvs != null && cvs.length() > 0 && MainActivity.p2PManager != null) {
-            P2PManager.enqueueMessage(new Message(builder.toString(), Message.MessageType.SEND_COMMAND));
+            P2PManager.enqueueMessage(new Message(builder.toString(), Message.MessageType.COMMAND));
         } else {
             log("please enter a message_background string or please init p2pManager");
         }
