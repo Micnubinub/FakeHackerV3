@@ -1,80 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/flash"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Flash Light"
-            android:textColor="#fff"
-            android:textSize="18sp" />
 
-        <!--<Switch-->
-        <!--android:id="@+id/wifi"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:enabled="false"-->
-        <!--android:padding="12dp"-->
-        <!--android:text="Wifi"-->
-        <!--android:textColor="#fff"-->
-        <!--android:textSize="18sp" />-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/bluetooth"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Bluetooth"
-            android:textColor="#fff"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/flash"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Flash Light"
+                android:textColor="#fff"
+                android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/take_pic_back"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Take picture (back)"
-            android:textColor="#fff"
-            android:textSize="18sp" />
+            <!--<Switch-->
+            <!--android:id="@+id/wifi"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:enabled="false"-->
+            <!--android:padding="12dp"-->
+            <!--android:text="Wifi"-->
+            <!--android:textColor="#fff"-->
+            <!--android:textSize="18sp" />-->
 
-        <TextView
-            android:id="@+id/take_pic_front"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Take picture (front)"
-            android:textColor="#fff"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/bluetooth"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Bluetooth"
+                android:textColor="#fff"
+                android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/media_control"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Media Control"
-            android:textColor="#fff"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/take_pic_back"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Take picture (back)"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/take_pic_front"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Take picture (front)"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/media_control"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Media Control"
+                android:textColor="#fff"
+                android:textSize="18sp" />
 
 
-        <TextView
-            android:id="@+id/brightness"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Brightness"
-            android:textColor="#fff"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/brightness"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Brightness"
+                android:textColor="#fff"
+                android:textSize="18sp" />
 
-        <!--<TextView-->
+            <!--<TextView-->
             <!--android:id="@+id/auto_rotation"-->
             <!--android:layout_width="fill_parent"-->
             <!--android:layout_height="wrap_content"-->
@@ -83,7 +88,7 @@
             <!--android:textColor="#fff"-->
             <!--android:textSize="18sp" />-->
 
-        <!--<TextView-->
+            <!--<TextView-->
             <!--android:id="@+id/screen_timeout"-->
             <!--android:layout_width="fill_parent"-->
             <!--android:layout_height="wrap_content"-->
@@ -92,7 +97,7 @@
             <!--android:textColor="#fff"-->
             <!--android:textSize="18sp" />-->
 
-        <!--<TextView-->
+            <!--<TextView-->
             <!--android:id="@+id/silent_mode"-->
             <!--android:layout_width="fill_parent"-->
             <!--android:layout_height="wrap_content"-->
@@ -102,41 +107,52 @@
             <!--android:textSize="18sp" />-->
 
 
-        <TextView
-            android:id="@+id/alarm_volume"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Alarm Volume"
-            android:textColor="#fff"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/alarm_volume"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Alarm Volume"
+                android:textColor="#fff"
+                android:textSize="18sp" />
 
 
-        <TextView
-            android:id="@+id/notification_volume"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Notification Volume"
-            android:textColor="#fff"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/notification_volume"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Notification Volume"
+                android:textColor="#fff"
+                android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/media_volume"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Media Volume"
-            android:textColor="#fff"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/media_volume"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Media Volume"
+                android:textColor="#fff"
+                android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/ringer_volume"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Ringer Volume"
-            android:textColor="#fff"
-            android:textSize="18sp" />
-    </LinearLayout>
-</ScrollView>
+            <TextView
+                android:id="@+id/ringer_volume"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Ringer Volume"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/placeholder"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#222222"
+        android:gravity="center"
+        android:text="Click to gain control"
+        android:textColor="#fff"
+        android:textSize="22sp" />
+</RelativeLayout>

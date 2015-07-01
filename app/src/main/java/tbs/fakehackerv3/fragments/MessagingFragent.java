@@ -37,10 +37,24 @@ public class MessagingFragent extends Fragment {
         }
     };
     private static final ArrayList<ReceivedMessage> messages = new ArrayList<ReceivedMessage>();
+    public static boolean isInit;
+    public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!P2PManager.isActive()) {
+                MainActivity.toast("click the refresh button on both devices to connect");
+                return;
+            }
+            isInit = true;
+            v.setVisibility(View.GONE);
+            P2PManager.enqueueMessage(new Message("mikeCheck 1,2,1,2", Message.MessageType.MESSAGE));
+        }
+    };
     private static ListView messageList;
     private static EditText messageEditText;
     private static ImageView sendMessage;
     private static FragmentActivity context;
+    private static View v;
     private static final View.OnClickListener sendMessageClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -88,7 +102,15 @@ public class MessagingFragent extends Fragment {
                     messages.add(message);
                     notifyDataSetChanged();
                     addMessageToDataBase(message);
+                }
 
+                if (!isInit) {
+                    try {
+                        v.findViewById(R.id.placeholder).setVisibility(View.GONE);
+                        isInit = true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -125,7 +147,7 @@ public class MessagingFragent extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Todo
 
-        final View v = View.inflate(getActivity(), R.layout.messaging_fragment, null);
+        v = View.inflate(getActivity(), R.layout.messaging_fragment, null);
         sendMessage = (ImageView) v.findViewById(R.id.send);
         messageEditText = (EditText) v.findViewById(R.id.message);
         messageList = (ListView) v.findViewById(R.id.list);
@@ -148,7 +170,8 @@ public class MessagingFragent extends Fragment {
         });
         sendMessage.setOnClickListener(sendMessageClickListener);
         messageList.setAdapter(messageAdapter);
-        P2PManager.enqueueMessage(new Message("mikeCheck 1,2,1,2", Message.MessageType.MESSAGE));
+        v.findViewById(R.id.placeholder).setOnClickListener(placeHolderListener);
+
         return v;
     }
 

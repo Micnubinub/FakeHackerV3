@@ -29,6 +29,18 @@ import tbs.fakehackerv3.custom_views.MaterialSwitch;
  */
 public class RemoteFragment extends Fragment {
 
+    public static boolean isInit;
+    public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!P2PManager.isActive()) {
+                MainActivity.toast("click the refresh button on both devices to connect");
+                return;
+            }
+            isInit = true;
+            v.setVisibility(View.GONE);
+        }
+    };
     private static Context context;
     public static final View.OnClickListener listener = new View.OnClickListener() {
         @Override
@@ -554,56 +566,6 @@ public class RemoteFragment extends Fragment {
         dialog.show();
     }
 
-    private static void showTorchFlashDialog() {
-//        final Dialog dialog = getDialog();
-//        dialog.setContentView(R.layout.switch_item);
-//        ((TextView) dialog.findViewById(R.id.title)).setText("Torch | Flash toggle");
-//        final MaterialSwitch materialSwitch = (MaterialSwitch) dialog.findViewById(R.id.material_switch);
-//        materialSwitch.setText("Flash light");
-//
-//        dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-        sendCommand(StaticValues.TOGGLE_TORCH, "");
-//                dialog.dismiss();
-//            }
-//        });
-//
-//        dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                dialog.dismiss();
-//            }
-//        });
-//
-//        dialog.show();
-    }
-
-    private static void showBluetoothDialog() {
-        final Dialog dialog = getDialog();
-        dialog.setContentView(R.layout.switch_item);
-        ((TextView) dialog.findViewById(R.id.title)).setText("Bluetooth");
-        final MaterialSwitch materialSwitch = (MaterialSwitch) dialog.findViewById(R.id.material_switch);
-        materialSwitch.setText("Bluetooth");
-
-        dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendCommand(StaticValues.SET_BLUETOOTH, materialSwitch.isChecked() ? "1" : "0");
-                dialog.dismiss();
-            }
-        });
-
-        dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-    }
-
     /* Todo private static void showDataDialog() {
           final Dialog dialog = getDialog();
           dialog.setContentView(R.layout.radio_group);
@@ -709,16 +671,54 @@ public class RemoteFragment extends Fragment {
         dialog.show();
     }*/
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-        context = getActivity();
+    private static void showTorchFlashDialog() {
+//        final Dialog dialog = getDialog();
+//        dialog.setContentView(R.layout.switch_item);
+//        ((TextView) dialog.findViewById(R.id.title)).setText("Torch | Flash toggle");
+//        final MaterialSwitch materialSwitch = (MaterialSwitch) dialog.findViewById(R.id.material_switch);
+//        materialSwitch.setText("Flash light");
+//
+//        dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+        sendCommand(StaticValues.TOGGLE_TORCH, "");
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        dialog.show();
     }
 
-    public void init() {
-        //TODO
-        getView().setVisibility(View.VISIBLE);
+    private static void showBluetoothDialog() {
+        final Dialog dialog = getDialog();
+        dialog.setContentView(R.layout.switch_item);
+        ((TextView) dialog.findViewById(R.id.title)).setText("Bluetooth");
+        final MaterialSwitch materialSwitch = (MaterialSwitch) dialog.findViewById(R.id.material_switch);
+        materialSwitch.setText("Bluetooth");
+
+        dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendCommand(StaticValues.SET_BLUETOOTH, materialSwitch.isChecked() ? "1" : "0");
+                dialog.dismiss();
+            }
+        });
+
+        dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
 
@@ -774,6 +774,18 @@ public class RemoteFragment extends Fragment {
         dialog.show();
     }*/
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        context = getActivity();
+    }
+
+    public void init() {
+        //TODO
+        getView().setVisibility(View.VISIBLE);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -792,9 +804,10 @@ public class RemoteFragment extends Fragment {
         v.findViewById(R.id.notification_volume).setOnClickListener(listener);
         v.findViewById(R.id.ringer_volume).setOnClickListener(listener);
 
+        v.findViewById(R.id.placeholder).setOnClickListener(placeHolderListener);
+
         return v;
     }
-
  /* Todo  private static void showSilentModeDialog() {
         final Dialog dialog = getDialog();
         dialog.setContentView(R.layout.switch_item);

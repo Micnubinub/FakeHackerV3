@@ -135,34 +135,8 @@ public class P2PManager extends Service {
                 return;
             }
             toast(String.format("connectionInfo > groupF : %b, groupO : %b, host : %s", wifiP2pInfo.groupFormed, wifiP2pInfo.isGroupOwner, wifiP2pInfo.groupOwnerAddress.toString()));
-
-
             handleWifiP2PInfo(wifiP2pInfo);
             log("receivedInfo : " + wifiP2pInfo.groupOwnerAddress.toString() + "\nisOwner? : " + wifiP2pInfo.isGroupOwner);
-        }
-    };
-    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
-        @Override
-        public void onDeviceDisconnected() {
-            p2PListener.onDevicesDisconnected("not sure");
-        }
-
-        @Override
-        public void onDeviceConnected(WifiP2pInfo info) {
-            if (info == null) {
-                requestConnectionInfo("onDevConnected");
-                return;
-            }
-
-            handleWifiP2PInfo(info);
-        }
-
-        @Override
-        public void onPeersChanged() {
-            if (manager != null && !isActive() && !tryingToConnect) {
-                if (!isActive())
-                    manager.requestPeers(channel, wifiP2PPeerListener);
-            }
         }
     };
     private static P2PAdapter adapter;
@@ -188,6 +162,30 @@ public class P2PManager extends Service {
             else {
                 toast("No peers found, try again");
                 log("No peers found, try again");
+            }
+        }
+    };
+    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
+        @Override
+        public void onDeviceDisconnected() {
+            p2PListener.onDevicesDisconnected("not sure");
+        }
+
+        @Override
+        public void onDeviceConnected(WifiP2pInfo info) {
+            if (info == null) {
+                requestConnectionInfo("onDevConnected");
+                return;
+            }
+
+            handleWifiP2PInfo(info);
+        }
+
+        @Override
+        public void onPeersChanged() {
+            if (manager != null && !isActive() && !tryingToConnect) {
+                if (!isActive())
+                    manager.requestPeers(channel, wifiP2PPeerListener);
             }
         }
     };
@@ -474,7 +472,6 @@ public class P2PManager extends Service {
             }
         });
     }
-
     public static void startMainThread() {
         log("should start mainthread");
         tryingToConnect = false;
@@ -959,12 +956,10 @@ public class P2PManager extends Service {
                 requestConnectionInfo("not isIO");
                 return;
             }
-
-            if (isGroupOwner) {
-                isWaitingForConfirmation = true;
-            } else {
-                sendConfirmation();
-            }
+//            isWaitingForConfirmation = true;
+//            if (isGroupOwner) {
+//                sendSimpleText(CONFIRMATION);
+//            }
 
             dismissDialog();
             if (p2PListener != null)

@@ -38,6 +38,7 @@ public class MainActivity extends FragmentActivity {
     public static Settings settings;
     public static boolean connected;
     public static WifiP2pGroup currentGroup;
+
     private static final P2PManager.P2PListener p2pListener = new P2PManager.P2PListener() {
         @Override
         public void onScanStarted() {

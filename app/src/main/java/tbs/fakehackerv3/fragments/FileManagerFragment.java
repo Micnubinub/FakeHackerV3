@@ -72,6 +72,19 @@ public class FileManagerFragment extends Fragment {
         }
     };
     public static ListView listView;
+    public static boolean isInit;
+    public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!P2PManager.isActive()) {
+                MainActivity.toast("click the refresh button on both devices to connect");
+                return;
+            }
+            isInit = true;
+            v.setVisibility(View.GONE);
+            sendFileCommand(COMMAND_BROWSE + FILE_SEP);
+        }
+    };
     private static FragmentActivity context;
     private static String currentDirectory = Environment.getExternalStorageDirectory().getPath();
     private static boolean isInFileManagerMode = false;
@@ -544,7 +557,7 @@ public class FileManagerFragment extends Fragment {
         listView = (ListView) view.findViewById(R.id.list);
         files = new ArrayList<MikeFile>();
         listView.setAdapter(new FileAdapter(listView));
-        sendFileCommand(COMMAND_BROWSE + FILE_SEP);
+        view.findViewById(R.id.placeholder).setOnClickListener(placeHolderListener);
         return view;
     }
 
@@ -559,7 +572,6 @@ public class FileManagerFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MainActivity.toast("file clicked : " + files.get(position).toString());
                 final MikeFile file = files.get(position);
-
                 if (file.fileType == FileType.FOLDER)
                     sendFileCommand(COMMAND_BROWSE + FILE_SEP + file.path);
                 else sendFileCommand(COMMAND_OPEN + FILE_SEP + file.path);
