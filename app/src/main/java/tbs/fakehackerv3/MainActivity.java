@@ -110,9 +110,9 @@ public class MainActivity extends FragmentActivity {
                                                                     out += wifiP2pDevice.deviceName + " (" + wifiP2pDevice.deviceAddress + "),";
                                                                 }
                                                             }
-                                                            log("connection info from onDeviceConnected : ");
-                                                            log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
-                                                            log(out);
+//                                                            log("connection info from onDeviceConnected : ");
+//                                                            log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
+//                                                            log(out);
                                                         }
                                                     });
                                                 }
@@ -124,9 +124,9 @@ public class MainActivity extends FragmentActivity {
                                     out += device.deviceName + " (" + device.deviceAddress + "),";
 
                                 }
-                                log("connection info from onDeviceConnected : ");
-                                log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
-                                log(out);
+//                                log("connection info from onDeviceConnected : ");
+//                                log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
+//                                log(out);
                             }
                         });
                     }
