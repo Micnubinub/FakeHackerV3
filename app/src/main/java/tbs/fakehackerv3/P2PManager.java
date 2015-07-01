@@ -95,7 +95,7 @@ public class P2PManager extends Service {
     public static P2PBroadcastReceiver receiver;
     public static P2PListener p2PListener;
     //Todo stop this somewhere
-    public static boolean stop, currentlySendingSomething;
+    public static boolean stop, isWaitingForConfirmation, hasntSentConfirmation;
     public static String CONFIRMATION = "MES_REC_CON";
     public static boolean dialogShown, tryingToConnect;
     public static P2PManager p2PManager;
@@ -139,30 +139,6 @@ public class P2PManager extends Service {
             log("receivedInfo : " + wifiP2pInfo.groupOwnerAddress.toString() + "\nisOwner? : " + wifiP2pInfo.isGroupOwner);
         }
     };
-    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
-        @Override
-        public void onDeviceDisconnected() {
-            p2PListener.onDevicesDisconnected("not sure");
-        }
-
-        @Override
-        public void onDeviceConnected(WifiP2pInfo info) {
-            if (info == null) {
-                requestConnectionInfo("onDevConnected");
-                return;
-            }
-
-            handleWifiP2PInfo(info);
-        }
-
-        @Override
-        public void onPeersChanged() {
-            if (manager != null && !isActive() && !tryingToConnect) {
-                if (!isActive())
-                    manager.requestPeers(channel, wifiP2PPeerListener);
-            }
-        }
-    };
     private static P2PAdapter adapter;
     public static final WifiP2pManager.PeerListListener wifiP2PPeerListener = new WifiP2pManager.PeerListListener() {
         @Override
@@ -186,6 +162,30 @@ public class P2PManager extends Service {
             else {
                 toast("No peers found, try again");
                 log("No peers found, try again");
+            }
+        }
+    };
+    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
+        @Override
+        public void onDeviceDisconnected() {
+            p2PListener.onDevicesDisconnected("not sure");
+        }
+
+        @Override
+        public void onDeviceConnected(WifiP2pInfo info) {
+            if (info == null) {
+                requestConnectionInfo("onDevConnected");
+                return;
+            }
+
+            handleWifiP2PInfo(info);
+        }
+
+        @Override
+        public void onPeersChanged() {
+            if (manager != null && !isActive() && !tryingToConnect) {
+                if (!isActive())
+                    manager.requestPeers(channel, wifiP2PPeerListener);
             }
         }
     };
@@ -465,7 +465,6 @@ public class P2PManager extends Service {
                         return;
                     } catch (Exception d) {
                         d.printStackTrace();
-
                     }
                     //log("disconnectingAndGettingServerSocket " + e.toString());
                 } catch (Exception e) {
@@ -477,7 +476,6 @@ public class P2PManager extends Service {
     }
 
     public static void checkIfShouldRequestInfoOrConnect() {
-
         manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
             @Override
             public void onPeersAvailable(WifiP2pDeviceList peers) {
@@ -511,14 +509,19 @@ public class P2PManager extends Service {
     private static synchronized void sendMessage() {
         if (messages == null || messages.size() < 1)
             return;
-        log("sending Message : current list > " + messages.toString());
-        currentlySendingSomething = true;
+
         final Message message = messages.get(0);
-        switch (message.messageType) {
+        //Todo see if you can clean this up
+        if (!(message.messageType == Message.MessageType.CONFIRMATION) && isWaitingForConfirmation)
+            return;
+
+        log("sending Message : current list > " + messages.toString());
+        sendSimpleText(message.getSendableMessage());
+     /*Todo   switch (message.messageType) {
             case CONFIRMATION:
             case COMMAND:
             case MESSAGE:
-                sendSimpleText(message.getSendableMessage());
+
                 break;
             case FILE:
                 //Todo message_background structure >> fileName + sep + file
@@ -533,20 +536,19 @@ public class P2PManager extends Service {
 //                }
 
                 break;
-        }
+        }*/
         messages.remove(message);
     }
 
     //TODO
-    public static void setMessageReceived() {
-        log("set Message received");
-        currentlySendingSomething = false;
+    public static void setConfirmationReceived(String reason) {
+        log("set Message received > " + reason);
+        isWaitingForConfirmation = false;
     }
 
     public static void sendConfirmation() {
         messages.add(0, new Message(CONFIRMATION, Message.MessageType.CONFIRMATION));
-        currentlySendingSomething = false;
-
+        hasntSentConfirmation = true;
     }
 
     private static boolean sendSimpleText(String text) {
@@ -561,7 +563,7 @@ public class P2PManager extends Service {
             outputStream.flush();
 
             if (text.equals(CONFIRMATION)) {
-                setMessageReceived();
+                hasntSentConfirmation = false;
             }
 
         } catch (IOException e) {
@@ -605,7 +607,7 @@ public class P2PManager extends Service {
             if (outputStream == null) {
                 getInputAndOutputStream(getSocket());
             }
-            currentlySendingSomething = true;
+            //todo currentlySendingSomething = true;
             while ((len = inputStream.read(buf)) != -1) {
                 outputStream.write(buf, 0, len);
             }
@@ -981,7 +983,6 @@ public class P2PManager extends Service {
             //TODO remove for final release
 
 
-            log("mainThread step 1");
             int count = 0;
             while (getSocket() == null) {
                 final Socket socket = getSocket();
@@ -1002,29 +1003,27 @@ public class P2PManager extends Service {
                 if (count > 12) {
                     if (wifiP2pInfo.groupFormed) {
                         if (wifiP2pInfo.isGroupOwner) {
-                            log("count>12 : getServerSocket");
                             getServerSocketThreadVoid();
                             return;
                         } else {
-                            log("count>12 : getClientSocket");
                             getClientSocketThreadVoid(wifiP2pInfo.groupOwnerAddress.toString());
                             return;
                         }
                     } else {
-                        log("count>12 : groupNotFormed");
                         connectToDevice(clickedDevice);
                         return;
                     }
                 }
-                log("count : " + count);
                 count++;
             }
 
-            log("mainThread step 3");
             stop = false;
             while (!stop) {
-                if (!currentlySendingSomething) {
+                if (!isWaitingForConfirmation || hasntSentConfirmation) {
                     sendMessage();
+                } else {
+                    if (Tools.random.nextInt(250) == 10)
+                        log("hasntSentConf > " + hasntSentConfirmation + ", waitingForConf > " + isWaitingForConfirmation);
                 }
                 try {
                     Thread.sleep(10);
@@ -1032,7 +1031,6 @@ public class P2PManager extends Service {
                     e.printStackTrace();
                 }
             }
-            log("mainThread stopping");
         }
     }
 
@@ -1090,17 +1088,17 @@ public class P2PManager extends Service {
                             stop = true;
                             break;
                         } else {
-                            String message = new String(msg);
+                            final String message = new String(msg);
                             log("inputMsg = " + message);
                             if (message.equals(CONFIRMATION)) {
-                                setMessageReceived();
+                                setConfirmationReceived("message is confirmation");
                             } else if (message.contains(CONFIRMATION)) {
                                 if (p2PListener != null) {
                                     p2PListener.onMessageReceived(resolveText(message.split(CONFIRMATION)));
                                 } else {
                                     log("len : " + msg.length + " , listener : " + (p2PListener == null));
                                 }
-                                setMessageReceived();
+                                setConfirmationReceived("message contains confirmation");
                                 sendConfirmation();
                             } else {
                                 if (p2PListener != null) {

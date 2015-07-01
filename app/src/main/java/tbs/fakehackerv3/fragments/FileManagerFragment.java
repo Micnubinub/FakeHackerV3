@@ -102,24 +102,24 @@ public class FileManagerFragment extends Fragment {
         try {
             switch (mikeFile.fileType) {
                 case DOCUMENT:
-                    share.setType("text/*");
+                    share.setDataAndType(Uri.parse(mikeFile.path), "text/*");
                     break;
                 case GENERIC:
-                    share.setType("*/*");
+                    share.setDataAndType(Uri.parse(mikeFile.path), "*/*");
                     break;
                 case MUSIC:
-                    share.setType("audio/*");
+                    share.setDataAndType(Uri.parse(mikeFile.path), "audio/*");
                     break;
                 case VIDEO:
-                    share.setType("video/*");
+                    share.setDataAndType(Uri.parse(mikeFile.path), "video/*");
                     break;
                 case PICTURE:
-                    share.setType("image/*");
+                    share.setDataAndType(Uri.parse(mikeFile.path), "image/*");
                     break;
             }
 
-            share.putExtra(Intent.EXTRA_STREAM, Uri.parse(mikeFile.path));
-            context.startActivity(Intent.createChooser(share, "Share File"));
+
+            context.startActivity(share);
         } catch (Exception e) {
             print("Failed to open " + mikeFile.toString());
         }
