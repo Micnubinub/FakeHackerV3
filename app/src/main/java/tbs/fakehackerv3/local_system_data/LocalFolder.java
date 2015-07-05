@@ -2,6 +2,8 @@ package tbs.fakehackerv3.local_system_data;
 
 import java.util.ArrayList;
 
+import tbs.fakehackerv3.player.ZipFolder;
+
 public class LocalFolder {
     public final String name;
     public final ArrayList<LocalFile> files;

@@ -24,26 +24,23 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
         this.listener = listener;
     }
 
+    public static void log(String msg) {
+        // MainActivity.addLog(msg);
+        LogFragment.log(msg);
+        Log.e("p2p", "broadcast : " + msg);
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
-            // Check to see if Wi-Fi is enabled and notify appropriate activity
             final int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-            if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                // TODO Wifi P2P is enabled
-//                log("p2p enabled");
-            } else {
-                // TODO Wi-Fi P2P is not enabled
+            if (state != WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                 if (p2PManager != null)
                     P2PManager.toast("Please enable Wifi Direct");
             }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-            // Request available peers from the wifi p2p manager. This is an
-            // asynchronous call and the calling activity is notified with a
-            // callback on PeerListListener.onPeersAvailable()
-
             if (listener != null) {
                 listener.onPeersChanged();
             }
@@ -60,10 +57,8 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
             final NetworkInfo networkState = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             log("networkState : " + networkState.toString());
 
-            log("connection changed : " + (networkState.isConnected() ? "connected" : "not-connected"));
 
             if (networkState.isConnected() && !P2PManager.isActive() && !P2PManager.tryingToConnect) {
-                log("connection changed, connected, requesting group info");
                 if (listener != null) {
                     listener.onDeviceConnected(wifiInfo);
                 }
@@ -72,13 +67,8 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
                     listener.onDeviceDisconnected();
                 }
             }
-        } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-            // Respond to this device's wifi state changing
-//            log("wifi changed");
         }
     }
-
-
 
     public interface P2PBroadcastReceiverListener {
         void onDeviceDisconnected();
@@ -86,11 +76,5 @@ public class P2PBroadcastReceiver extends BroadcastReceiver {
         void onDeviceConnected(WifiP2pInfo info);
 
         void onPeersChanged();
-    }
-
-    public static void log(String msg) {
-        // MainActivity.addLog(msg);
-        LogFragment.log(msg);
-        Log.e("p2p", "broadcast : " + msg);
     }
 }

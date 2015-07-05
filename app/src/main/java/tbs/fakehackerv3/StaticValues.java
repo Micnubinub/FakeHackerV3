@@ -32,7 +32,6 @@ public class StaticValues {
     public static final String SET_ALARM_VOLUME = "SET_ALARM_VOLUME";
     public static final String SET_BRIGHTNESS = "SET_BRIGHTNESS";
     public static final String SET_BRIGHTNESS_MODE = "SET_BRIGHTNESS_MODE";
-    //TODO consider adding a wifi setting, but notify the user that this will kill the connection to the other device
     public static final String SET_BLUETOOTH = "SET_BLUETOOTH";
     public static final String CHAT_MESSAGE = "CHAT_MESSAGE";
     public static final String SPOOF_TOUCH = "SPOOF_TOUCH";

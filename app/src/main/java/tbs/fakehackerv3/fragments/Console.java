@@ -32,6 +32,7 @@ import tbs.fakehackerv3.R;
 import tbs.fakehackerv3.console.ConsoleItem;
 import tbs.fakehackerv3.console.ConsoleListAdapter;
 import tbs.fakehackerv3.player.Commands;
+import tbs.fakehackerv3.player.PlayerSystem;
 
 /**
  * Created by Michael on 7/5/2015.
@@ -125,9 +126,6 @@ public class Console extends Fragment {
 
         player = new PlayerSystem();
         handler = new Handler();
-
-        // Start Filemanager on startup
-        FileManager.startFilemanager();
 
         final DecimalFormat df = new DecimalFormat("0");
         //  final DecimalFormat mb = new DecimalFormat("0.00");
