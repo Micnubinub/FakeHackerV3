@@ -12,6 +12,8 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/MaterialSwitch.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/PagerSlidingTabStrip.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/local_system_data" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/local_system_data/PlayerSystem.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/local_system_data/ZipFolder.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/player/Commands.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/player/PlayerSystem.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/player/ZipFolder.java" charset="windows-1252" />
