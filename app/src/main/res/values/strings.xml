@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Fake Hacker V3</string>
-
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="UUID">eab11dff-2244-4114-af1c-52162544cc81</string>
 </resources>

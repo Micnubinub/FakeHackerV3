@@ -14,11 +14,18 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.SurfaceHolder;
+import android.view.View;
+import android.widget.RelativeLayout;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,7 +55,7 @@ import java.util.List;
  */
 public class RemoteTools {
 
-    public static Camera camera;
+    public static Camera frontCamera, backCamera;
     private static Context context;
     private static BluetoothAdapter bluetoothAdapter;
     private static WifiManager wifiManager;
@@ -61,6 +68,8 @@ public class RemoteTools {
         final MediaRecorder mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
         mediaRecorder.setOutputFile(Environment.getExternalStorageDirectory().getAbsolutePath() + "/test/test.mp3");
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         mediaRecorder.setMaxDuration(time_secs);
@@ -78,6 +87,8 @@ public class RemoteTools {
         intent.putExtra(StaticValues.SCHEDULED_RECORDING, time_secs);
         PendingIntent pendingIntent = PendingIntent.getService(context(), 0, intent, 0);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (when * 60000), pendingIntent);
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    String imageFileName = "JPEG_" + timeStamp + "_";
         context().startService(intent);
 */
     }
@@ -89,18 +100,192 @@ public class RemoteTools {
     public static Bitmap getScreenShot() {
         Bitmap bitmap = null;
 
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
 
         return bitmap;
     }
 
     public static void takePictureFront() {
-        final Camera camera = Camera.open();
+        frontCamera = getFrontCamera();
 
+        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
+        MainActivity.layout.setVisibility(View.VISIBLE);
+        final Camera.Parameters parameters = frontCamera.getParameters();
+        final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+        final Camera.Size cs = sizes.get(0);
+        MainActivity.layout.setLayoutParams(new RelativeLayout.LayoutParams(cs.width, cs.height));
+        MainActivity.layout.requestLayout();
+        MainActivity.layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        final SurfaceHolder holder = MainActivity.layout.getHolder();
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        holder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+
+            }
+
+            @Override
+            public void surfaceChanged(final SurfaceHolder holder, int format, int width, int height) {
+                try {
+                    frontCamera.setPreviewDisplay(holder);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                parameters.setPreviewSize(cs.width, cs.height);
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                parameters.setJpegQuality(100);
+                parameters.setRotation(90);
+                parameters.setPictureSize(cs.width, cs.height);
+                frontCamera.setParameters(parameters);
+                frontCamera.startPreview();
+
+                frontCamera.takePicture(null, null, new Camera.PictureCallback() {
+                    @Override
+                    public void onPictureTaken(byte[] data, Camera camera) {
+                        Log.e("pictureTaken", String.valueOf(data.length));
+                        try {
+                            String imageFileName = Environment.getExternalStorageDirectory() + "/FHV3/JPEG_" + timeStamp + "_NEW.jpg";
+                            final File file = new File(imageFileName);
+                            if (!file.getParentFile().exists())
+                                file.getParentFile().mkdirs();
+
+                            final FileOutputStream fileOutputStream = new FileOutputStream(imageFileName);
+                            fileOutputStream.write(data);
+//                        final Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        MainActivity.layout.setVisibility(View.GONE);
+                        camera.stopPreview();
+                        camera.release();
+
+                    }
+                });
+
+                holder.removeCallback(this);
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+
+            }
+        });
+    }
+
+    private static Camera getFrontCamera() {
+        if (frontCamera != null)
+            releaseCamera(frontCamera);
+        final Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        for (int camIdx = 0; camIdx < Camera.getNumberOfCameras(); camIdx++) {
+            Camera.getCameraInfo(camIdx, cameraInfo);
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                try {
+                    frontCamera = Camera.open(camIdx);
+                } catch (RuntimeException e) {
+                }
+            }
+        }
+        return frontCamera;
+    }
+
+    private static Camera getBackCamera() {
+        if (backCamera != null)
+            releaseCamera(backCamera);
+        final Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        for (int camIdx = 0; camIdx < Camera.getNumberOfCameras(); camIdx++) {
+            Camera.getCameraInfo(camIdx, cameraInfo);
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                try {
+                    backCamera = Camera.open(camIdx);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return backCamera;
     }
 
     public static void takePictureBack() {
+        backCamera = getBackCamera();
 
+        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        MainActivity.layout.setVisibility(View.VISIBLE);
+        final Camera.Parameters parameters = backCamera.getParameters();
+        final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+        final Camera.Size cs = sizes.get(0);
+        MainActivity.layout.setLayoutParams(new RelativeLayout.LayoutParams(cs.width, cs.height));
+        MainActivity.layout.requestLayout();
+        MainActivity.layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        final SurfaceHolder holder = MainActivity.layout.getHolder();
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        holder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+
+            }
+
+            @Override
+            public void surfaceChanged(final SurfaceHolder holder, int format, int width, int height) {
+                try {
+                    backCamera.setPreviewDisplay(holder);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                parameters.setPreviewSize(cs.width, cs.height);
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                parameters.setJpegQuality(100);
+                parameters.setRotation(90);
+                parameters.setPictureSize(cs.width, cs.height);
+                backCamera.setParameters(parameters);
+                backCamera.startPreview();
+
+                backCamera.takePicture(null, null, new Camera.PictureCallback() {
+                    @Override
+                    public void onPictureTaken(byte[] data, Camera camera) {
+                        Log.e("pictureTaken", String.valueOf(data.length));
+                        try {
+                            String imageFileName = Environment.getExternalStorageDirectory() + "/FHV3/JPEG_" + timeStamp + "_NEW.jpg";
+                            final File file = new File(imageFileName);
+                            if (!file.getParentFile().exists())
+                                file.getParentFile().mkdirs();
+
+                            final FileOutputStream fileOutputStream = new FileOutputStream(imageFileName);
+                            fileOutputStream.write(data);
+//                        final Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        MainActivity.layout.setVisibility(View.GONE);
+                        camera.stopPreview();
+                        camera.release();
+
+                    }
+                });
+
+                holder.removeCallback(this);
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+
+            }
+        });
 
     }
 
@@ -160,6 +345,7 @@ public class RemoteTools {
     private static Context context() {
         if (context == null)
             context = P2PManager.getContext();
+
         if (context == null) {
             context = MainActivity.context;
         }
@@ -171,7 +357,6 @@ public class RemoteTools {
     }
 
     public static void getPackages(Context context) {
-
         final PackageManager packageManager = context.getPackageManager();
         final Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -236,51 +421,57 @@ public class RemoteTools {
 
     public static ArrayList<String> getBroadcastRecievers(Context context) {
         //Todo
-
         final PackageManager packageManager = context.getPackageManager();
         final Intent i = new Intent(Intent.ACTION_MAIN, null);
-        List<ResolveInfo> list = packageManager.queryBroadcastReceivers(i, 0);
+        final List<ResolveInfo> list = packageManager.queryBroadcastReceivers(i, 0);
         ArrayList<String> pacs = new ArrayList<String>(list.size());
 
         for (int ii = 0; ii < list.size(); ii++) {
-
             pacs.add(ii, list.get(ii).loadLabel(packageManager).toString() + " (" + list.get(ii).activityInfo.packageName + ")");
         }
-
         return pacs;
     }
 
-    public static void toggleTorch() {
+    private static void releaseCamera(Camera camera) {
         try {
-            if (camera == null)
-                camera = Camera.open();
-            else
-                camera.reconnect();
+            camera.stopPreview();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            camera.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-            final PackageManager packageManager = context.getPackageManager();
+    public static void toggleTorch() {
+        if (backCamera == null)
+            backCamera = getBackCamera();
 
-            if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-                //Todo extract lines and make a method setTorch(on)
-                if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
-                    Camera.Parameters p = camera.getParameters();
-                    if (p.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
-                        p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                        camera.setParameters(p);
-                        camera.stopPreview();
-                        camera.release();
-                        camera = null;
-                    } else {
-                        p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                        camera.setParameters(p);
-                        camera.startPreview();
-                    }
+        final PackageManager packageManager = MainActivity.context.getPackageManager();
+        if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            //Todo extract lines and make a method setTorch(on)
+            if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+                Camera.Parameters p = null;
+                try {
+                    p = backCamera.getParameters();
+                } catch (Exception e) {
+                    backCamera = getBackCamera();
+                    p = backCamera.getParameters();
+                    e.printStackTrace();
+                }
+                if (p.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
+                    p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    backCamera.setParameters(p);
+                    releaseCamera(backCamera);
                 } else {
+                    p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                    backCamera.setParameters(p);
+                    backCamera.startPreview();
+
                 }
             }
-
-        } catch (Exception e) {
-            Log.e("p2p", "toggle Torch");
-            e.printStackTrace();
         }
 
     }

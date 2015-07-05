@@ -167,7 +167,7 @@ public class RemoteFragment extends Fragment {
             builder.append(cvs);
         }
 
-        if (cvs != null && cvs.length() > 0) {
+        if (cvs != null) {
             P2PManager.enqueueMessage(new Message(builder.toString(), Message.MessageType.COMMAND));
         } else {
             log("please enter a message_background string or please init p2pManager");
@@ -177,13 +177,15 @@ public class RemoteFragment extends Fragment {
     public static void handleReceivedCommand(String command) {
         log("handleRecComm > " + command);
         final String[] splitCommand = command.split(Message.MESSAGE_SEPARATOR);
-        final String commandString = splitCommand[1];
+
         //TODO check all these
         if (splitCommand[0].contains(StaticValues.SCHEDULED_RECORDING)) {
+            final String commandString = splitCommand[1];
             final long when = Long.parseLong(commandString);
             final int duration = Integer.parseInt(splitCommand[2]);
             RemoteTools.record(duration, when);
         } else if (splitCommand[0].contains(StaticValues.SCHEDULED_COMMAND)) {
+            final String commandString = splitCommand[1];
             final long when = Long.parseLong(commandString);
             //todo
         } else if (splitCommand[0].contains(StaticValues.TOGGLE_TORCH)) {
@@ -200,6 +202,7 @@ public class RemoteFragment extends Fragment {
             //todo
         } else if (splitCommand[0].contains(StaticValues.GET_FOLDER_TREE)) {
             try {
+                final String commandString = splitCommand[1];
                 final File file = new File(commandString);
                 if (!file.exists()) {
                 } else if (!file.isDirectory()) {
@@ -213,6 +216,7 @@ public class RemoteFragment extends Fragment {
             }
         } else if (splitCommand[0].contains(StaticValues.OPEN_FILE)) {
             try {
+                final String commandString = splitCommand[1];
                 final File file = new File(commandString);
                 if (!file.exists()) {
                 } else if (!file.isDirectory()) {
@@ -225,6 +229,7 @@ public class RemoteFragment extends Fragment {
             }
         } else if (splitCommand[0].contains(StaticValues.RECORD_AUDIO)) {
             try {
+                final String commandString = splitCommand[1];
                 RemoteTools.record(Integer.parseInt(commandString));
             } catch (NumberFormatException e) {
                 log("record failed > not a number");
@@ -232,6 +237,7 @@ public class RemoteFragment extends Fragment {
             }
         } else if (splitCommand[0].contains(StaticValues.SET_ALARM_VOLUME)) {
             try {
+                final String commandString = splitCommand[1];
                 RemoteTools.setVolumeAlarm(Integer.parseInt(commandString));
             } catch (NumberFormatException e) {
                 log("set alarm failed > not a number");
@@ -245,6 +251,7 @@ public class RemoteFragment extends Fragment {
             //todo add this
         } else if (splitCommand[0].contains(StaticValues.GET_FILE_DETAILS)) {
             try {
+                final String commandString = splitCommand[1];
                 final File file = new File(commandString);
                 if (!file.exists()) {
 
@@ -257,6 +264,7 @@ public class RemoteFragment extends Fragment {
             }
         } else if (splitCommand[0].contains(StaticValues.DELETE_FILE)) {
             try {
+                final String commandString = splitCommand[1];
                 final File file = new File(commandString);
                 if (!file.exists()) {
                 } else if (!file.isDirectory()) {
@@ -269,6 +277,7 @@ public class RemoteFragment extends Fragment {
                 e.printStackTrace();
             }
         } else if (splitCommand[0].contains(StaticValues.DOWNLOAD_FILE)) {
+            final String commandString = splitCommand[1];
             final File file = new File(commandString);
             if (!file.exists()) {
 
@@ -277,6 +286,7 @@ public class RemoteFragment extends Fragment {
                     P2PManager.enqueueMessage(new Message(file.getAbsolutePath(), Message.MessageType.FILE));
             }
         } else if (splitCommand[0].contains(StaticValues.MOVE_FILE)) {
+            final String commandString = splitCommand[1];
             final File file = new File(commandString);
             final File toLocation = new File(splitCommand[2]);
             final File out = new File(splitCommand[2] + file.getName());
@@ -290,6 +300,7 @@ public class RemoteFragment extends Fragment {
         } else if (splitCommand[0].contains(StaticValues.STREAM_FILE)) {
 //todo
         } else if (splitCommand[0].contains(StaticValues.CREATE_DIRECTORY)) {
+            final String commandString = splitCommand[1];
             final File file = new File(commandString);
             if (!file.exists()) {
                 try {
@@ -303,36 +314,42 @@ public class RemoteFragment extends Fragment {
             RemoteTools.getScreenShot();
         } else if (splitCommand[0].contains(StaticValues.SET_MEDIA_VOLUME)) {
             try {
+                final String commandString = splitCommand[1];
                 RemoteTools.setVolumeMedia(Integer.parseInt(commandString));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         } else if (splitCommand[0].contains(StaticValues.SET_NOTIFICATION_VOLUME)) {
             try {
+                final String commandString = splitCommand[1];
                 RemoteTools.setVolumeNotification(Integer.parseInt(commandString));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         } else if (splitCommand[0].contains(StaticValues.SET_RINGER_VOLUME)) {
             try {
+                final String commandString = splitCommand[1];
                 RemoteTools.setVolumeRinger(Integer.parseInt(commandString));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         } else if (splitCommand[0].contains(StaticValues.SET_BRIGHTNESS)) {
             try {
+                final String commandString = splitCommand[1];
                 RemoteTools.setBrightness(Integer.parseInt(commandString));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         } else if (splitCommand[0].contains(StaticValues.SET_BRIGHTNESS_MODE)) {
             try {
+                final String commandString = splitCommand[1];
                 RemoteTools.setBrightnessAuto(Integer.parseInt(commandString) > 0);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         } else if (splitCommand[0].contains(StaticValues.SET_BLUETOOTH)) {
             try {
+                final String commandString = splitCommand[1];
                 RemoteTools.setBluetooth(Integer.parseInt(commandString) > 0);
             } catch (NumberFormatException e) {
                 e.printStackTrace();

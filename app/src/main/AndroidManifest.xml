@@ -16,9 +16,18 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
 
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.flash" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -35,17 +44,9 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".Console"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:label="Console">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <service android:name=".P2PManager" android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
+        <service
+            android:name=".P2PManager"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
     </application>
 
 </manifest>

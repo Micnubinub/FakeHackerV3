@@ -3,7 +3,6 @@ package tbs.fakehackerv3;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,30 +11,13 @@ import android.widget.TextView;
  * Created by Michael on 6/13/2015.
  */
 public class MainViewManager {
-    //TODO dialog.findViewById(R.id.text).setSelected(true);
-    private static View mainView;
     public static FAB fab;
     public static LinearLayout sidePane;
+    private static View mainView;
     private static ImageView hamburger;
     private static Context context;
     private static TextView connectedToStaticText, connectedToDevice;
     private static boolean isSidePaneOpen;
-
-
-    public MainViewManager(View view) {
-        mainView = view;
-        MainViewManager.context = mainView.getContext();
-        init();
-    }
-
-    private void init() {
-        sidePane = (LinearLayout) mainView.findViewById(R.id.side_pane);
-        fab = (FAB) mainView.findViewById(R.id.fab);
-        hamburger = (ImageView) mainView.findViewById(R.id.hamburger);
-        connectedToDevice = (TextView) mainView.findViewById(R.id.device_text);
-        connectedToStaticText = (TextView) mainView.findViewById(R.id.static_text);
-    }
-
     private static View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -49,6 +31,12 @@ public class MainViewManager {
             }
         }
     };
+
+    public MainViewManager(View view) {
+        mainView = view;
+        MainViewManager.context = mainView.getContext();
+        init();
+    }
 
     public static void setConnectedToDevice(String connectedToDeviceText) {
         if (connectedToDeviceText != null && connectedToDevice != null)
@@ -70,6 +58,14 @@ public class MainViewManager {
 
     private static void setViewPadding(View v, int padding) {
         v.setPadding(padding, padding, padding, padding);
+    }
+
+    private void init() {
+        sidePane = (LinearLayout) mainView.findViewById(R.id.side_pane);
+        fab = (FAB) mainView.findViewById(R.id.fab);
+        hamburger = (ImageView) mainView.findViewById(R.id.hamburger);
+        connectedToDevice = (TextView) mainView.findViewById(R.id.device_text);
+        connectedToStaticText = (TextView) mainView.findViewById(R.id.static_text);
     }
 
     private int dpToPixels(int dp) {

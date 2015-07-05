@@ -53,12 +53,10 @@ public class P2PManager extends Service {
     public static final WifiP2pManager.ActionListener wifiP2PActionListener = new WifiP2pManager.ActionListener() {
         @Override
         public void onSuccess() {
-            //TODO devices found >> do something about it
         }
 
         @Override
         public void onFailure(int i) {
-            //TODO devices not found >> do something about it (rescan?)
             String out = "";
             switch (i) {
                 case WifiP2pManager.P2P_UNSUPPORTED:
@@ -73,7 +71,6 @@ public class P2PManager extends Service {
             }
 
             log("failed to discover devices : " + out);
-
             manager.requestGroupInfo(channel, new WifiP2pManager.GroupInfoListener() {
                 @Override
                 public void onGroupInfoAvailable(WifiP2pGroup group) {
@@ -139,6 +136,30 @@ public class P2PManager extends Service {
             log("receivedInfo : " + wifiP2pInfo.groupOwnerAddress.toString() + "\nisOwner? : " + wifiP2pInfo.isGroupOwner);
         }
     };
+    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
+        @Override
+        public void onDeviceDisconnected() {
+            p2PListener.onDevicesDisconnected("not sure");
+        }
+
+        @Override
+        public void onDeviceConnected(WifiP2pInfo info) {
+            if (info == null) {
+                requestConnectionInfo("onDevConnected");
+                return;
+            }
+
+            handleWifiP2PInfo(info);
+        }
+
+        @Override
+        public void onPeersChanged() {
+            if (manager != null && !isActive() && !tryingToConnect) {
+                if (!isActive())
+                    manager.requestPeers(channel, wifiP2PPeerListener);
+            }
+        }
+    };
     private static P2PAdapter adapter;
     public static final WifiP2pManager.PeerListListener wifiP2PPeerListener = new WifiP2pManager.PeerListListener() {
         @Override
@@ -162,30 +183,6 @@ public class P2PManager extends Service {
             else {
                 toast("No peers found, try again");
                 log("No peers found, try again");
-            }
-        }
-    };
-    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
-        @Override
-        public void onDeviceDisconnected() {
-            p2PListener.onDevicesDisconnected("not sure");
-        }
-
-        @Override
-        public void onDeviceConnected(WifiP2pInfo info) {
-            if (info == null) {
-                requestConnectionInfo("onDevConnected");
-                return;
-            }
-
-            handleWifiP2PInfo(info);
-        }
-
-        @Override
-        public void onPeersChanged() {
-            if (manager != null && !isActive() && !tryingToConnect) {
-                if (!isActive())
-                    manager.requestPeers(channel, wifiP2PPeerListener);
             }
         }
     };

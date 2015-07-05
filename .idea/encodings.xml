@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/console/CommandItem.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/console/ConsoleItem.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/console/ConsoleListAdapter.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/console/MainActivity.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/MaterialCheckBox.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/MaterialRadioButton.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/MaterialRadioGroup.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/MaterialSeekBar.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/MaterialSwitch.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/PagerSlidingTabStrip.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/local_system_data" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/player/Commands.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/player/PlayerSystem.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/player/ZipFolder.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/bottom_shadow.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/button_normal.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/button_pressed.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dialog_background_inset.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dialog_card_background.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/file_folder.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/green_border_full.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/green_border_left.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/green_border_nolefttop.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/green_border_notop.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/green_border_onlyleft.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/round_rect_black.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/white_button_selector.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/checkbox_item.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/command_item.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/console_entry.xml" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/console_frament.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/radio_group.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/save_cancel.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/seekbar.xml" charset="windows-1252" />

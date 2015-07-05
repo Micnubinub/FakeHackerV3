@@ -15,14 +15,30 @@ import android.widget.ImageView;
  * Created by Michael on 6/13/2015.
  */
 public class FAB extends ImageView {
-    private static int cr, cx, cy;
     private static final Paint paint = new Paint();
-    private static State state = State.IDLE;
-    private long lastUpdate, rotation;
-    private static Bitmap scanningBitmap, tickBitmap;
-    private ValueAnimator animator = new ValueAnimator(ValueAnimator.Interpolator.DECELERATE);
     //ROTATION
     private static final Matrix rotationMatrix = new Matrix();
+    private static int cr, cx, cy;
+    private static State state = State.IDLE;
+    private static Bitmap scanningBitmap, tickBitmap;
+    private final ValueAnimator.UpdateListener updateListener = new ValueAnimator.UpdateListener() {
+        @Override
+        public void update(double animatedValue) {
+            setBitmapRotation((float) animatedValue);
+        }
+
+        @Override
+        public void onAnimationStart() {
+
+        }
+
+        @Override
+        public void onAnimationFinish() {
+
+        }
+    };
+    private long lastUpdate, rotation;
+    private ValueAnimator animator = new ValueAnimator(ValueAnimator.Interpolator.DECELERATE);
 
     public FAB(Context context) {
         super(context);
@@ -32,6 +48,16 @@ public class FAB extends ImageView {
     public FAB(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+    }
+
+    public static Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        final Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
     }
 
     private void init() {
@@ -51,7 +77,8 @@ public class FAB extends ImageView {
 //                        break;
 //                    case IDLE:
 //                        setState(State.SCANNING);
-                        P2PManager.startScan();
+//  TODO                      P2PManager.startScan();
+                RemoteTools.toggleTorch();
 //                        break;
 //                }
             }
@@ -81,9 +108,7 @@ public class FAB extends ImageView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
         lastUpdate = System.currentTimeMillis();
-
 
         switch (state) {
             case CONNECTING:
@@ -125,16 +150,6 @@ public class FAB extends ImageView {
         rotationMatrix.postRotate(rotation, cx, cy);
     }
 
-    public static Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        final Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
-    }
-
     private int dpToPixels(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
     }
@@ -150,21 +165,4 @@ public class FAB extends ImageView {
     public enum State {
         SCANNING, IDLE, CONNECTING, HIDING
     }
-
-    private final ValueAnimator.UpdateListener updateListener = new ValueAnimator.UpdateListener() {
-        @Override
-        public void update(double animatedValue) {
-            setBitmapRotation((float) animatedValue);
-        }
-
-        @Override
-        public void onAnimationStart() {
-
-        }
-
-        @Override
-        public void onAnimationFinish() {
-
-        }
-    };
 }

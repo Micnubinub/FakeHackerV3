@@ -71,6 +71,34 @@ public class FileManagerFragment extends Fragment {
             }
         }
     };
+    private static final Comparator<File> fileComp = new Comparator<File>() {
+        @Override
+        public int compare(File file1, File file2) {
+
+            if (file1.isDirectory()) {
+                if (file2.isDirectory()) {
+                    return String.valueOf(file1.getName().toLowerCase()).compareTo(file2.getName().toLowerCase());
+                } else {
+                    return -1;
+                }
+            } else {
+                if (file2.isDirectory()) {
+                    return 1;
+                } else {
+                    return String.valueOf(file1.getName().toLowerCase()).compareTo(file2.getName().toLowerCase());
+                }
+            }
+//                int i;
+//                if (file.isDirectory() && !file2.isDirectory()) {
+//                    i = -1;
+//                } else if (!file.isDirectory() && file2.isDirectory()) {
+//                    i = 1;
+//                } else {
+//                    i = file.getName().compareToIgnoreCase(file2.getName());
+//                }
+//                return i;
+        }
+    };
     public static ListView listView;
     public static boolean isInit;
     public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
@@ -264,20 +292,7 @@ public class FileManagerFragment extends Fragment {
     }
 
     public static void sortFiles(ArrayList<File> list) {
-        Collections.sort(list, new Comparator<File>() {
-            @Override
-            public int compare(File file, File file2) {
-                int i;
-                if (file.isDirectory() && !file2.isDirectory()) {
-                    i = -1;
-                } else if (!file.isDirectory() && file2.isDirectory()) {
-                    i = 1;
-                } else {
-                    i = file.getName().compareToIgnoreCase(file2.getName());
-                }
-                return i;
-            }
-        });
+        Collections.sort(list, fileComp);
     }
 
     public static void updateAdapter() {

@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.SurfaceView;
 import android.widget.Toast;
 
 import tbs.fakehackerv3.custom_views.PagerSlidingTabStrip;
@@ -38,7 +39,7 @@ public class MainActivity extends FragmentActivity {
     public static Settings settings;
     public static boolean connected;
     public static WifiP2pGroup currentGroup;
-
+    public static SurfaceView layout;
     private static final P2PManager.P2PListener p2pListener = new P2PManager.P2PListener() {
         @Override
         public void onScanStarted() {
@@ -61,10 +62,6 @@ public class MainActivity extends FragmentActivity {
             } else if (received[0].equals(String.valueOf(Message.MessageType.FILE))) {
                 FileManagerFragment.handleMessage(received[1]);
             }
-            //TODO split them up into the different categories then
-          /*Todo  messages.add(new ReceivedMessage(received[1], "RECEIVED : " + received[2], "random"));
-            notifyDataSetChanged();
-            Log.e("notified", "msg");*/
         }
 
         @Override
@@ -133,7 +130,6 @@ public class MainActivity extends FragmentActivity {
                     }
                 }
             });
-            /*Todo messageEditText.setEnabled(true);*/
         }
     };
     private static PagerSlidingTabStrip tabs;
@@ -171,7 +167,6 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
-
 
     public static void nullifyGroupAndDevice() {
         connectedDevice = null;
@@ -225,8 +220,8 @@ public class MainActivity extends FragmentActivity {
         context = this;
         p2PManager = P2PManager.getP2PManager(this, p2pListener);
         setContentView(R.layout.main_view);
+        layout = (SurfaceView) findViewById(R.id.holder);
         mainViewManager = new MainViewManager(findViewById(R.id.main_view));
-
         setUpFragments();
 //        showDialog();
     }

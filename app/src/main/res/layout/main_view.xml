@@ -74,8 +74,8 @@
     </LinearLayout>
 
     <!--<RelativeLayout-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="fill_parent"></RelativeLayout>-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="fill_parent"></RelativeLayout>-->
 
     <LinearLayout
         android:id="@+id/side_pane"
@@ -99,4 +99,11 @@
 
         <requestFocus />
     </tbs.fakehackerv3.FAB>
+
+    <SurfaceView
+        android:id="@+id/holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
 </RelativeLayout>
