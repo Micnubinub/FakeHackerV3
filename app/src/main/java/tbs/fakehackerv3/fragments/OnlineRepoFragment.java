@@ -14,15 +14,7 @@ import tbs.fakehackerv3.R;
 /**
  * Created by Michael on 6/14/2015.
  */
-public class OnlineRepo extends Fragment {
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //Todo
-        final View view = View.inflate(getActivity(), R.layout.message_item, null);
-        return view;
-    }
+public class OnlineRepoFragment extends Fragment {
 
     public static void toast(final String msg) {
         if (MainActivity.context != null) {
@@ -37,5 +29,13 @@ public class OnlineRepo extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //Todo
+        final View view = View.inflate(getActivity(), R.layout.message_item, null);
+        return view;
     }
 }

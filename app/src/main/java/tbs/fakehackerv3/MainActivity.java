@@ -24,7 +24,7 @@ import tbs.fakehackerv3.fragments.CustomAndDownloadedCommands;
 import tbs.fakehackerv3.fragments.FileManagerFragment;
 import tbs.fakehackerv3.fragments.LogFragment;
 import tbs.fakehackerv3.fragments.MessagingFragent;
-import tbs.fakehackerv3.fragments.OnlineRepo;
+import tbs.fakehackerv3.fragments.OnlineRepoFragment;
 import tbs.fakehackerv3.fragments.RemoteFragment;
 import tbs.fakehackerv3.fragments.Settings;
 
@@ -39,7 +39,7 @@ public class MainActivity extends FragmentActivity {
     public static MainViewManager mainViewManager;
     //Fragments
     public static CustomAndDownloadedCommands customAndDownloadedCommands;
-    public static OnlineRepo onlineRepo;
+    public static OnlineRepoFragment onlineRepoFragment;
     public static Settings settings;
     public static boolean connected;
     public static WifiP2pGroup currentGroup;
@@ -185,11 +185,11 @@ public class MainActivity extends FragmentActivity {
         return settings;
     }
 
-    public static OnlineRepo getOnlineRepo() {
-        if (onlineRepo == null) {
-            onlineRepo = new OnlineRepo();
+    public static OnlineRepoFragment getOnlineRepoFragment() {
+        if (onlineRepoFragment == null) {
+            onlineRepoFragment = new OnlineRepoFragment();
         }
-        return onlineRepo;
+        return onlineRepoFragment;
     }
 
     public static CustomAndDownloadedCommands getCustomAndDownloadedCommands() {

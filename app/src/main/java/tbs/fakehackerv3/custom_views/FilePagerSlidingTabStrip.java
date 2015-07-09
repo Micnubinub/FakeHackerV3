@@ -35,13 +35,13 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.Locale;
 
 
 public class FilePagerSlidingTabStrip extends HorizontalScrollView {
 
-    private static int selectedPage;
     private final PageListener pageListener = new PageListener();
     // @formatter:on
     public OnPageChangeListener delegatePageListener;
@@ -100,8 +100,6 @@ public class FilePagerSlidingTabStrip extends HorizontalScrollView {
         tabTextSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, tabTextSize, dm);
 
         // get system attrs (android:textSize and android:textColor)
-
-
         rectPaint = new Paint();
         rectPaint.setAntiAlias(true);
         rectPaint.setStyle(Style.FILL);
@@ -202,8 +200,8 @@ public class FilePagerSlidingTabStrip extends HorizontalScrollView {
         for (int i = 0; i < tabCount; i++) {
             final View v = tabsContainer.getChildAt(i);
             v.setBackgroundResource(tabBackgroundResId);
-            if (v instanceof HackerTextView) {
-                final HackerTextView tab = (HackerTextView) v;
+            if (v instanceof TextView) {
+                final TextView tab = (HackerTextView) v;
                 if (i == currentPosition) {
                     v.setBackground(null);
                 } else {

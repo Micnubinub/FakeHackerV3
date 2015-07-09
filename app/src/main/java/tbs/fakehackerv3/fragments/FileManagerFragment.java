@@ -37,7 +37,7 @@ import tbs.fakehackerv3.Message;
 import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
 import tbs.fakehackerv3.Tools;
-import tbs.fakehackerv3.custom_views.PagerSlidingTabStrip;
+import tbs.fakehackerv3.custom_views.FilePagerSlidingTabStrip;
 
 /**
  * Created by root on 31/07/14.
@@ -65,16 +65,8 @@ public class FileManagerFragment extends Fragment {
     public static final String[] VIDEO_EXTENSIONS = {"webm", "mkv", "flv", "vob", "ogv", "ogg", "drc", "mng", "avi", "mov", "qt", "wmv", "yuv", "rm", "rmvb", "asf", "mp4", "m4p", "m4v", "mpg", "mp2", "mpeg", "mpe", "mpv", "m2v", "svi", "3gp", "3g2", "mxf", "roq", "nsv"};
     public static final String[] PICTURE_EXTENSIONS = {"jpg", "jpeg", "tif", "gif", "png", "raw"};
     public static final String[] MUSIC_EXTENSIONS = {"3gp", "act", "aiff", "aac", "amr", "au", "awb", "dct", "dss", "dvf", "flac", "gsm", "", "m4a", "m4p", "mmf", "mp3", "mpc", "msv", "ogg", "oga", "opus", "ra", "rm", "raw", "sln", "tta", "vox", "wav", "wma", "wv", "webm"};
-    private static final Runnable update = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                FileAdapter.getFileAdapter().notifyDataSetChanged();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
+
+
     private static final Comparator<File> fileComp = new Comparator<File>() {
         @Override
         public int compare(File file1, File file2) {
@@ -122,12 +114,12 @@ public class FileManagerFragment extends Fragment {
     private static FragmentActivity context;
     //Todo local and external
     private static String currentDirectory = Environment.getExternalStorageDirectory().getPath();
+    private static ArrayList<File> currentTree;
+
     private static boolean isInFileManagerMode = false;
     private static ViewPager pager;
-    private static ArrayList<File> currentTree;
-    private static ArrayList<MikeFile> files;
     private static MyPagerAdapter pagerAdapter;
-    private static PagerSlidingTabStrip tabs;
+    private static FilePagerSlidingTabStrip tabs;
 
     public static boolean isIsInFileManagerMode() {
         return isInFileManagerMode;
@@ -302,9 +294,7 @@ public class FileManagerFragment extends Fragment {
         Collections.sort(list, fileComp);
     }
 
-    public static void updateAdapter() {
-        context.runOnUiThread(update);
-    }
+
 
     public static int getImageResource(FileType type) {
         int res = R.drawable.file_file;
@@ -327,43 +317,6 @@ public class FileManagerFragment extends Fragment {
                 break;
         }
         return res;
-    }
-
-    public static void parseReceivedFiles(String files) {
-        final String[] fileA = files.split(FILE_SEP);
-
-
-        if (FileManagerFragment.files == null) {
-            FileManagerFragment.files = new ArrayList<MikeFile>(fileA.length);
-        } else {
-            try {
-                FileManagerFragment.files.clear();
-                updateAdapter();
-                FileManagerFragment.files.ensureCapacity(fileA.length);
-                updateAdapter();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        updateAdapter();
-
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                for (String s : fileA) {
-                    try {
-                        FileManagerFragment.files.add(new MikeFile(s));
-                        updateAdapter();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-
-        log("receivedFiles > " + FileManagerFragment.files.toString());
-
     }
 
     public static void handleMessage(String msg) {
@@ -577,10 +530,7 @@ public class FileManagerFragment extends Fragment {
         //Todo
         final View view = inflater.inflate(R.layout.file_manager_fragment, null);
         //Todo
-        externalListView = (ListView) view.findViewById(R.id.list);
-        files = new ArrayList<MikeFile>();
-
-        //externalListView.setAdapter(new FileAdapter(externalListView));
+        setUpFragments(view);
         view.findViewById(R.id.placeholder).setOnClickListener(placeHolderListener);
         return view;
     }
@@ -589,7 +539,7 @@ public class FileManagerFragment extends Fragment {
         fragments[0] = new LocalFileManager();
         fragments[1] = new ExternalFileManager();
 
-        tabs = (PagerSlidingTabStrip) v.findViewById(R.id.tabs);
+        tabs = (FilePagerSlidingTabStrip) v.findViewById(R.id.tabs);
         pager = (ViewPager) v.findViewById(R.id.view_pager);
         pager.setOffscreenPageLimit(4);
 
@@ -606,6 +556,8 @@ public class FileManagerFragment extends Fragment {
     }
 
     public static class FileAdapter extends BaseAdapter {
+
+        //TODO ASAP
         public static final AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -637,7 +589,7 @@ public class FileManagerFragment extends Fragment {
         private static ListView listView;
         private static FileAdapter fileAdapter;
 
-        public FileAdapter(ListView listView) {
+        public FileAdapter(ListView listView, ArrayList<MikeFile> files) {
             this.listView = listView;
             listView.setOnItemClickListener(onItemClickListener);
             listView.setOnItemLongClickListener(onItemLongClickListener);
@@ -686,6 +638,7 @@ public class FileManagerFragment extends Fragment {
             icon.setImageResource(getImageResource(mikeFile.fileType));
             fileName.setText(mikeFile.name);
             fileSize.setText(mikeFile.fileSize);
+
             return convertView;
         }
     }
@@ -755,23 +708,83 @@ public class FileManagerFragment extends Fragment {
 
     //TODO
     public static class LocalFileManager extends Fragment {
+        public static FileAdapter fileAdapter;
+        private static ArrayList<MikeFile> files;
+
+        public static void parseLocalFile(ArrayList<File> files) {
+            if (ExternalFileManager.files == null) {
+                ExternalFileManager.files = new ArrayList<MikeFile>(fileA.length);
+            } else {
+                try {
+                    ExternalFileManager.files.clear();
+                    updateAdapter();
+                    ExternalFileManager.files.ensureCapacity(fileA.length);
+                    updateAdapter();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
 
         @Nullable
         @Override
         public View getView() {
             ListView listView = (ListView) View.inflate(getActivity(), R.layout.file_manager_fragment_item, null);
-
+            fileAdapter = new FileAdapter(listView);
             return listView;
         }
     }
 
     public static class ExternalFileManager extends Fragment {
+        public static FileAdapter fileAdapter;
+        private static ArrayList<MikeFile> files;
+
+        public static void parseReceivedFiles(String files) {
+            final String[] fileA = files.split(FILE_SEP);
+
+            if (ExternalFileManager.files == null) {
+                ExternalFileManager.files = new ArrayList<MikeFile>(fileA.length);
+            } else {
+                try {
+                    ExternalFileManager.files.clear();
+                    updateAdapter();
+                    ExternalFileManager.files.ensureCapacity(fileA.length);
+                    updateAdapter();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            updateAdapter();
+
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    for (String s : fileA) {
+                        try {
+                            ExternalFileManager.files.add(new MikeFile(s));
+                            updateAdapter();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+
+            log("receivedFiles > " + ExternalFileManager.files.toString());
+        }
+
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+        }
 
         @Nullable
         @Override
-        public View getView() {
-            ListView listView = (ListView) View.inflate(getActivity(), R.layout.file_manager_fragment_item, null);
-
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            ListView listView = (ListView) inflater.inflate(R.layout.file_manager_fragment_item, null);
+            fileAdapter = new FileAdapter(listView);
             return listView;
         }
     }
