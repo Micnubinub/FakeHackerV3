@@ -29,19 +29,29 @@ import java.util.Date;
 import java.util.Random;
 
 import tbs.fakehackerv3.R;
-import tbs.fakehackerv3.console.ConsoleItem;
 import tbs.fakehackerv3.console.ConsoleListAdapter;
+import tbs.fakehackerv3.local_system_data.PlayerSystem;
 import tbs.fakehackerv3.player.Commands;
-import tbs.fakehackerv3.player.PlayerSystem;
 
 /**
  * Created by Michael on 7/5/2015.
  */
 public class ConsoleFragment extends Fragment {
-    public static final ArrayList<ConsoleItem> consoleEntries = new ArrayList<ConsoleItem>();
-    public static final ArrayList<ConsoleItem> inventoryItems = new ArrayList<ConsoleItem>();
-    private static final ArrayList<ConsoleItem> infoEntries = new ArrayList<ConsoleItem>();
+    public static final ArrayList<String> consoleEntries = new ArrayList<String>();
+    public static final ArrayList<String> inventoryItems = new ArrayList<String>();
+    private static final ArrayList<String> infoEntries = new ArrayList<String>();
+    private static final Random random = new Random();
     public static ConsoleListAdapter cl_adapter;
+    private static final Runnable notifyConsoleList = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                cl_adapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
     public static ConsoleListAdapter c3_adapter;
     public static PlayerSystem player;
     public static FragmentActivity context;
@@ -55,6 +65,19 @@ public class ConsoleFragment extends Fragment {
     // BATTERY
     private static BroadcastReceiver mBatInfoReceiver;
     private static TextView deviceName, dataStorage, batLife;
+    private static boolean runPrintRandomShit;
+    private static String[] randomCommandWords = {"acpi", "export", "init", "boot", "chainloader",
+            "gettext", "gtpsync", "drivemap", "echo", "loop", "loopback", "xss", "linux", "ls", "partition", "crc", "cat", "gpuid", "cpu",
+            "gpu", "x86", "read", "gparted", "set", "halt", "pxe_unload", "bash", "chmod", "command", "cp",
+            "dir", "mkdir"};
+    private static final Runnable printRandomShit = new Runnable() {
+        @Override
+        public void run() {
+            while (runPrintRandomShit) {
+                addConsoleItem(new String(getRandomHackerString()));
+            }
+        }
+    };
 
     private static String getTotalInternalMemorySize() {
         File path = Environment.getDataDirectory();
@@ -76,7 +99,7 @@ public class ConsoleFragment extends Fragment {
             }
         }
 
-        StringBuilder resultBuffer = new StringBuilder(Long.toString(size));
+        final StringBuilder resultBuffer = new StringBuilder(Long.toString(size));
 
         int commaOffset = resultBuffer.length() - 3;
         while (commaOffset > 0) {
@@ -90,7 +113,7 @@ public class ConsoleFragment extends Fragment {
     }
 
     public static int randInt(int min, int max) {
-        return (new Random()).nextInt((max - min) + 1) + min;
+        return random.nextInt((max - min) + 1) + min;
     }
 
     public static void handleCommand(String str) {
@@ -113,41 +136,39 @@ public class ConsoleFragment extends Fragment {
         // Styling TEXT
         //cmdEntry = (TextView) findViewById(R.id.commandEntry);
 
-
-        Date d = new Date();
+        final Date d = new Date();
         CharSequence timeString = DateFormat.format("hh: mm: ss -- d/MM/yyyy ",
                 d.getTime());
 
-        infoEntries.add(new ConsoleItem("  " + timeString));
-        infoEntries.add(new ConsoleItem(
-                "> Mucrusoft Wendows [Version 6.1.7601]"));
+        infoEntries.add(new String("  " + timeString));
+        infoEntries.add(new String("> Mucrusoft Wendows [Version 6.1.7601]"));
         infoEntries
-                .add(new ConsoleItem(
+                .add(new String(
                         "> Copyright (c) 2009 Mucrusoft Corporation. All rights resrved."));
-        // infoEntries.add(new ConsoleItem(
+        // infoEntries.add(new String(
         // "> Copyright (c) 2078 Vlaas Corporation. All rights reserved"));
         // infoEntries.add(new
-        // ConsoleItem("> Diamex Software Operating Systems"));
+        // String("> Diamex Software Operating Systems"));
 
         c2_adapter.notifyDataSetChanged();
 
         consoleEntries
-                .add(new ConsoleItem(
+                .add(new String(
                         "--------------------------------------------------------------------------------------------------"));
-        consoleEntries.add(new ConsoleItem(
+        consoleEntries.add(new String(
                 "Mucrusuft Wendows [Version 6.1.7601]"));
 
         consoleEntries
-                .add(new ConsoleItem(
+                .add(new String(
                         "--------------------------------------------------------------------------------------------------"));
         // CHANGE TEXT
         consoleEntries
-                .add(new ConsoleItem(
+                .add(new String(
                         "Type [help] to get a list of possible commands. Or type [guide] to view"));
-        consoleEntries.add(new ConsoleItem(
+        consoleEntries.add(new String(
                 "the instructions and learn everything works."));
         consoleEntries
-                .add(new ConsoleItem(
+                .add(new String(
                         "--------------------------------------------------------------------------------------------------"));
         cl_adapter.notifyDataSetChanged();
 
@@ -195,9 +216,13 @@ public class ConsoleFragment extends Fragment {
                     Date d = new Date();
                     CharSequence timeString = DateFormat.format(
                             "hh: mm: ss -- d/MM/yyyy ", d.getTime());
-                    infoEntries.get(0).setDetails("  " + timeString);
-                    c2_adapter.notifyDataSetChanged();
-
+                    try {
+                        infoEntries.remove(0);
+                        infoEntries.add(0, "  " + timeString);
+                        c2_adapter.notifyDataSetChanged();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     // UPDATE FILE SPACE:
 
                     handler.postDelayed(this, 1000);
@@ -212,7 +237,7 @@ public class ConsoleFragment extends Fragment {
                     switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
-                            // consoleEntries.add(new ConsoleItem(
+                            // consoleEntries.add(new String(
                             // localSystem.location.name
                             // + " > "
                             // + userCommand.getText()
@@ -242,6 +267,20 @@ public class ConsoleFragment extends Fragment {
         });
     }
 
+    public static void addConsoleItem(String consoleItem) {
+        consoleEntries.add(consoleItem);
+        if (context != null)
+            context.runOnUiThread(notifyConsoleList);
+
+    }
+
+    public static String getRandomHackerString() {
+        if (random.nextBoolean())
+            return randomCommandWords[random.nextInt(randomCommandWords.length)] + " 0x" + Integer.toHexString(random.nextInt());
+        else
+            return randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)] + " 0x" + Integer.toHexString(random.nextInt());
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -255,7 +294,7 @@ public class ConsoleFragment extends Fragment {
 
         cl_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
                 consoleEntries);
-        getListView().setAdapter(cl_adapter);
+        mainListView.setAdapter(cl_adapter);
 
         c2_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
                 infoEntries);
@@ -272,14 +311,10 @@ public class ConsoleFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getActivity();
-
         commands = new Commands();
         player.Setup(getTotalInternalMemorySize());
         handler = new Handler();
-
         player = new PlayerSystem();
-        handler = new Handler();
-
-
+        initEverythingElse();
     }
 }

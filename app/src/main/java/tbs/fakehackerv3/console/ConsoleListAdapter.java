@@ -1,7 +1,6 @@
 package tbs.fakehackerv3.console;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -11,34 +10,31 @@ import java.util.ArrayList;
 
 import tbs.fakehackerv3.R;
 
-public class ConsoleListAdapter extends ArrayAdapter<ConsoleItem> {
+public class ConsoleListAdapter extends ArrayAdapter<String> {
 
-    private final ArrayList<ConsoleItem> consoleItems;
+    private final ArrayList<String> consoleItems;
 
     public ConsoleListAdapter(Context context, int textViewResourceId,
-                              ArrayList<ConsoleItem> objects) {
+                              ArrayList<String> objects) {
         super(context, textViewResourceId, objects);
         this.consoleItems = objects;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        View v = convertView;
-
-        if (v == null) {
-            LayoutInflater inflater = (LayoutInflater) getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.console_entry, null);
+        if (convertView == null) {
+            convertView = View.inflate(getContext(), R.layout.console_entry, null);
+            final ViewHolder holder = new ViewHolder((TextView) convertView.findViewById(R.id.commandEntry));
+            convertView.setTag(holder);
         }
+        ((ViewHolder) convertView.getTag()).textView.setText(consoleItems.get(position));
+        return convertView;
+    }
 
-        ConsoleItem i = consoleItems.get(position);
+    private static class ViewHolder {
+        public final TextView textView;
 
-        if (i != null) {
-            TextView btd = (TextView) v.findViewById(R.id.commandEntry);
-            if (btd != null) {
-                btd.setText(i.getDetails());
-            }
+        public ViewHolder(TextView textView) {
+            this.textView = textView;
         }
-        return v;
     }
 }

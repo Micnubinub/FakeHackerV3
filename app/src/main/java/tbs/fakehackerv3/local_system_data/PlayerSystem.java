@@ -1,14 +1,11 @@
-package tbs.fakehackerv3.player;
+package tbs.fakehackerv3.local_system_data;
 
 import android.os.CountDownTimer;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import tbs.fakehackerv3.console.ConsoleItem;
 import tbs.fakehackerv3.fragments.ConsoleFragment;
-import tbs.fakehackerv3.local_system_data.LocalFile;
-import tbs.fakehackerv3.local_system_data.LocalFolder;
 
 
 public class PlayerSystem {
@@ -114,7 +111,7 @@ public class PlayerSystem {
         }
         storage = tempStorage;
         if (storage >= storageMax) {
-            ConsoleFragment.consoleEntries.add(new ConsoleItem("Out of Memmory!"));
+            ConsoleFragment.consoleEntries.add("Out of Memmory!");
         }
     }
 
@@ -122,8 +119,8 @@ public class PlayerSystem {
         final DecimalFormat df = new DecimalFormat("0");
         ConsoleFragment.inventoryItems.clear();
         for (int i = 0; i < ConsoleFragment.player.deviceStats.folders.size(); ++i) {
-            ConsoleFragment.inventoryItems.add(new ConsoleItem(" > "
-                    + ConsoleFragment.player.deviceStats.folders.get(i).name));
+            ConsoleFragment.inventoryItems.add(" > "
+                    + ConsoleFragment.player.deviceStats.folders.get(i).name);
             System.out.println("TEST 1");
             if (ConsoleFragment.player.deviceStats.folders.get(i).folders.size() > 0) {
                 System.out.println("TEST 2");
@@ -131,20 +128,18 @@ public class PlayerSystem {
                         .get(i).folders.size(); ++x) {
                     System.out.println("TEST 3");
                     ConsoleFragment.inventoryItems
-                            .add(new ConsoleItem(
-                                    "     > "
+                            .add("     > "
                                             + ConsoleFragment.player.deviceStats.folders
                                             .get(i).folders.get(x).name
                                             + " - "
                                             + df.format(deviceStats.folders
                                             .get(i).folders.get(x).size)
                                             + "kb"
-                            ));
+                            );
                 }
-
             } else {
                 ConsoleFragment.inventoryItems
-                        .add(new ConsoleItem("     > Empty"));
+                        .add("     > Empty");
             }
         }
     }
@@ -152,18 +147,17 @@ public class PlayerSystem {
     public static void showCurrent() {
         final DecimalFormat df = new DecimalFormat("0");
         location.update();
-        ConsoleFragment.consoleEntries.add(new ConsoleItem(" Location: "
-                + locationStr + ">"));
+        ConsoleFragment.consoleEntries.add(" Location: "
+                + locationStr + ">");
         ConsoleFragment.consoleEntries
-                .add(new ConsoleItem(
-                        "--------------------------------------------------------------------------------------------------"));
+                .add("--------------------------------------------------------------------------------------------------");
         // COMPRESSED
-        ConsoleFragment.consoleEntries.add(new ConsoleItem("   > Folders:"));
+        ConsoleFragment.consoleEntries.add("   > Folders:");
         if (location.folders.size() < 1) {
-            ConsoleFragment.consoleEntries.add(new ConsoleItem("      > None"));
+            ConsoleFragment.consoleEntries.add("      > None");
         } else {
             for (int i = 0; i < location.folders.size(); ++i) {
-                ConsoleFragment.consoleEntries.add(new ConsoleItem(
+                ConsoleFragment.consoleEntries.add(
                         "        > "
                                 + location.folders.get(i).name
                                 + " - "
@@ -174,30 +168,30 @@ public class PlayerSystem {
                                 + " files - "
                                 + df.format(location.folders.get(i).size)
                                 + "kb"
-                ));
+                );
             }
         }
         // FILES
-        ConsoleFragment.consoleEntries.add(new ConsoleItem("   > Files:"));
+        ConsoleFragment.consoleEntries.add("   > Files:");
         if (location.files.size() < 1) {
-            ConsoleFragment.consoleEntries.add(new ConsoleItem("      > None"));
+            ConsoleFragment.consoleEntries.add("      > None");
         } else {
             for (int i = 0; i < location.files.size(); ++i) {
-                ConsoleFragment.consoleEntries.add(new ConsoleItem("      > "
+                ConsoleFragment.consoleEntries.add("      > "
                         + location.files.get(i).name + "."
                         + location.files.get(i).type + " - "
-                        + df.format(location.files.get(i).size) + "kb"));
+                        + df.format(location.files.get(i).size) + "kb");
             }
         }
 
         // ZIP
-        ConsoleFragment.consoleEntries.add(new ConsoleItem("   > Compressed:"));
+        ConsoleFragment.consoleEntries.add("   > Compressed:");
         if (location.zipFiles.size() < 1) {
-            ConsoleFragment.consoleEntries.add(new ConsoleItem("      > None"));
+            ConsoleFragment.consoleEntries.add("      > None");
         } else {
             for (int i = 0; i < location.zipFiles.size(); ++i) {
                 ConsoleFragment.consoleEntries
-                        .add(new ConsoleItem(
+                        .add(
                                 "        > "
                                         + location.zipFiles.get(i).name
                                         + "."
@@ -209,17 +203,17 @@ public class PlayerSystem {
                                         + " files - "
                                         + df.format(location.zipFiles.get(i).size)
                                         + "kb"
-                        ));
+                        );
             }
         }
         // DEVICES
-        ConsoleFragment.consoleEntries.add(new ConsoleItem("   > Devices:"));
+        ConsoleFragment.consoleEntries.add("   > Devices:");
         if (deviceStats.folders.get(0).folders.size() < 1) {
-            ConsoleFragment.consoleEntries.add(new ConsoleItem("      > None"));
+            ConsoleFragment.consoleEntries.add("      > None");
         } else {
             for (int i = 0; i < deviceStats.folders.get(0).folders.size(); ++i) {
                 ConsoleFragment.consoleEntries
-                        .add(new ConsoleItem(
+                        .add(
                                 "        > "
                                         + deviceStats.folders.get(0).folders
                                         .get(i).name
@@ -231,12 +225,11 @@ public class PlayerSystem {
                                         + " files - "
                                         + df.format(deviceStats.folders.get(0).folders
                                         .get(i).size) + "kb"
-                        ));
+                        );
             }
         }
         ConsoleFragment.consoleEntries
-                .add(new ConsoleItem(
-                        "--------------------------------------------------------------------------------------------------"));
+                .add("--------------------------------------------------------------------------------------------------");
     }
 
     private static void showDevicesMenu() {
@@ -245,21 +238,19 @@ public class PlayerSystem {
 
     public static void incLocation(String folderName, LocalFolder targetFolder) {
         if (targetFolder.locked) {
-            ConsoleFragment.consoleEntries.add(new ConsoleItem("Access Denied"));
-            ConsoleFragment.consoleEntries.add(new ConsoleItem(folderName
-                    + " is a secure location"));
+            ConsoleFragment.consoleEntries.add("Access Denied");
+            ConsoleFragment.consoleEntries.add(folderName
+                    + " is a secure location");
             ConsoleFragment.consoleEntries
-                    .add(new ConsoleItem(
-                            "--------------------------------------------------------------------------------------------------"));
+                    .add("--------------------------------------------------------------------------------------------------");
         } else if (!targetFolder.locked) {
             // lastLocation = location;
             location = targetFolder;
             locationStr.add("/" + targetFolder.name);
-            ConsoleFragment.consoleEntries.add(new ConsoleItem("Opened "
-                    + folderName + ""));
+            ConsoleFragment.consoleEntries.add("Opened "
+                    + folderName + "");
             ConsoleFragment.consoleEntries
-                    .add(new ConsoleItem(
-                            "--------------------------------------------------------------------------------------------------"));
+                    .add("--------------------------------------------------------------------------------------------------");
         }
     }
 
@@ -269,11 +260,10 @@ public class PlayerSystem {
     }
 
     public static void unzip(final ZipFolder zip) {
-        ConsoleFragment.consoleEntries.add(new ConsoleItem(
-                "Attempting to extract " + zip.name + ".zip"));
+        ConsoleFragment.consoleEntries.add(
+                "Attempting to extract " + zip.name + ".zip");
         ConsoleFragment.consoleEntries
-                .add(new ConsoleItem(
-                        "--------------------------------------------------------------------------------------------------"));
+                .add("--------------------------------------------------------------------------------------------------");
 
         targetZip = zip;
 
@@ -283,8 +273,8 @@ public class PlayerSystem {
 
             public void onFinish() {
                 // Extract Delayed
-                ConsoleFragment.consoleEntries.add(new ConsoleItem(
-                        "Successfully extracted:"));
+                ConsoleFragment.consoleEntries.add(
+                        "Successfully extracted:");
                 targetZip.unzip();
                 targetZip.location.zipFiles.remove(targetZip);
                 ConsoleFragment.cl_adapter.notifyDataSetChanged();

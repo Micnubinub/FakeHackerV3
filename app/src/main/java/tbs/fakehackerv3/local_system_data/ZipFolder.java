@@ -1,12 +1,8 @@
-package tbs.fakehackerv3.player;
+package tbs.fakehackerv3.local_system_data;
 
 import java.util.ArrayList;
 
-import tbs.fakehackerv3.console.ConsoleItem;
 import tbs.fakehackerv3.fragments.ConsoleFragment;
-import tbs.fakehackerv3.local_system_data.LocalFile;
-import tbs.fakehackerv3.local_system_data.LocalFolder;
-import tbs.fakehackerv3.local_system_data.SidFileType;
 
 
 public class ZipFolder extends LocalFolder {
@@ -64,17 +60,16 @@ public class ZipFolder extends LocalFolder {
     }
 
     public void unzip() { // UNZIP
-        ConsoleFragment.consoleEntries.add(new ConsoleItem(
-                "Successfully Extracted:"));
+        ConsoleFragment.consoleEntries.add(
+                "Successfully Extracted:");
         for (int i = 0; i < folders.get(0).files.size(); ++i) {
             System.out.println("For Loop for Adding");
 
             ConsoleFragment.player.location.files.add(folders.get(0).files.get(i));
-            ConsoleFragment.consoleEntries.add(new ConsoleItem(" > "
-                    + folders.get(0).files.get(i).name));
+            ConsoleFragment.consoleEntries.add(" > "
+                    + folders.get(0).files.get(i).name);
         }
         ConsoleFragment.consoleEntries
-                .add(new ConsoleItem(
-                        "--------------------------------------------------------------------------------------------------"));
+                .add("--------------------------------------------------------------------------------------------------");
     }
 }

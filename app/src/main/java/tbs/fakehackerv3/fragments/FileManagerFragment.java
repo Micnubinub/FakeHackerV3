@@ -114,6 +114,7 @@ public class FileManagerFragment extends Fragment {
         }
     };
     private static FragmentActivity context;
+    //Todo local and external
     private static String currentDirectory = Environment.getExternalStorageDirectory().getPath();
     private static boolean isInFileManagerMode = false;
     private static ArrayList<File> currentTree;

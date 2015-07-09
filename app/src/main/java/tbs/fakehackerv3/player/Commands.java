@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import tbs.fakehackerv3.RemoteTools;
 import tbs.fakehackerv3.Tools;
 import tbs.fakehackerv3.console.CommandItem;
-import tbs.fakehackerv3.console.ConsoleItem;
 import tbs.fakehackerv3.fragments.ConsoleFragment;
 import tbs.fakehackerv3.fragments.FileManagerFragment;
 
@@ -36,13 +35,13 @@ public class Commands {
     }
 
     private static void print(String string) {
-        ConsoleFragment.consoleEntries.add(new ConsoleItem(string));
+        ConsoleFragment.consoleEntries.add(string);
     }
 
     public static void seperator() {
         ConsoleFragment.consoleEntries
-                .add(new ConsoleItem(
-                        "--------------------------------------------------------------------------------------------------"));
+                .add(
+                        "--------------------------------------------------------------------------------------------------");
     }
 
     private static boolean isInteger(String s) {
@@ -380,16 +379,16 @@ public class Commands {
         } else if (cmdArray.size() == 6) {
             checkSix(cmdArray);
         } else if (cmdArray.size() == 0) {
-            ConsoleFragment.consoleEntries.add(new ConsoleItem("Blank Command!"));
+            ConsoleFragment.consoleEntries.add("Blank Command!");
             ConsoleFragment.consoleEntries
-                    .add(new ConsoleItem(
-                            "--------------------------------------------------------------------------------------------------"));
+                    .add(
+                            "--------------------------------------------------------------------------------------------------");
         } else {
-            ConsoleFragment.consoleEntries.add(new ConsoleItem(
-                    "Command out of Range"));
+            ConsoleFragment.consoleEntries.add(
+                    "Command out of Range");
             ConsoleFragment.consoleEntries
-                    .add(new ConsoleItem(
-                            "--------------------------------------------------------------------------------------------------"));
+                    .add(
+                            "--------------------------------------------------------------------------------------------------");
         }
 
     }
@@ -403,26 +402,26 @@ public class Commands {
             // Device
             // List
             //Todo ConsoleFragment.mBluetoothAdapter.startDiscovery();
-            ConsoleFragment.consoleEntries.add(new ConsoleItem(
-                    "bluetooth adapter initialized"));
-            ConsoleFragment.consoleEntries.add(new ConsoleItem(
-                    "seeking devices in range"));
+            ConsoleFragment.consoleEntries.add(
+                    "bluetooth adapter initialized");
+            ConsoleFragment.consoleEntries.add(
+                    "seeking devices in range");
             ConsoleFragment.consoleEntries
-                    .add(new ConsoleItem(
-                            "--------------------------------------------------------------------------------------------------"));
+                    .add(
+                            "--------------------------------------------------------------------------------------------------");
         } else if (cmd.get(0).equals("help")) {
-            ConsoleFragment.consoleEntries.add(new ConsoleItem(" COMMANDS: "));
+            ConsoleFragment.consoleEntries.add(" COMMANDS: ");
             ConsoleFragment.consoleEntries
-                    .add(new ConsoleItem(
-                            "--------------------------------------------------------------------------------------------------"));
+                    .add(
+                            "--------------------------------------------------------------------------------------------------");
             // for (int i = 0; i < commands.size(); ++i) {
-            // ConsoleFragment.consoleEntries.add(new ConsoleItem("   "
+            // ConsoleFragment.consoleEntries.add("   "
             // + commands.get(i).cmd + " - " + commands.get(i).desc));
             // }
             printHelp();
             ConsoleFragment.consoleEntries
-                    .add(new ConsoleItem(
-                            "--------------------------------------------------------------------------------------------------"));
+                    .add(
+                            "--------------------------------------------------------------------------------------------------");
         } else if (cmd.get(0).equals("repeat")) {
             ConsoleFragment.handleCommand(lastCom);
         } else if (cmd.get(0).equals("landscape")) {
@@ -501,10 +500,9 @@ public class Commands {
 
     void checkTwo(ArrayList cmd) {
         if (cmd.get(0).equals("print")) {
-            ConsoleFragment.consoleEntries.add(new ConsoleItem(cmd.get(1) + ""));
+            ConsoleFragment.consoleEntries.add(cmd.get(1) + "");
             ConsoleFragment.consoleEntries
-                    .add(new ConsoleItem(
-                            "--------------------------------------------------------------------------------------------------"));
+                    .add("--------------------------------------------------------------------------------------------------");
         } else if (cmd.get(0).equals("setbt")) {
             if (isInteger(cmd.get(1).toString())) {
                 int num = Integer.valueOf(cmd.get(1).toString());
@@ -545,13 +543,12 @@ public class Commands {
     }
 
     void invalidCommand(ArrayList userCmd) {
-        ConsoleFragment.consoleEntries.add(new ConsoleItem("command " + userCmd
-                + " does not exist."));
-        ConsoleFragment.consoleEntries.add(new ConsoleItem(
-                "type [ help ] for a list of commands."));
+        ConsoleFragment.consoleEntries.add("command " + userCmd
+                + " does not exist.");
+        ConsoleFragment.consoleEntries.add(
+                "type [ help ] for a list of commands.");
         ConsoleFragment.consoleEntries
-                .add(new ConsoleItem(
-                        "--------------------------------------------------------------------------------------------------"));
+                .add("--------------------------------------------------------------------------------------------------");
     }
 
     void printHelp() {
