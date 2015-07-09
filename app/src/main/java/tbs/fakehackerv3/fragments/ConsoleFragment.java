@@ -128,8 +128,7 @@ public class ConsoleFragment extends Fragment {
     }
 
     private static void initEverythingElse() {
-        userCommand = (EditText) mainView.findViewById(R.id.userCommand);
-        Button submitCMD = (Button) mainView.findViewById(R.id.subCommand);
+
         final DecimalFormat df = new DecimalFormat("0");
         //  final DecimalFormat mb = new DecimalFormat("0.00");
 
@@ -186,6 +185,9 @@ public class ConsoleFragment extends Fragment {
         deviceName = (TextView) mainView.findViewById(R.id.playerName);
         dataStorage = (TextView) mainView.findViewById(R.id.localStorage);
         batLife = (TextView) mainView.findViewById(R.id.batLife);
+        userCommand = (EditText) mainView.findViewById(R.id.userCommand);
+        Button submitCMD = (Button) mainView.findViewById(R.id.subCommand);
+
 
         deviceName.setText(android.os.Build.MODEL);
 
@@ -303,18 +305,19 @@ public class ConsoleFragment extends Fragment {
         c3_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
                 inventoryItems);
         deviceList.setAdapter(c3_adapter);
-
+        initEverythingElse();
 
         return mainView;
     }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         context = getActivity();
         commands = new Commands();
         player.Setup(getTotalInternalMemorySize());
         handler = new Handler();
         player = new PlayerSystem();
-        initEverythingElse();
+
     }
 }

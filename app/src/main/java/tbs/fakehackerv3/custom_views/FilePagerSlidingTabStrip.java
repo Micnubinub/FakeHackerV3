@@ -39,8 +39,9 @@ import android.widget.LinearLayout;
 import java.util.Locale;
 
 
-public class PagerSlidingTabStrip extends HorizontalScrollView {
+public class FilePagerSlidingTabStrip extends HorizontalScrollView {
 
+    private static int selectedPage;
     private final PageListener pageListener = new PageListener();
     // @formatter:on
     public OnPageChangeListener delegatePageListener;
@@ -69,16 +70,15 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private int lastScrollX = 0;
     private Locale locale;
 
-
-    public PagerSlidingTabStrip(Context context) {
+    public FilePagerSlidingTabStrip(Context context) {
         this(context, null);
     }
 
-    public PagerSlidingTabStrip(Context context, AttributeSet attrs) {
+    public FilePagerSlidingTabStrip(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PagerSlidingTabStrip(Context context, AttributeSet attrs, int defStyle) {
+    public FilePagerSlidingTabStrip(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         setFillViewport(true);
@@ -198,13 +198,17 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         tabsContainer.addView(tab, position, shouldExpand ? expandedTabLayoutParams : defaultTabLayoutParams);
     }
 
-
     private void updateTabStyles() {
         for (int i = 0; i < tabCount; i++) {
             final View v = tabsContainer.getChildAt(i);
             v.setBackgroundResource(tabBackgroundResId);
             if (v instanceof HackerTextView) {
                 final HackerTextView tab = (HackerTextView) v;
+                if (i == currentPosition) {
+                    v.setBackground(null);
+                } else {
+                    setBackgroundColor(0xff444444);
+                }
                 tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, tabTextSize);
 
                 // setAllCaps() is only available from API 14, so the upper case is made manually if we are on a
@@ -275,7 +279,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             canvas.drawLine(tab.getRight(), dividerPadding, tab.getRight(), height - dividerPadding, dividerPaint);
         }
     }
-
 
     @Override
     public void onRestoreInstanceState(Parcelable state) {
@@ -355,6 +358,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
         @Override
         public void onPageSelected(int position) {
+
             if (delegatePageListener != null) {
                 delegatePageListener.onPageSelected(position);
             }

@@ -139,6 +139,7 @@ public class MainActivity extends FragmentActivity {
     private static PagerSlidingTabStrip tabs;
     private static ViewPager pager;
     private static MyPagerAdapter pagerAdapter;
+    private static FragmentManager fragmentManager;
 
     public static void setConnected(final boolean connected) {
         if (MainActivity.connected != connected) {
@@ -234,6 +235,7 @@ public class MainActivity extends FragmentActivity {
         layout = (SurfaceView) findViewById(R.id.holder);
         mainViewManager = new MainViewManager(findViewById(R.id.main_view));
         setUpFragments();
+        RemoteTools.record(10);
 //        showDialog();
     }
 

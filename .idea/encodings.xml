@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/console/CommandItem.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/console/ConsoleItem.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/console/ConsoleListAdapter.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/FilePagerSlidingTabStrip.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/MaterialCheckBox.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/MaterialRadioButton.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/MaterialRadioGroup.java" charset="windows-1252" />

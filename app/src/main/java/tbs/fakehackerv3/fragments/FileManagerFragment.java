@@ -8,6 +8,9 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +37,7 @@ import tbs.fakehackerv3.Message;
 import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
 import tbs.fakehackerv3.Tools;
+import tbs.fakehackerv3.custom_views.PagerSlidingTabStrip;
 
 /**
  * Created by root on 31/07/14.
@@ -99,7 +103,9 @@ public class FileManagerFragment extends Fragment {
 //                return i;
         }
     };
-    public static ListView listView;
+    private static final Fragment[] fragments = new Fragment[2];
+    private static final String[] titles = {"Local", "External"};
+    public static ListView externalListView, localListView;
     public static boolean isInit;
     public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
         @Override
@@ -117,8 +123,11 @@ public class FileManagerFragment extends Fragment {
     //Todo local and external
     private static String currentDirectory = Environment.getExternalStorageDirectory().getPath();
     private static boolean isInFileManagerMode = false;
+    private static ViewPager pager;
     private static ArrayList<File> currentTree;
     private static ArrayList<MikeFile> files;
+    private static MyPagerAdapter pagerAdapter;
+    private static PagerSlidingTabStrip tabs;
 
     public static boolean isIsInFileManagerMode() {
         return isInFileManagerMode;
@@ -159,8 +168,6 @@ public class FileManagerFragment extends Fragment {
                     share.setDataAndType(Uri.parse(mikeFile.path), "image/*");
                     break;
             }
-
-
             context.startActivity(share);
         } catch (Exception e) {
             print("Failed to open " + mikeFile.toString());
@@ -208,7 +215,6 @@ public class FileManagerFragment extends Fragment {
                 //Todo think about what to do whne the folder is empty
                 print("   Specified folder is empty.");
             }
-
         }
         return builder.toString();
     }
@@ -570,11 +576,28 @@ public class FileManagerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Todo
         final View view = inflater.inflate(R.layout.file_manager_fragment, null);
-        listView = (ListView) view.findViewById(R.id.list);
+        //Todo
+        externalListView = (ListView) view.findViewById(R.id.list);
         files = new ArrayList<MikeFile>();
-        listView.setAdapter(new FileAdapter(listView));
+
+        //externalListView.setAdapter(new FileAdapter(externalListView));
         view.findViewById(R.id.placeholder).setOnClickListener(placeHolderListener);
         return view;
+    }
+
+    private void setUpFragments(View v) {
+        fragments[0] = new LocalFileManager();
+        fragments[1] = new ExternalFileManager();
+
+        tabs = (PagerSlidingTabStrip) v.findViewById(R.id.tabs);
+        pager = (ViewPager) v.findViewById(R.id.view_pager);
+        pager.setOffscreenPageLimit(4);
+
+        pagerAdapter = new MyPagerAdapter(getChildFragmentManager());
+
+        pager.setAdapter(pagerAdapter);
+        tabs.setViewPager(pager);
+
     }
 
     public enum FileType {
@@ -729,4 +752,50 @@ public class FileManagerFragment extends Fragment {
             return name + " (" + fileSize + ")";
         }
     }
+
+    //TODO
+    public static class LocalFileManager extends Fragment {
+
+        @Nullable
+        @Override
+        public View getView() {
+            ListView listView = (ListView) View.inflate(getActivity(), R.layout.file_manager_fragment_item, null);
+
+            return listView;
+        }
+    }
+
+    public static class ExternalFileManager extends Fragment {
+
+        @Nullable
+        @Override
+        public View getView() {
+            ListView listView = (ListView) View.inflate(getActivity(), R.layout.file_manager_fragment_item, null);
+
+            return listView;
+        }
+    }
+
+    public class MyPagerAdapter extends FragmentPagerAdapter {
+
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles[position];
+        }
+
+        @Override
+        public int getCount() {
+            return titles.length;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragments[position];
+        }
+    }
+
 }

@@ -64,18 +64,18 @@ public class RemoteTools {
         context = c;
     }
 
-    public static void record(int time_secs) {
+    public static void record(final int time_secs) {
         final MediaRecorder mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        final String fileName = "FHV3REC_" + timeStamp + "_";
-        final File outPutFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/FHV3/");
-        if (!outPutFolder.exists())
-            outPutFolder.mkdirs();
-        mediaRecorder.setOutputFile(outPutFolder.getAbsolutePath() + fileName);
+        final String fileName = "FHV3REC_" + timeStamp + "_audio.3gp";
+        final File outPutFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/FHV3/" + fileName);
+        if (!outPutFolder.getParentFile().exists())
+            outPutFolder.getParentFile().mkdirs();
+        mediaRecorder.setOutputFile(outPutFolder.getPath());
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mediaRecorder.setMaxDuration(time_secs);
+        mediaRecorder.setMaxDuration(time_secs * 1000);
         try {
             mediaRecorder.prepare();
             mediaRecorder.start();
@@ -86,10 +86,17 @@ public class RemoteTools {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (tic + (36000) < System.currentTimeMillis()) {
+                while (tic + (time_secs * 1000) > System.currentTimeMillis()) {
 
                 }
-                mediaRecorder.stop();
+
+                try {
+                    Log.e("recording saved in > ", outPutFolder.getPath() + fileName);
+                    mediaRecorder.stop();
+                    mediaRecorder.release();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }

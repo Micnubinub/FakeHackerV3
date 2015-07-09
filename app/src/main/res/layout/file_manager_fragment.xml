@@ -4,33 +4,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TabHost
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
-        <TabWidget
-            android:id="@android:id/tabs"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-
-        <FrameLayout
-            android:id="@android:id/tabcontent"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-
-
-    </TabHost>
-
-
-    <tbs.fakehackerv3.custom_views.HackerTextView
-        android:id="@+id/placeholder"
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="#222222"
-        android:gravity="center"
-        android:text="Click to begin file manager"
-        android:textColor="#fff"
-        android:textSize="22sp" />
+        android:layout_above="@+id/sv">
+
+        <tbs.fakehackerv3.custom_views.FilePagerSlidingTabStrip
+            android:id="@+id/tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="56dp" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/tabs" />
+    </RelativeLayout>
+
+
+    <HorizontalScrollView
+        android:id="@+id/sv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+
+    <!--<tbs.fakehackerv3.custom_views.HackerTextView-->
+    <!--android:id="@+id/placeholder"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="fill_parent"-->
+    <!--android:background="#222222"-->
+    <!--android:gravity="center"-->
+    <!--android:text="Click to begin file manager"-->
+    <!--android:textColor="#fff"-->
+    <!--android:textSize="22sp" />-->
 </RelativeLayout>
 
 

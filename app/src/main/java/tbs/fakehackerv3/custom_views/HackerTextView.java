@@ -39,8 +39,8 @@ public class HackerTextView extends TextView {
         if (fontItalic == null) {
             fontItalic = Typeface.createFromAsset(context.getAssets(), "exo_italic.otf");
         }
-
         setTypeface(font);
+        setTextColor(0xff22ccff);
     }
 
     @Override
