@@ -19,7 +19,7 @@
             android:padding="8dp"
             android:src="@drawable/hamburger" />
 
-        <TextView
+        <tbs.fakehackerv3.custom_views.HackerTextView
             android:id="@+id/static_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
             android:textColor="#fff"
             android:textSize="22sp" />
 
-        <TextView
+        <tbs.fakehackerv3.custom_views.HackerTextView
             android:id="@+id/device_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

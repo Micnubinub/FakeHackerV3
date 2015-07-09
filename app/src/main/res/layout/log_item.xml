@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:textSize="18sp"
+<tbs.fakehackerv3.custom_views.HackerTextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/text"
-    android:textColor="#fff"
-    android:padding="8dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" />
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:textColor="#fff"
+    android:textSize="18sp" />

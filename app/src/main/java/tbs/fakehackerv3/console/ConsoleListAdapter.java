@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import tbs.fakehackerv3.R;
+
 public class ConsoleListAdapter extends ArrayAdapter<ConsoleItem> {
 
     private final ArrayList<ConsoleItem> consoleItems;

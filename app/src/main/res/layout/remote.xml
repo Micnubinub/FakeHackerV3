@@ -14,7 +14,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
+            <tbs.fakehackerv3.custom_views.HackerTextView
                 android:id="@+id/flash"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             <!--android:textColor="#fff"-->
             <!--android:textSize="18sp" />-->
 
-            <TextView
+            <tbs.fakehackerv3.custom_views.HackerTextView
                 android:id="@+id/bluetooth"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
-            <TextView
+            <tbs.fakehackerv3.custom_views.HackerTextView
                 android:id="@+id/take_pic_back"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
-            <TextView
+            <tbs.fakehackerv3.custom_views.HackerTextView
                 android:id="@+id/take_pic_front"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
-            <TextView
+            <tbs.fakehackerv3.custom_views.HackerTextView
                 android:id="@+id/media_control"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
                 android:textSize="18sp" />
 
 
-            <TextView
+            <tbs.fakehackerv3.custom_views.HackerTextView
                 android:id="@+id/brightness"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
-            <!--<TextView-->
+            <!--<tbs.fakehackerv3.custom_views.HackerTextView-->
             <!--android:id="@+id/auto_rotation"-->
             <!--android:layout_width="fill_parent"-->
             <!--android:layout_height="wrap_content"-->
@@ -88,7 +88,7 @@
             <!--android:textColor="#fff"-->
             <!--android:textSize="18sp" />-->
 
-            <!--<TextView-->
+            <!--<tbs.fakehackerv3.custom_views.HackerTextView-->
             <!--android:id="@+id/screen_timeout"-->
             <!--android:layout_width="fill_parent"-->
             <!--android:layout_height="wrap_content"-->
@@ -97,7 +97,7 @@
             <!--android:textColor="#fff"-->
             <!--android:textSize="18sp" />-->
 
-            <!--<TextView-->
+            <!--<tbs.fakehackerv3.custom_views.HackerTextView-->
             <!--android:id="@+id/silent_mode"-->
             <!--android:layout_width="fill_parent"-->
             <!--android:layout_height="wrap_content"-->
@@ -107,7 +107,7 @@
             <!--android:textSize="18sp" />-->
 
 
-            <TextView
+            <tbs.fakehackerv3.custom_views.HackerTextView
                 android:id="@+id/alarm_volume"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
                 android:textSize="18sp" />
 
 
-            <TextView
+            <tbs.fakehackerv3.custom_views.HackerTextView
                 android:id="@+id/notification_volume"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -126,7 +126,7 @@
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
-            <TextView
+            <tbs.fakehackerv3.custom_views.HackerTextView
                 android:id="@+id/media_volume"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -135,7 +135,7 @@
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
-            <TextView
+            <tbs.fakehackerv3.custom_views.HackerTextView
                 android:id="@+id/ringer_volume"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -146,7 +146,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/placeholder"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

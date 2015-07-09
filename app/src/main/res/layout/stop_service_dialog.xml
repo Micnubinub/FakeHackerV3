@@ -5,7 +5,7 @@
     android:background="@drawable/round_rect"
     android:orientation="vertical">
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="12dp"
@@ -14,7 +14,7 @@
         android:textSize="22sp"
         android:textStyle="bold" />
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="12dp"
@@ -24,11 +24,12 @@
 
 
     <LinearLayout
-        android:layout_margin="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
+        android:layout_margin="4dp"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/stop"
             android:layout_width="wrap_content"
@@ -39,6 +40,7 @@
             android:text="Stop"
             android:textColor="#ff555555"
             android:textSize="18sp" />
+
         <Button
             android:id="@+id/continue_service"
             android:layout_width="wrap_content"

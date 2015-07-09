@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -75,8 +79,22 @@ public class Tools {
         for (int ii = 0; ii < list.size(); ii++) {
             pacs.add(ii, list.get(ii).loadLabel(packageManager).toString() + " (" + list.get(ii).activityInfo.packageName + ")");
         }
-
         return pacs;
+    }
+
+    public static Bitmap getBitmapFromDrawable(Drawable drawable) {
+        //TODO test
+        Bitmap bitmap = null;
+        if (drawable instanceof BitmapDrawable) ;
+        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
+        final Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
     }
 
     public static void launchIE(final Context context) {
@@ -180,7 +198,6 @@ public class Tools {
     public static String getDate(long date) {
         // Create a DateFormatter object for displaying date in specified format.
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-
         // Create a calendar object that will convert the date and time value in milliseconds to date.
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);

@@ -1,6 +1,6 @@
 package tbs.fakehackerv3.local_system_data;
 
-import tbs.fakehackerv3.fragments.Console;
+import tbs.fakehackerv3.fragments.ConsoleFragment;
 
 public class LocalFile {
     public final String name;
@@ -13,7 +13,7 @@ public class LocalFile {
         this.type = type;
         this.size = size;
         this.rarity = rar;
-        this.size += Console.randInt(0, 10);
+        this.size += ConsoleFragment.randInt(0, 10);
 
     }
 }

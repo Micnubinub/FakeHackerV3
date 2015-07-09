@@ -3,7 +3,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_background_inset">
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         android:layout_margin="8dp"
         android:visibility="gone" />
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
 
         android:id="@+id/text"
         android:layout_width="wrap_content"

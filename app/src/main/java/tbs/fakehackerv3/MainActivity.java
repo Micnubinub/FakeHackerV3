@@ -16,7 +16,10 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import tbs.fakehackerv3.custom_views.PagerSlidingTabStrip;
+import tbs.fakehackerv3.fragments.ConsoleFragment;
 import tbs.fakehackerv3.fragments.CustomAndDownloadedCommands;
 import tbs.fakehackerv3.fragments.FileManagerFragment;
 import tbs.fakehackerv3.fragments.LogFragment;
@@ -28,7 +31,8 @@ import tbs.fakehackerv3.fragments.Settings;
 
 public class MainActivity extends FragmentActivity {
 
-    private static final Fragment[] fragments = new Fragment[4];
+    private static final ArrayList<Fragment> fragments = new ArrayList<Fragment>(6);
+    private static final ArrayList<String> titles = new ArrayList<String>(6);
     public static WifiP2pDevice connectedDevice;
     public static P2PManager p2PManager;
     public static Activity context;
@@ -214,6 +218,13 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    public static void addFragment(Fragment fragment, String title) {
+        if (fragments.contains(fragment)) return;
+
+        fragments.add(fragment);
+        titles.add(title);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -233,10 +244,11 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void setUpFragments() {
-        fragments[0] = new MessagingFragent();
-        fragments[1] = new RemoteFragment();
-        fragments[2] = new FileManagerFragment();
-        fragments[3] = new LogFragment();
+        addFragment(new MessagingFragent(), "Messaging");
+        addFragment(new RemoteFragment(), "Remote");
+        addFragment(new FileManagerFragment(), "File Manager");
+        addFragment(new ConsoleFragment(), "Console");
+        addFragment(new LogFragment(), "Log");
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.view_pager);
@@ -251,7 +263,6 @@ public class MainActivity extends FragmentActivity {
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
-        private final String[] TITLES = {"Messaging", "Remote", "File Manager", "Log"};
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -259,17 +270,17 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return TITLES[position];
+            return titles.get(position);
         }
 
         @Override
         public int getCount() {
-            return TITLES.length;
+            return titles.size();
         }
 
         @Override
         public Fragment getItem(int position) {
-            return fragments[position];
+            return fragments.get(position);
         }
     }
 

@@ -1,4 +1,4 @@
-package coGame.consoletest;
+package tbs.fakehackerv3.console;
 
 public class CommandItem {
     private final String cmd;

@@ -5,21 +5,19 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.os.Environment;
-import android.provider.Settings;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import coGame.consoletest.CommandItem;
-import coGame.consoletest.ConsoleItem;
-import coGame.consoletest.MainActivity;
-import mike.Chat;
-import mike.FileManager;
-import mike.MikeMode;
-import mike.Tools;
+import tbs.fakehackerv3.RemoteTools;
+import tbs.fakehackerv3.Tools;
+import tbs.fakehackerv3.console.CommandItem;
+import tbs.fakehackerv3.console.ConsoleItem;
+import tbs.fakehackerv3.fragments.ConsoleFragment;
+import tbs.fakehackerv3.fragments.FileManagerFragment;
+
 
 public class Commands {
-    private static Chat chat;
     private final ArrayList<CommandItem> commands;
     private final boolean exists;
     // Handler handler = new Handler();
@@ -38,11 +36,11 @@ public class Commands {
     }
 
     private static void print(String string) {
-        MainActivity.consoleEntries.add(new ConsoleItem(string));
+        ConsoleFragment.consoleEntries.add(new ConsoleItem(string));
     }
 
     public static void seperator() {
-        MainActivity.consoleEntries
+        ConsoleFragment.consoleEntries
                 .add(new ConsoleItem(
                         "--------------------------------------------------------------------------------------------------"));
     }
@@ -58,20 +56,21 @@ public class Commands {
     }
 
     public void checkCommand(String userCmd) {
-
+        //TODo
         if (!userCmd.equals("repeat")) {
             lastCom = userCmd;
         }
 
         userCmd = userCmd.toLowerCase();
         // Todo
+/* Todo
         if (userCmd.equals("toggleflash")) {
-            Tools.toggleTorch(MainActivity.context);
+            Tools.toggleTorch(ConsoleFragment.context);
             return;
         }
 
-        // if (userCmd.equals("filemanager")) {
-        // FileManager.startFilemanager();
+        // if (userCmd.equals("FileManagerFragment")) {
+        // FileManagerFragment.startFilemanager();
         // return;
         // }
 
@@ -155,23 +154,24 @@ public class Commands {
                 return;
             }
         }
+*/
 
-        if (FileManager.isIsInFileManagerMode()) {
+        if (FileManagerFragment.isIsInFileManagerMode()) {
 
             if (userCmd.equals("totalspace")) {
-                print("Total space : " + Tools.fileSize(FileManager.getTotalSpace(Environment.getExternalStorageDirectory().getPath())));
+                //Todo print("Total space : " + Tools.fileSize(FileManagerFragment.getTotalSpace(Environment.getExternalStorageDirectory().getPath())));
                 print("");
                 return;
             }
 
             if (userCmd.equals("freespace")) {
-                print("Free space :" + Tools.fileSize(FileManager.getFreeSpace(Environment.getExternalStorageDirectory().getPath())));
+                //Todo  print("Free space :" + Tools.fileSize(FileManagerFragment.getFreeSpace(Environment.getExternalStorageDirectory().getPath())));
                 print("");
                 return;
             }
 
             try {
-                FileManager.open(Integer.parseInt(userCmd));
+                //Todo FileManagerFragment.open(Integer.parseInt(userCmd));
                 // Commands.seperator();
                 print(" type the respective number of each file/folder to open it");
                 print(" or type back to return to its parent directory.");
@@ -183,20 +183,20 @@ public class Commands {
 
             if (userCmd.split("\\s+")[0].equals("del")
                     && userCmd.split("\\s+").length == 2) {
-                try {
-                    FileManager
+            /*  Todo  try {
+                    FileManagerFragment
                             .delete(Integer.parseInt(userCmd.split("\\s+")[1]));
                 } catch (NumberFormatException e) {
-                    FileManager.delete(userCmd.split("\\s+")[1]);
+                    FileManagerFragment.delete(userCmd.split("\\s+")[1]);
                 } catch (Exception e) {
                 }
-
+*/
                 return;
             }
 
             if (userCmd.equals("back")) {
-                FileManager.openFolder(new File(FileManager
-                        .getCurrentDirectory()).getParent());
+              /* Todo FileManagerFragment.openFolder(new File(FileManagerFragment
+                        .getCurrentDirectory()).getParent());*/
                 print(" type the respective number of each file/folder to open it");
                 print(" or type back to return to its parent directory.");
                 seperator();
@@ -205,13 +205,13 @@ public class Commands {
         }
 
         // if (userCmd.equals("exit")) {
-        // if (FileManager.isIsInFileManagerMode())
-        // FileManager.exitFilemanager();
+        // if (FileManagerFragment.isIsInFileManagerMode())
+        // FileManagerFragment.exitFilemanager();
         // return;
         // }
 
         if (userCmd.equals("launch ie")) {
-            Tools.launchIE(MainActivity.context);
+            Tools.launchIE(ConsoleFragment.context);
             return;
         }
 
@@ -220,8 +220,8 @@ public class Commands {
             try {
 
                 print("opening :" + commands[1]);
-                FileManager.open(Environment.getExternalStorageDirectory()
-                        .toString() + commands[1]);
+             /*Todo   FileManagerFragment.open(Environment.getExternalStorageDirectory()
+                        .toString() + commands[1]);*/
 
             } catch (Exception e) {
             }
@@ -229,28 +229,28 @@ public class Commands {
         }
 
         if (commands[0].equals("showdetails") && commands.length == 2) {
-            try {
-                FileManager.showFileDetails(Integer.parseInt(commands[1]));
+       /*  TOdo   try {
+                FileManagerFragment.showFileDetails(Integer.parseInt(commands[1]));
             } catch (NumberFormatException e) {
-                FileManager.showFileDetails(commands[1]);
+                FileManagerFragment.showFileDetails(commands[1]);
             } catch (Exception e) {
                 print("Failed to show details");
-            }
+            }*/
 
             return;
         }
 
         if (commands[0].equals("mkdir") && commands.length == 2) {
             try {
-                if (commands[1].endsWith("/")) {
-                    FileManager.createFolder(Environment
+      /*  Todo        if (commands[1].endsWith("/")) {
+                    FileManagerFragment.createFolder(Environment
                             .getExternalStorageDirectory().getPath()
                             + "/"
                             + commands[1]);
                 } else {
-                    FileManager.createFolder(new File(FileManager
+                    FileManagerFragment.createFolder(new File(FileManagerFragment
                             .getCurrentDirectory(), commands[1] + "/"));
-                }
+                }*/
 
                 return;
             } catch (Exception e) {
@@ -261,13 +261,13 @@ public class Commands {
 
         if (commands[0].equals("mkfile") && commands.length == 2) {
             try {
-                if (commands[1].contains("/")) {
-                    FileManager.createFile(Environment
+            /* Todo   if (commands[1].contains("/")) {
+                    FileManagerFragment.createFile(Environment
                             .getExternalStorageDirectory() + commands[1]);
                 } else {
-                    FileManager.createFile(new File(FileManager
+                    FileManagerFragment.createFile(new File(FileManagerFragment
                             .getCurrentDirectory(), commands[1]));
-                }
+                }*/
                 return;
             } catch (Exception e) {
                 print("Failed to create file");
@@ -275,28 +275,26 @@ public class Commands {
         }
 
         if (userCmd.equals("getpackages")) {
-            Tools.getPackages(MainActivity.context);
+            Tools.getPackages(ConsoleFragment.context);
             return;
         }
 
         if (userCmd.equals("totalspace")) {
             print("Total space : "
-                    + Tools.fileSize(FileManager.getTotalSpace(Environment
-                    .getExternalStorageDirectory().getPath())));
+                    + RemoteTools.fileSize(new File(Environment.getExternalStorageDirectory().getPath()).getTotalSpace()));
             print("");
             return;
         }
 
         if (userCmd.equals("freespace")) {
             print("Free space :"
-                    + Tools.fileSize(FileManager.getFreeSpace(Environment
-                    .getExternalStorageDirectory().getPath())));
+                    + RemoteTools.fileSize(new File(Environment.getExternalStorageDirectory().getPath()).getFreeSpace()));
             print("");
             return;
         }
 
         if (userCmd.equals("tree")) {
-            FileManager.showTree(Environment.getExternalStorageDirectory());
+            //Todo FileManagerFragment.showTree(Environment.getExternalStorageDirectory());
             // seperator();
             print("  type the respective number for each directory to open it");
             print("--------------------------------------------------------------------------------------------------");
@@ -304,7 +302,7 @@ public class Commands {
         }
 
         if (userCmd.equals("restart")) {
-            MikeMode.restart(MainActivity.context);
+            //Todo MikeMode.restart(ConsoleFragment.context);
             return;
         }
 
@@ -316,10 +314,10 @@ public class Commands {
         if (userCmd.split("\\s+")[0].equals("launch")
                 && userCmd.split("\\s+").length == 2) {
             try {
-                Tools.launchInt(MainActivity.context,
+                Tools.launchInt(ConsoleFragment.context,
                         Integer.parseInt(userCmd.split("\\s+")[1]));
             } catch (NumberFormatException e) {
-                Tools.launchPackage(MainActivity.context,
+                Tools.launchPackage(ConsoleFragment.context,
                         userCmd.split("\\s+")[1]);
             } catch (Exception e) {
 
@@ -352,7 +350,7 @@ public class Commands {
                         seperator();
                     } else {
                         for (int i = 0; i < itr; ++i) {
-                            MainActivity.handleCommand(command);
+                            ConsoleFragment.handleCommand(command);
                         }
                     }
                     return;
@@ -382,14 +380,14 @@ public class Commands {
         } else if (cmdArray.size() == 6) {
             checkSix(cmdArray);
         } else if (cmdArray.size() == 0) {
-            MainActivity.consoleEntries.add(new ConsoleItem("Blank Command!"));
-            MainActivity.consoleEntries
+            ConsoleFragment.consoleEntries.add(new ConsoleItem("Blank Command!"));
+            ConsoleFragment.consoleEntries
                     .add(new ConsoleItem(
                             "--------------------------------------------------------------------------------------------------"));
         } else {
-            MainActivity.consoleEntries.add(new ConsoleItem(
+            ConsoleFragment.consoleEntries.add(new ConsoleItem(
                     "Command out of Range"));
-            MainActivity.consoleEntries
+            ConsoleFragment.consoleEntries
                     .add(new ConsoleItem(
                             "--------------------------------------------------------------------------------------------------"));
         }
@@ -399,50 +397,50 @@ public class Commands {
     void checkSingle(ArrayList cmd) {
         if (cmd.get(0).equals("btsn")) {
             // Find Devices
-            MainActivity.player.location.update();
+            ConsoleFragment.player.location.update();
 
-            MainActivity.player.deviceStats.folders.get(0).folders.clear(); // Reset
+            ConsoleFragment.player.deviceStats.folders.get(0).folders.clear(); // Reset
             // Device
             // List
-            MainActivity.mBluetoothAdapter.startDiscovery();
-            MainActivity.consoleEntries.add(new ConsoleItem(
+            //Todo ConsoleFragment.mBluetoothAdapter.startDiscovery();
+            ConsoleFragment.consoleEntries.add(new ConsoleItem(
                     "bluetooth adapter initialized"));
-            MainActivity.consoleEntries.add(new ConsoleItem(
+            ConsoleFragment.consoleEntries.add(new ConsoleItem(
                     "seeking devices in range"));
-            MainActivity.consoleEntries
+            ConsoleFragment.consoleEntries
                     .add(new ConsoleItem(
                             "--------------------------------------------------------------------------------------------------"));
         } else if (cmd.get(0).equals("help")) {
-            MainActivity.consoleEntries.add(new ConsoleItem(" COMMANDS: "));
-            MainActivity.consoleEntries
+            ConsoleFragment.consoleEntries.add(new ConsoleItem(" COMMANDS: "));
+            ConsoleFragment.consoleEntries
                     .add(new ConsoleItem(
                             "--------------------------------------------------------------------------------------------------"));
             // for (int i = 0; i < commands.size(); ++i) {
-            // MainActivity.consoleEntries.add(new ConsoleItem("   "
+            // ConsoleFragment.consoleEntries.add(new ConsoleItem("   "
             // + commands.get(i).cmd + " - " + commands.get(i).desc));
             // }
             printHelp();
-            MainActivity.consoleEntries
+            ConsoleFragment.consoleEntries
                     .add(new ConsoleItem(
                             "--------------------------------------------------------------------------------------------------"));
         } else if (cmd.get(0).equals("repeat")) {
-            MainActivity.handleCommand(lastCom);
+            ConsoleFragment.handleCommand(lastCom);
         } else if (cmd.get(0).equals("landscape")) {
-            // MainActivity.consoleEntries.clear();
-            // MainActivity.infoEntries.clear();
-            ((Activity) MainActivity.context)
+            // ConsoleFragment.consoleEntries.clear();
+            // ConsoleFragment.infoEntries.clear();
+            ((Activity) ConsoleFragment.context)
                     .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         } else if (cmd.get(0).equals("portrait")) {
-            // MainActivity.consoleEntries.clear();
-            // MainActivity.infoEntries.clear();
-            ((Activity) MainActivity.context)
+            // ConsoleFragment.consoleEntries.clear();
+            // ConsoleFragment.infoEntries.clear();
+            ((Activity) ConsoleFragment.context)
                     .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         } else if (cmd.get(0).equals("insertbreak")) {
             seperator();
         } else if (cmd.get(0).equals("sweep")) {
-            MainActivity.consoleEntries.clear();
+            ConsoleFragment.consoleEntries.clear();
             seperator();
             print(" Console cleared.");
             seperator();
@@ -451,14 +449,14 @@ public class Commands {
             System.exit(0);
         } else if (cmd.get(0).equals("togglemute")) { // MUTE UNMUTE
             if (!isMute) {
-                AudioManager audioManager = (AudioManager) MainActivity.context
+                AudioManager audioManager = (AudioManager) ConsoleFragment.context
                         .getSystemService(Context.AUDIO_SERVICE);
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                 isMute = false;
 
                 print("  device sound output toggled: OFF");
             } else {
-                AudioManager audioManager = (AudioManager) MainActivity.context
+                AudioManager audioManager = (AudioManager) ConsoleFragment.context
                         .getSystemService(Context.AUDIO_SERVICE);
                 int maxVolume = audioManager
                         .getStreamMaxVolume(AudioManager.STREAM_RING);
@@ -503,18 +501,18 @@ public class Commands {
 
     void checkTwo(ArrayList cmd) {
         if (cmd.get(0).equals("print")) {
-            MainActivity.consoleEntries.add(new ConsoleItem(cmd.get(1) + ""));
-            MainActivity.consoleEntries
+            ConsoleFragment.consoleEntries.add(new ConsoleItem(cmd.get(1) + ""));
+            ConsoleFragment.consoleEntries
                     .add(new ConsoleItem(
                             "--------------------------------------------------------------------------------------------------"));
         } else if (cmd.get(0).equals("setbt")) {
             if (isInteger(cmd.get(1).toString())) {
                 int num = Integer.valueOf(cmd.get(1).toString());
                 if (num >= 0 && num <= 255) {
-                    Settings.System.putInt(
-                            MainActivity.context.getContentResolver(),
-                            android.provider.Settings.System.SCREEN_BRIGHTNESS,
-                            num);
+// Todo not sure what this is                   Settings.System.putInt(
+//                            ConsoleFragment.context.getContentResolver(),
+//                            android.provider.Settings.System.SCREEN_BRIGHTNESS,
+//                            num);
                     print("  set brightness to " + num + ".");
                 } else {
                     print("  must enter value between 0 and 255.");
@@ -547,11 +545,11 @@ public class Commands {
     }
 
     void invalidCommand(ArrayList userCmd) {
-        MainActivity.consoleEntries.add(new ConsoleItem("command " + userCmd
+        ConsoleFragment.consoleEntries.add(new ConsoleItem("command " + userCmd
                 + " does not exist."));
-        MainActivity.consoleEntries.add(new ConsoleItem(
+        ConsoleFragment.consoleEntries.add(new ConsoleItem(
                 "type [ help ] for a list of commands."));
-        MainActivity.consoleEntries
+        ConsoleFragment.consoleEntries
                 .add(new ConsoleItem(
                         "--------------------------------------------------------------------------------------------------"));
     }

@@ -14,7 +14,7 @@
         android:scaleType="centerInside"
         android:src="@drawable/file_file" />
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/file_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
         android:textColor="#fff"
         android:textSize="18sp" />
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/file_size"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

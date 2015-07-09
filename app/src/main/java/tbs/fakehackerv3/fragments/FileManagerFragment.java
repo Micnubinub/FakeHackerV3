@@ -221,7 +221,7 @@ public class FileManagerFragment extends Fragment {
         showTree(file);
     }
 
-    private static void open(File file) {
+    public static void open(File file) {
         if (file.isDirectory())
             openFolder(file);
         else

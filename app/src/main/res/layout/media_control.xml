@@ -5,7 +5,7 @@
     android:background="@drawable/dialog_background_inset"
     android:orientation="vertical">
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -30,29 +30,29 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:background="@drawable/white_button_selector"
             android:id="@+id/previous"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="4dp"
+            android:background="@drawable/white_button_selector"
             android:scaleType="centerInside"
             android:src="@drawable/prev" />
 
         <ImageView
-            android:background="@drawable/white_button_selector"
             android:id="@+id/play_pause"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="4dp"
+            android:background="@drawable/white_button_selector"
             android:scaleType="centerInside"
             android:src="@drawable/play_pause" />
 
         <ImageView
-            android:background="@drawable/white_button_selector"
             android:id="@+id/next"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="4dp"
+            android:background="@drawable/white_button_selector"
             android:scaleType="centerInside"
             android:src="@drawable/next" />
 

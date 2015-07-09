@@ -6,7 +6,7 @@
     android:background="@drawable/message_background"
     android:orientation="vertical">
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/sent_by"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/body"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         android:textColor="#fff"
         android:textSize="17sp" />
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/received_when"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

@@ -37,24 +37,24 @@ import tbs.fakehackerv3.player.PlayerSystem;
 /**
  * Created by Michael on 7/5/2015.
  */
-public class Console extends Fragment {
+public class ConsoleFragment extends Fragment {
     public static final ArrayList<ConsoleItem> consoleEntries = new ArrayList<ConsoleItem>();
     public static final ArrayList<ConsoleItem> inventoryItems = new ArrayList<ConsoleItem>();
     private static final ArrayList<ConsoleItem> infoEntries = new ArrayList<ConsoleItem>();
     public static ConsoleListAdapter cl_adapter;
     public static ConsoleListAdapter c3_adapter;
     public static PlayerSystem player;
+    public static FragmentActivity context;
     private static View mainView;
-    private static FragmentActivity context;
     // Todo
     private static ConsoleListAdapter c2_adapter;
     private static Commands commands;
     private static ListView infoList, deviceList, mainListView;
     private static EditText userCommand;
-    private Handler handler;
+    private static Handler handler;
     // BATTERY
-    private BroadcastReceiver mBatInfoReceiver;
-    private TextView deviceName, dataStorage, batLife;
+    private static BroadcastReceiver mBatInfoReceiver;
+    private static TextView deviceName, dataStorage, batLife;
 
     private static String getTotalInternalMemorySize() {
         File path = Environment.getDataDirectory();
@@ -104,54 +104,15 @@ public class Console extends Fragment {
         return mainListView;
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mainView = inflater.inflate(R.layout.console_frament, null);
-
-        return mainView;
-    }
-
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        commands = new Commands();
-        player.Setup(getTotalInternalMemorySize());
-
-        //connected = false;
-        //initialized = false;
-        //systemStarted = false;
-
-        handler = new Handler();
-
-        player = new PlayerSystem();
-        handler = new Handler();
-
+    private static void initEverythingElse() {
+        userCommand = (EditText) mainView.findViewById(R.id.userCommand);
+        Button submitCMD = (Button) mainView.findViewById(R.id.subCommand);
         final DecimalFormat df = new DecimalFormat("0");
         //  final DecimalFormat mb = new DecimalFormat("0.00");
 
         // Styling TEXT
         //cmdEntry = (TextView) findViewById(R.id.commandEntry);
 
-        infoList = (ListView) mainView.findViewById(R.id.infoView);
-        // infoList.setTypeface(null, Typeface.BOLD);
-
-        deviceList = (ListView) mainView.findViewById(R.id.inventory);
-
-        cl_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
-                consoleEntries);
-        getListView().setAdapter(cl_adapter);
-
-        c2_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
-                infoEntries);
-        infoList.setAdapter(c2_adapter);
-
-        c3_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
-                inventoryItems);
-        deviceList.setAdapter(c3_adapter);
-
-        userCommand = (EditText) mainView.findViewById(R.id.userCommand);
-        Button submitCMD = (Button) mainView.findViewById(R.id.subCommand);
 
         Date d = new Date();
         CharSequence timeString = DateFormat.format("hh: mm: ss -- d/MM/yyyy ",
@@ -198,7 +159,7 @@ public class Console extends Fragment {
                         BatteryManager.EXTRA_LEVEL, 0);
             } // Update Player Bat Life
         };
-        context.registerReceiver(this.mBatInfoReceiver, new IntentFilter(
+        context.registerReceiver(mBatInfoReceiver, new IntentFilter(
                 Intent.ACTION_BATTERY_CHANGED));
 
         deviceName = (TextView) mainView.findViewById(R.id.playerName);
@@ -279,5 +240,46 @@ public class Console extends Fragment {
                 handleCommand(str);
             }
         });
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mainView = inflater.inflate(R.layout.console_frament, null);
+        mainListView = (ListView) mainView.findViewById(R.id.list);
+        infoList = (ListView) mainView.findViewById(R.id.infoView);
+
+        // infoList.setTypeface(null, Typeface.BOLD);
+
+        deviceList = (ListView) mainView.findViewById(R.id.inventory);
+
+        cl_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
+                consoleEntries);
+        getListView().setAdapter(cl_adapter);
+
+        c2_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
+                infoEntries);
+        infoList.setAdapter(c2_adapter);
+
+        c3_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
+                inventoryItems);
+        deviceList.setAdapter(c3_adapter);
+
+
+        return mainView;
+    }
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = getActivity();
+
+        commands = new Commands();
+        player.Setup(getTotalInternalMemorySize());
+        handler = new Handler();
+
+        player = new PlayerSystem();
+        handler = new Handler();
+
+
     }
 }
