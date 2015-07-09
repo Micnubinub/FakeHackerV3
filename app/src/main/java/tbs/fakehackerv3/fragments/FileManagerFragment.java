@@ -84,60 +84,39 @@ public class FileManagerFragment extends Fragment {
                     return String.valueOf(file1.getName().toLowerCase()).compareTo(file2.getName().toLowerCase());
                 }
             }
-//                int i;
-//                if (file.isDirectory() && !file2.isDirectory()) {
-//                    i = -1;
-//                } else if (!file.isDirectory() && file2.isDirectory()) {
-//                    i = 1;
-//                } else {
-//                    i = file.getName().compareToIgnoreCase(file2.getName());
-//                }
-//                return i;
+/*                int i;
+                if (file.isDirectory() && !file2.isDirectory()) {
+                    i = -1;
+                } else if (!file.isDirectory() && file2.isDirectory()) {
+                    i = 1;
+                } else {
+                    i = file.getName().compareToIgnoreCase(file2.getName());
+                }
+                return i;*/
         }
     };
     private static final Fragment[] fragments = new Fragment[2];
     private static final String[] titles = {"Local", "External"};
-    public static ListView externalListView, localListView;
+    //Todo use this list for both ext and local files
+    private static final ArrayList<File> tmpTree = new ArrayList<File>();
     public static boolean isInit;
-    public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (!P2PManager.isActive()) {
-                MainActivity.toast("click the refresh button on both devices to connect");
-                return;
-            }
-            isInit = true;
-            v.setVisibility(View.GONE);
-            sendFileCommand(COMMAND_BROWSE + FILE_SEP);
-        }
-    };
     private static FragmentActivity context;
     //Todo local and external
-    private static String currentDirectory = Environment.getExternalStorageDirectory().getPath();
-    private static ArrayList<File> currentTree;
-
-    private static boolean isInFileManagerMode = false;
+    private static String currentExternalDirectory = Environment.getExternalStorageDirectory().getPath();
+    private static String currentLocalDirectory = Environment.getExternalStorageDirectory().getPath();
     private static ViewPager pager;
     private static MyPagerAdapter pagerAdapter;
     private static FilePagerSlidingTabStrip tabs;
 
-    public static boolean isIsInFileManagerMode() {
-        return isInFileManagerMode;
-    }
-
-    private static void setIsInFileManagerMode(boolean isInFileManagerMode) {
-        FileManagerFragment.isInFileManagerMode = isInFileManagerMode;
-    }
-
-    public static String getCurrentDirectory() {
-        if (!(new File(currentDirectory).isDirectory()) || currentDirectory.length() < 1) {
+    public static String getCurrentExternalDirectory() {
+        if (!(new File(currentExternalDirectory).isDirectory()) || currentExternalDirectory.length() < 1) {
             return Environment.getExternalStorageDirectory().toString();
         }
-        return currentDirectory;
+        return currentExternalDirectory;
     }
 
-    private static void setCurrentDirectory(String currentDirectory) {
-        FileManagerFragment.currentDirectory = currentDirectory;
+    private static void setCurrentExternalDirectory(String currentExternalDirectory) {
+        FileManagerFragment.currentExternalDirectory = currentExternalDirectory;
     }
 
     private static void openFile(Context context, MikeFile mikeFile) {
@@ -170,59 +149,66 @@ public class FileManagerFragment extends Fragment {
         openFile(context, file);
     }
 
-    public static String showTree(File dir) {
+    public static String showTree(File dir, MikeFileOperationType mikeFileOperationType) {
+
         if (!dir.exists()) {
             //TODO
-            currentDirectory = Environment.getExternalStorageDirectory().getPath();
-            dir = new File(currentDirectory);
+            currentExternalDirectory = Environment.getExternalStorageDirectory().getPath();
+            dir = new File(currentExternalDirectory);
         } else {
-            currentDirectory = dir.getPath();
+            currentExternalDirectory = dir.getPath();
         }
 
         final StringBuilder builder = new StringBuilder();
         final File[] files = dir.listFiles();
         if (files != null) {
             if (!(files.length < 1)) {
-                if (currentTree != null) {
-                    currentTree.clear();
-                    currentTree.ensureCapacity(files.length);
-                } else
-                    currentTree = new ArrayList<File>();
+                tmpTree.clear();
+                tmpTree.ensureCapacity(files.length);
 
-                Collections.addAll(currentTree, dir.listFiles());
-                sortFiles(currentTree);
+                Collections.addAll(tmpTree, dir.listFiles());
+                sortFiles(tmpTree);
 
-                for (int i = 0; i < files.length; i++) {
-                    final File file = files[i];
-                    if ((i < files.length - 1)) {
-                        builder.append(MikeFile.getFileString(file));
-                        builder.append(FILE_SEP);
-                    } else {
-                        builder.append(MikeFile.getFileString(file));
-                    }
+                switch (mikeFileOperationType) {
+                    case EXTERNAL:
+                        for (int i = 0; i < files.length; i++) {
+                            final File file = files[i];
+                            if ((i < files.length - 1)) {
+                                builder.append(MikeFile.getFileString(file));
+                                builder.append(FILE_SEP);
+                            } else {
+                                builder.append(MikeFile.getFileString(file));
+                            }
+                        }
+                        builder.toString();
+                        break;
+                    case LOCAL:
+                        ((LocalFileManager) fragments[0]).parseLocalFile(tmpTree);
+                        break;
                 }
 
-                currentTree.clear();
+
             } else {
                 //Todo think about what to do whne the folder is empty
                 print("   Specified folder is empty.");
             }
         }
-        return builder.toString();
+        return "";
     }
 
-    private static void showTree(String path) {
-        showTree(new File(path));
+    private static void showTree(String path, MikeFileOperationType mikeFileOperationType) {
+        showTree(new File(path), mikeFileOperationType);
     }
 
-    private static void openFolder(File file) {
-        setCurrentDirectory(file.getPath());
-        showTree(file);
+    private static void openFolder(File file, MikeFileOperationType mikeFileOperationType) {
+        //Todo do this for both local and external files
+        setCurrentExternalDirectory(file.getPath());
+        showTree(file, mikeFileOperationType);
     }
 
-    public static void open(File file) {
+    public static void open(File file, MikeFileOperationType mikeFileOperationType) {
         if (file.isDirectory())
-            openFolder(file);
+            openFolder(file, mikeFileOperationType);
         else
             openFile(new MikeFile(MikeFile.getFileString(file)));
     }
@@ -236,7 +222,7 @@ public class FileManagerFragment extends Fragment {
         try {
             // file.createNewFile();
             file.mkdirs();
-            showTree(getCurrentDirectory());
+            showTree(getCurrentExternalDirectory());
         } catch (Exception e) {
         }
     }
@@ -249,13 +235,13 @@ public class FileManagerFragment extends Fragment {
     }
 
     public static void delete(String file) {
-        delete(new File(getCurrentDirectory() + "/" + file));
+        delete(new File(getCurrentExternalDirectory() + "/" + file));
     }
 
     private static void delete(File file) {
         file.delete();
         print(file.getName() + " deleted");
-        showTree(currentDirectory);
+        showTree(currentExternalDirectory);
     }
 
     public static long getFreeSpace(String path) {
@@ -283,7 +269,7 @@ public class FileManagerFragment extends Fragment {
             file.createNewFile();
         } catch (Exception e) {
         }
-        showTree(getCurrentDirectory());
+        showTree(getCurrentExternalDirectory());
     }
 
     private static void print(String string) {
@@ -293,7 +279,6 @@ public class FileManagerFragment extends Fragment {
     public static void sortFiles(ArrayList<File> list) {
         Collections.sort(list, fileComp);
     }
-
 
 
     public static int getImageResource(FileType type) {
@@ -381,7 +366,7 @@ public class FileManagerFragment extends Fragment {
             } else {
                 final String input = split[1];
                 if (input.startsWith(COMMAND_OPEN_PARENT)) {
-                    sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(currentDirectory).getParentFile()));
+                    sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(currentExternalDirectory).getParentFile()));
                 } else {
                     sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(input)));
                 }
@@ -411,7 +396,7 @@ public class FileManagerFragment extends Fragment {
         if (msg.startsWith(RESPONSE_BROWSE)) {
             //todo RESPONSE name + filesep+filepath
             final String[] split = msg.split(FILE_SEP, 2);
-            parseReceivedFiles(split[1]);
+            ((ExternalFileManager) fragments[1]).parseReceivedFiles(split[1]);
         } else if (msg.startsWith(RESPONSE_OPEN)) {
             //todo RESPONSE name + filesep+filepath
 
@@ -531,7 +516,6 @@ public class FileManagerFragment extends Fragment {
         final View view = inflater.inflate(R.layout.file_manager_fragment, null);
         //Todo
         setUpFragments(view);
-        view.findViewById(R.id.placeholder).setOnClickListener(placeHolderListener);
         return view;
     }
 
@@ -550,6 +534,10 @@ public class FileManagerFragment extends Fragment {
 
     }
 
+    private enum MikeFileOperationType {
+        LOCAL, EXTERNAL
+    }
+
     public enum FileType {
         //Todo do the folders
         MUSIC, PICTURE, GENERIC, VIDEO, DOCUMENT, FOLDER
@@ -557,39 +545,12 @@ public class FileManagerFragment extends Fragment {
 
     public static class FileAdapter extends BaseAdapter {
 
-        //TODO ASAP
-        public static final AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MainActivity.toast("file clicked : " + files.get(position).toString());
-                final MikeFile file = files.get(position);
-                if (file.fileType == FileType.FOLDER)
-                    sendFileCommand(COMMAND_BROWSE + FILE_SEP + file.path);
-                else sendFileCommand(COMMAND_OPEN + FILE_SEP + file.path);
-            }
-        };
-        public static final AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                MainActivity.toast("file longClicked : " + files.get(position).toString());
-//    Todo mke dialog            //todo command name + filesep+filepath
-//                sendFileCommand(COMMAND_BROWSE + FILE_SEP + files.get(position).path);
-//                //todo command name + filesep+filepath
-//                open(new File(split[1]));
-//                //todo command name + filesep+filepath
-//                delete(new File(split[1]));
-//                //todo command name + filesep+filepathFrom+fileSep+fileTo
-//                copyFile(new File(split[1]), new File(split[2]));
-//                //todo command name + filesep+filepathFrom+fileSep+fileTo
-//                moveFile(new File(split[1]), new File(split[2]));
-//                //TODO handle upload and download
-                return false;
-            }
-        };
         private static ListView listView;
         private static FileAdapter fileAdapter;
+        private ArrayList<MikeFile> files;
 
-        public FileAdapter(ListView listView, ArrayList<MikeFile> files) {
+        public FileAdapter(ListView listView, ArrayList<MikeFile> files, AdapterView.OnItemClickListener onItemClickListener, AdapterView.OnItemLongClickListener onItemLongClickListener) {
+            this.files = files;
             this.listView = listView;
             listView.setOnItemClickListener(onItemClickListener);
             listView.setOnItemLongClickListener(onItemLongClickListener);
@@ -604,6 +565,19 @@ public class FileManagerFragment extends Fragment {
 
         public static ListView getListView() {
             return listView;
+        }
+
+        public ArrayList<MikeFile> getFiles() {
+            return files;
+        }
+
+        public void setFiles(ArrayList<MikeFile> files) {
+            this.files = files;
+            try {
+                notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         public Context getContext() {
@@ -675,6 +649,7 @@ public class FileManagerFragment extends Fragment {
             this.path = path;
         }
 
+
         public static String getFileString(File file) {
             final StringBuilder builder = new StringBuilder(getFileTypeString(file));
             //Todo
@@ -709,21 +684,79 @@ public class FileManagerFragment extends Fragment {
     //TODO
     public static class LocalFileManager extends Fragment {
         public static FileAdapter fileAdapter;
-        private static ArrayList<MikeFile> files;
+        private static final Runnable update = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    fileAdapter.notifyDataSetChanged();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        private static ArrayList<MikeFile> files = new ArrayList<MikeFile>();
+        //TODO ASAP
+        public static final AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MainActivity.toast("file clicked : " + files.get(position).toString());
+                final MikeFile file = files.get(position);
+                if (file.fileType == FileType.FOLDER)
+                    sendFileCommand(COMMAND_BROWSE + FILE_SEP + file.path);
+                else sendFileCommand(COMMAND_OPEN + FILE_SEP + file.path);
+            }
+        };
+        public static final AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                MainActivity.toast("file longClicked : " + files.get(position).toString());
+//    Todo mke dialog            //todo command name + filesep+filepath
+//                sendFileCommand(COMMAND_BROWSE + FILE_SEP + files.get(position).path);
+//                //todo command name + filesep+filepath
+//                open(new File(split[1]));
+//                //todo command name + filesep+filepath
+//                delete(new File(split[1]));
+//                //todo command name + filesep+filepathFrom+fileSep+fileTo
+//                copyFile(new File(split[1]), new File(split[2]));
+//                //todo command name + filesep+filepathFrom+fileSep+fileTo
+//                moveFile(new File(split[1]), new File(split[2]));
+//                //TODO handle upload and download
+                return false;
+            }
+        };
 
-        public static void parseLocalFile(ArrayList<File> files) {
-            if (ExternalFileManager.files == null) {
-                ExternalFileManager.files = new ArrayList<MikeFile>(fileA.length);
+        public static void updateAdapter() {
+            context.runOnUiThread(update);
+        }
+
+        public static void parseLocalFile(final ArrayList<File> files) {
+            if (LocalFileManager.files == null) {
+                LocalFileManager.files = new ArrayList<MikeFile>(files.size());
             } else {
                 try {
-                    ExternalFileManager.files.clear();
+                    LocalFileManager.files.clear();
                     updateAdapter();
-                    ExternalFileManager.files.ensureCapacity(fileA.length);
+                    LocalFileManager.files.ensureCapacity(files.size());
                     updateAdapter();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    for (File file : files) {
+                        try {
+                            LocalFileManager.files.add(new MikeFile(MikeFile.getFileString(file)));
+                            updateAdapter();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
 
         }
 
@@ -731,14 +764,70 @@ public class FileManagerFragment extends Fragment {
         @Override
         public View getView() {
             ListView listView = (ListView) View.inflate(getActivity(), R.layout.file_manager_fragment_item, null);
-            fileAdapter = new FileAdapter(listView);
+            fileAdapter = new FileAdapter(listView, files, onItemClickListener, onItemLongClickListener);
             return listView;
         }
     }
 
     public static class ExternalFileManager extends Fragment {
+        //Todo add this to onCreateView
+        public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!P2PManager.isActive()) {
+                    MainActivity.toast("click the refresh button on both devices to connect");
+                    return;
+                }
+                isInit = true;
+                v.setVisibility(View.GONE);
+                sendFileCommand(COMMAND_BROWSE + FILE_SEP);
+            }
+        };
         public static FileAdapter fileAdapter;
-        private static ArrayList<MikeFile> files;
+        private static final Runnable update = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    fileAdapter.notifyDataSetChanged();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        private static ArrayList<MikeFile> files = new ArrayList<MikeFile>();
+        //TODO ASAP
+        public static final AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MainActivity.toast("file clicked : " + files.get(position).toString());
+                final MikeFile file = files.get(position);
+                if (file.fileType == FileType.FOLDER)
+                    sendFileCommand(COMMAND_BROWSE + FILE_SEP + file.path);
+                else sendFileCommand(COMMAND_OPEN + FILE_SEP + file.path);
+            }
+        };
+        public static final AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                MainActivity.toast("file longClicked : " + files.get(position).toString());
+//    Todo mke dialog            //todo command name + filesep+filepath
+//                sendFileCommand(COMMAND_BROWSE + FILE_SEP + files.get(position).path);
+//                //todo command name + filesep+filepath
+//                open(new File(split[1]));
+//                //todo command name + filesep+filepath
+//                delete(new File(split[1]));
+//                //todo command name + filesep+filepathFrom+fileSep+fileTo
+//                copyFile(new File(split[1]), new File(split[2]));
+//                //todo command name + filesep+filepathFrom+fileSep+fileTo
+//                moveFile(new File(split[1]), new File(split[2]));
+//                //TODO handle upload and download
+                return false;
+            }
+        };
+
+        public static void updateAdapter() {
+            context.runOnUiThread(update);
+        }
 
         public static void parseReceivedFiles(String files) {
             final String[] fileA = files.split(FILE_SEP);
@@ -784,7 +873,7 @@ public class FileManagerFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ListView listView = (ListView) inflater.inflate(R.layout.file_manager_fragment_item, null);
-            fileAdapter = new FileAdapter(listView);
+            fileAdapter = new FileAdapter(listView, files, onItemClickListener, onItemLongClickListener);
             return listView;
         }
     }

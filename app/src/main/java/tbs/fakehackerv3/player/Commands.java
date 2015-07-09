@@ -30,7 +30,6 @@ public class Commands {
         this.exists = false;
 
         lastCom = "";
-
         isMute = false;
     }
 
@@ -55,13 +54,11 @@ public class Commands {
     }
 
     public void checkCommand(String userCmd) {
-        //TODo
+        //TODO ASAP check commands and hijack them for the respective fragments where applicable
+        userCmd = userCmd.toLowerCase();
         if (!userCmd.equals("repeat")) {
             lastCom = userCmd;
         }
-
-        userCmd = userCmd.toLowerCase();
-        // Todo
 /* Todo
         if (userCmd.equals("toggleflash")) {
             Tools.toggleTorch(ConsoleFragment.context);
@@ -195,7 +192,7 @@ public class Commands {
 
             if (userCmd.equals("back")) {
               /* Todo FileManagerFragment.openFolder(new File(FileManagerFragment
-                        .getCurrentDirectory()).getParent());*/
+                        .getCurrentExternalDirectory()).getParent());*/
                 print(" type the respective number of each file/folder to open it");
                 print(" or type back to return to its parent directory.");
                 seperator();
@@ -248,7 +245,7 @@ public class Commands {
                             + commands[1]);
                 } else {
                     FileManagerFragment.createFolder(new File(FileManagerFragment
-                            .getCurrentDirectory(), commands[1] + "/"));
+                            .getCurrentExternalDirectory(), commands[1] + "/"));
                 }*/
 
                 return;
@@ -265,7 +262,7 @@ public class Commands {
                             .getExternalStorageDirectory() + commands[1]);
                 } else {
                     FileManagerFragment.createFile(new File(FileManagerFragment
-                            .getCurrentDirectory(), commands[1]));
+                            .getCurrentExternalDirectory(), commands[1]));
                 }*/
                 return;
             } catch (Exception e) {

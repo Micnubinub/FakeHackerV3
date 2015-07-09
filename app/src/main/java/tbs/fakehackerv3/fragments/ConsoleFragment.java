@@ -79,17 +79,29 @@ public class ConsoleFragment extends Fragment {
         }
     };
 
+    //Todo make commands and ad to help
+    private static void printRandomShit() {
+        runPrintRandomShit = true;
+        new Thread(printRandomShit).start();
+    }
+
+    //Todo make command and add to help
+    private static void printRandomShit(int num) {
+        for (int i = 0; i < num; i++) {
+            addConsoleItem(new String(getRandomHackerString()));
+        }
+    }
+
     private static String getTotalInternalMemorySize() {
-        File path = Environment.getDataDirectory();
-        StatFs stat = new StatFs(path.getPath());
-        long blockSize = stat.getBlockSize();
-        long totalBlocks = stat.getBlockCount();
+        final File path = Environment.getDataDirectory();
+        final StatFs stat = new StatFs(path.getPath());
+        final long blockSize = stat.getBlockSize();
+        final long totalBlocks = stat.getBlockCount();
         return formatSize(totalBlocks * blockSize);
     }
 
     private static String formatSize(long size) {
         String suffix = null;
-
         if (size >= 1024) {
             suffix = "KB";
             size /= 1024;
@@ -186,7 +198,7 @@ public class ConsoleFragment extends Fragment {
         dataStorage = (TextView) mainView.findViewById(R.id.localStorage);
         batLife = (TextView) mainView.findViewById(R.id.batLife);
         userCommand = (EditText) mainView.findViewById(R.id.userCommand);
-        Button submitCMD = (Button) mainView.findViewById(R.id.subCommand);
+        final Button submitCMD = (Button) mainView.findViewById(R.id.subCommand);
 
 
         deviceName.setText(android.os.Build.MODEL);
@@ -261,7 +273,6 @@ public class ConsoleFragment extends Fragment {
 
         submitCMD.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 String str = userCommand.getText().toString();
                 userCommand.setText("");
                 handleCommand(str);

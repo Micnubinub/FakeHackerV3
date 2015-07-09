@@ -18,7 +18,7 @@
         android:inputType="text|textAutoComplete|textAutoCorrect|textShortMessage"
         android:padding="7dp"
         android:scrollHorizontally="false"
-        android:textColor="@color/Green"
+        android:textColor="@color/neon_blue"
         android:textSize="16sp" />
 
     <Button
@@ -33,7 +33,7 @@
         android:padding="10dp"
         android:scrollHorizontally="false"
         android:text="Submit"
-        android:textColor="@color/Green"
+        android:textColor="@color/neon_blue"
         android:textSize="16sp" />
 
     <ListView
@@ -49,7 +49,7 @@
         android:padding="5dp"
         android:scrollHorizontally="false"
         android:stackFromBottom="true"
-        android:textColor="@color/Green"
+        android:textColor="@color/neon_blue"
         android:textSize="12sp"
         android:transcriptMode="alwaysScroll" />
 
@@ -67,7 +67,7 @@
         android:paddingBottom="10dp"
         android:scrollHorizontally="false"
         android:stackFromBottom="true"
-        android:textColor="@color/Green"
+        android:textColor="@color/neon_blue"
         android:textSize="25sp" />
 
     <TableLayout
@@ -82,7 +82,7 @@
         android:maxLength="40"
         android:padding="5dp"
         android:scrollHorizontally="false"
-        android:textColor="@color/Green"
+        android:textColor="@color/neon_blue"
         android:textSize="16sp">
 
         <TableRow
@@ -94,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="   ID:"
-                android:textColor="@color/Green"
+                android:textColor="@color/neon_blue"
                 android:textSize="16sp" />
 
             <TextView
@@ -102,7 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
-                android:textColor="@color/Green"
+                android:textColor="@color/neon_blue"
                 android:textSize="16sp" />
         </TableRow>
 
@@ -115,7 +115,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="   Storage:   "
-                android:textColor="@color/Green"
+                android:textColor="@color/neon_blue"
                 android:textSize="16sp" />
 
             <TextView
@@ -123,7 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
-                android:textColor="@color/Green"
+                android:textColor="@color/neon_blue"
                 android:textSize="16sp" />
         </TableRow>
 
@@ -136,7 +136,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="   Battery:"
-                android:textColor="@color/Green"
+                android:textColor="@color/neon_blue"
                 android:textSize="16sp" />
 
             <TextView
@@ -144,7 +144,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
-                android:textColor="@color/Green"
+                android:textColor="@color/neon_blue"
                 android:textSize="16sp" />
         </TableRow>
 
@@ -157,7 +157,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="   Location:"
-                android:textColor="@color/Green"
+                android:textColor="@color/neon_blue"
                 android:textSize="16sp" />
 
             <TextView
@@ -165,7 +165,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
-                android:textColor="@color/Green"
+                android:textColor="@color/neon_blue"
                 android:textSize="16sp" />
         </TableRow>
     </TableLayout>
@@ -183,7 +183,7 @@
         android:padding="5dp"
         android:scrollHorizontally="false"
         android:stackFromBottom="true"
-        android:textColor="@color/Green"
+        android:textColor="@color/neon_blue"
         android:textSize="16sp" />
 
     <TextView
@@ -197,7 +197,7 @@
         android:padding="5dp"
         android:paddingLeft="0dp"
         android:text="   Devices"
-        android:textColor="@color/Green"
+        android:textColor="@color/neon_blue"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -212,7 +212,7 @@
         android:padding="5dp"
         android:paddingLeft="0dp"
         android:text="   User Info"
-        android:textColor="@color/Green"
+        android:textColor="@color/neon_blue"
         android:textSize="16sp"
         android:textStyle="bold" />
 
