@@ -150,7 +150,6 @@ public class FileManagerFragment extends Fragment {
     }
 
     public static String showTree(File dir, MikeFileOperationType mikeFileOperationType) {
-
         if (!dir.exists()) {
             //TODO
             currentExternalDirectory = Environment.getExternalStorageDirectory().getPath();
@@ -230,11 +229,8 @@ public class FileManagerFragment extends Fragment {
     public static void search(String name) {
     }
 
-    public static void delete(int file) {
-        delete(currentTree.get(file - 1));
-    }
-
-    public static void delete(String file) {
+    public static void delete(String file, MikeFileOperationType mikeFileOperationType) {
+        mik
         delete(new File(getCurrentExternalDirectory() + "/" + file));
     }
 
@@ -264,12 +260,13 @@ public class FileManagerFragment extends Fragment {
         createFile(new File(name));
     }
 
-    public static void createFile(File file) {
+    public static void createFile(File file, MikeFileOperationType mikeFileOperationType) {
         try {
             file.createNewFile();
         } catch (Exception e) {
+            e.printStackTrace();
         }
-        showTree(getCurrentExternalDirectory());
+        showTree(getCurrentExternalDirectory(), mikeFileOperationType);
     }
 
     private static void print(String string) {
@@ -362,18 +359,18 @@ public class FileManagerFragment extends Fragment {
         if (msg.startsWith(COMMAND_BROWSE)) {
             //todo command name + filesep+filepath
             if (split.length < 2 || split[1] == null || split[1].length() < 1) {
-                sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(Environment.getExternalStorageDirectory().getPath())));
+                sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(Environment.getExternalStorageDirectory().getPath()), MikeFileOperationType.EXTERNAL));
             } else {
                 final String input = split[1];
                 if (input.startsWith(COMMAND_OPEN_PARENT)) {
-                    sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(currentExternalDirectory).getParentFile()));
+                    sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(currentExternalDirectory).getParentFile(), MikeFileOperationType.EXTERNAL));
                 } else {
-                    sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(input)));
+                    sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(input), MikeFileOperationType.EXTERNAL));
                 }
             }
         } else if (msg.startsWith(COMMAND_OPEN)) {
             //todo command name + filesep+filepath
-            open(new File(split[1]));
+            open(new File(split[1]), MikeFileOperationType.EXTERNAL);
         } else if (msg.startsWith(COMMAND_DELETE)) {
             //todo command name + filesep+filepath
             delete(new File(split[1]));
@@ -385,7 +382,6 @@ public class FileManagerFragment extends Fragment {
             moveFile(new File(split[1]), new File(split[2]));
         } else if (msg.startsWith(COMMAND_DOWNLOAD)) {
             //todo command name + fileSep+fileTo
-
         } else if (msg.startsWith(COMMAND_UPLOAD)) {
             //todo command name + fileSep+fileFrom
 
