@@ -1,6 +1,5 @@
 package tbs.fakehackerv3.player;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
@@ -9,11 +8,11 @@ import android.os.Environment;
 import java.io.File;
 import java.util.ArrayList;
 
+import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.RemoteTools;
 import tbs.fakehackerv3.Tools;
 import tbs.fakehackerv3.console.CommandItem;
 import tbs.fakehackerv3.fragments.ConsoleFragment;
-import tbs.fakehackerv3.fragments.FileManagerFragment;
 
 
 public class Commands {
@@ -39,8 +38,7 @@ public class Commands {
 
     public static void seperator() {
         ConsoleFragment.consoleEntries
-                .add(
-                        "--------------------------------------------------------------------------------------------------");
+                .add("--------------------------------------------------------------------------------------------------");
     }
 
     private static boolean isInteger(String s) {
@@ -152,33 +150,21 @@ public class Commands {
         }
 */
 
-        if (FileManagerFragment.isIsInFileManagerMode()) {
+        if (userCmd.equals("totalspace")) {
+            //Todo print("Total space : " + Tools.fileSize(FileManagerFragment.getTotalSpace(Environment.getExternalStorageDirectory().getPath())));
+            print("");
+            return;
+        }
 
-            if (userCmd.equals("totalspace")) {
-                //Todo print("Total space : " + Tools.fileSize(FileManagerFragment.getTotalSpace(Environment.getExternalStorageDirectory().getPath())));
-                print("");
-                return;
-            }
+        if (userCmd.equals("freespace")) {
+            //Todo  print("Free space :" + Tools.fileSize(FileManagerFragment.getFreeSpace(Environment.getExternalStorageDirectory().getPath())));
+            print("");
+            return;
+        }
 
-            if (userCmd.equals("freespace")) {
-                //Todo  print("Free space :" + Tools.fileSize(FileManagerFragment.getFreeSpace(Environment.getExternalStorageDirectory().getPath())));
-                print("");
-                return;
-            }
 
-            try {
-                //Todo FileManagerFragment.open(Integer.parseInt(userCmd));
-                // Commands.seperator();
-                print(" type the respective number of each file/folder to open it");
-                print(" or type back to return to its parent directory.");
-                seperator();
-                return;
-            } catch (Exception e) {
-
-            }
-
-            if (userCmd.split("\\s+")[0].equals("del")
-                    && userCmd.split("\\s+").length == 2) {
+        if (userCmd.split("\\s+")[0].equals("del")
+                && userCmd.split("\\s+").length == 2) {
             /*  Todo  try {
                     FileManagerFragment
                             .delete(Integer.parseInt(userCmd.split("\\s+")[1]));
@@ -187,18 +173,18 @@ public class Commands {
                 } catch (Exception e) {
                 }
 */
-                return;
-            }
+            return;
+        }
 
-            if (userCmd.equals("back")) {
+        if (userCmd.equals("back")) {
               /* Todo FileManagerFragment.openFolder(new File(FileManagerFragment
                         .getCurrentExternalDirectory()).getParent());*/
-                print(" type the respective number of each file/folder to open it");
-                print(" or type back to return to its parent directory.");
-                seperator();
-                return;
-            }
+            print(" type the respective number of each file/folder to open it");
+            print(" or type back to return to its parent directory.");
+            seperator();
+            return;
         }
+
 
         // if (userCmd.equals("exit")) {
         // if (FileManagerFragment.isIsInFileManagerMode())
@@ -218,7 +204,6 @@ public class Commands {
                 print("opening :" + commands[1]);
              /*Todo   FileManagerFragment.open(Environment.getExternalStorageDirectory()
                         .toString() + commands[1]);*/
-
             } catch (Exception e) {
             }
             return;
@@ -252,7 +237,6 @@ public class Commands {
             } catch (Exception e) {
                 print("Failed to create directory");
             }
-
         }
 
         if (commands[0].equals("mkfile") && commands.length == 2) {
@@ -322,8 +306,8 @@ public class Commands {
             return;
         }
 
-        String[] splitCmd = userCmd.split("\\s+");
-        ArrayList<String> cmdArray = new ArrayList();
+        final String[] splitCmd = userCmd.split("\\s+");
+        final ArrayList<String> cmdArray = new ArrayList();
         for (int i = 0; i < splitCmd.length; i++) {
             cmdArray.add(splitCmd[i]);
         }
@@ -393,9 +377,6 @@ public class Commands {
     void checkSingle(ArrayList cmd) {
         if (cmd.get(0).equals("btsn")) {
             // Find Devices
-            ConsoleFragment.player.location.update();
-
-            ConsoleFragment.player.deviceStats.folders.get(0).folders.clear(); // Reset
             // Device
             // List
             //Todo ConsoleFragment.mBluetoothAdapter.startDiscovery();
@@ -424,14 +405,14 @@ public class Commands {
         } else if (cmd.get(0).equals("landscape")) {
             // ConsoleFragment.consoleEntries.clear();
             // ConsoleFragment.infoEntries.clear();
-            ((Activity) ConsoleFragment.context)
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//            ((Activity) ConsoleFragment.context)
+            MainActivity.context.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         } else if (cmd.get(0).equals("portrait")) {
             // ConsoleFragment.consoleEntries.clear();
             // ConsoleFragment.infoEntries.clear();
-            ((Activity) ConsoleFragment.context)
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            // (Activity) ConsoleFragment.context)
+            MainActivity.context.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         } else if (cmd.get(0).equals("insertbreak")) {
             seperator();

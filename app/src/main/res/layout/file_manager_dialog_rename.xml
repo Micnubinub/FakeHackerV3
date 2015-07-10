@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_rect_black"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <tbs.fakehackerv3.custom_views.HackerTextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="8dp"
+        android:text="Rename file"
+        android:textSize="22sp" />
+
+    <tbs.fakehackerv3.custom_views.HackerTextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="8dp"
+        android:text="From :"
+        android:textSize="16sp" />
+
+    <tbs.fakehackerv3.custom_views.HackerTextView
+        android:id="@+id/old_filename"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="8dp"
+        android:text="Rename file"
+        android:textSize="18sp" />
+
+    <tbs.fakehackerv3.custom_views.HackerTextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="8dp"
+        android:text="To :"
+        android:textSize="16sp" />
+
+    <tbs.fakehackerv3.custom_views.HackerEditText
+        android:id="@+id/new_filename"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter new file name"
+        android:padding="8dp"
+        android:textSize="18sp" />
+
+    <include
+        android:id="@+id/save_cancel"
+        layout="@layout/save_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right" />
+</LinearLayout>

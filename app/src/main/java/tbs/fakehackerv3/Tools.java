@@ -31,12 +31,9 @@ import java.util.Random;
  */
 public class Tools {
 
-
-    //public static final String
     public static final Random random = new Random();
 
     public static void getPackages(Context context) {
-
         final PackageManager packageManager = context.getPackageManager();
         final Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -144,8 +141,6 @@ public class Tools {
                                     try {
                                         thread.sleep(2500);
                                         thread.sleep(2500);
-
-
                                         dialog.dismiss();
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -308,39 +303,6 @@ public class Tools {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (splitCommand[1].contains(StaticValues.DELETE_FILE)) {
-            try {
-                final File file = new File(commandString);
-                if (!file.exists()) {
-                } else if (!file.isDirectory()) {
-
-                } else {
-                    //todo
-                    file.delete();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.DOWNLOAD_FILE)) {
-            final File file = new File(commandString);
-            if (!file.exists()) {
-                file.mkdirs();
-            } else {
-                if (MainActivity.p2PManager != null)
-                    P2PManager.enqueueMessage(new Message(file.getAbsolutePath(), Message.MessageType.FILE));
-            }
-        } else if (splitCommand[1].contains(StaticValues.MOVE_FILE)) {
-            final File file = new File(commandString);
-            final File toLocation = new File(splitCommand[3]);
-            final File out = new File(splitCommand[3] + file.getName());
-            if (!file.exists() || !toLocation.exists()) {
-            } else if (!toLocation.isDirectory()) {
-            } else {
-                //todo
-                file.renameTo(out);
-            }
-        } else if (splitCommand[1].contains(StaticValues.STREAM_FILE)) {
-//todo
         } else if (splitCommand[1].contains(StaticValues.CREATE_DIRECTORY)) {
             final File file = new File(commandString);
             if (!file.exists()) {

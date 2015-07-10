@@ -1,219 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
-
-    <EditText
-        android:id="@+id/userCommand"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/subCommand"
-        android:layout_toLeftOf="@+id/subCommand"
-        android:autoText="true"
-        android:background="@drawable/green_border_notop"
-        android:ems="10"
-        android:inputType="text|textAutoComplete|textAutoCorrect|textShortMessage"
-        android:padding="7dp"
-        android:scrollHorizontally="false"
-        android:textColor="@color/neon_blue"
-        android:textSize="16sp" />
-
-    <Button
-        android:id="@+id/subCommand"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/green_border_nolefttop"
-        android:gravity="center"
-        android:padding="10dp"
-        android:scrollHorizontally="false"
-        android:text="Submit"
-        android:textColor="@color/neon_blue"
-        android:textSize="16sp" />
+    android:layout_height="fill_parent">
 
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
-        android:layout_height="20dp"
-        android:layout_above="@+id/userCommand"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/shipInfoView"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/rl"
         android:background="@drawable/green_border_full"
         android:divider="#00000000"
         android:maxLength="40"
         android:padding="5dp"
-        android:scrollHorizontally="false"
         android:stackFromBottom="true"
         android:textColor="@color/neon_blue"
         android:textSize="12sp"
         android:transcriptMode="alwaysScroll" />
 
-    <ListView
-        android:id="@+id/infoView"
+    <RelativeLayout
+        android:id="@+id/rl"
         android:layout_width="fill_parent"
-        android:layout_height="80dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_weight="0.16"
-        android:background="@drawable/green_border_full"
-        android:divider="#00000000"
-        android:maxLength="40"
-        android:padding="5dp"
-        android:paddingBottom="10dp"
-        android:scrollHorizontally="false"
-        android:stackFromBottom="true"
-        android:textColor="@color/neon_blue"
-        android:textSize="25sp" />
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true">
 
-    <TableLayout
-        android:id="@+id/shipInfoView"
-        android:layout_width="220dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/inv"
-        android:layout_weight="0.16"
-        android:background="@drawable/green_border_left"
-        android:divider="#00000000"
-        android:maxLength="40"
-        android:padding="5dp"
-        android:scrollHorizontally="false"
-        android:textColor="@color/neon_blue"
-        android:textSize="16sp">
+        <tbs.fakehackerv3.custom_views.HackerEditText
+            android:id="@+id/userCommand"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/subCommand"
+            android:autoText="true"
+            android:background="@drawable/green_border_notop"
+            android:ems="10"
+            android:inputType="text|textAutoComplete|textAutoCorrect|textShortMessage"
+            android:padding="8dp"
+            android:scrollHorizontally="false"
+            android:textColor="@color/neon_blue"
+            android:textSize="16sp" />
 
-        <TableRow
+        <Button
+            android:id="@+id/subCommand"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/green_border_nolefttop"
+            android:gravity="center"
+            android:text="Submit"
+            android:textColor="@color/neon_blue"
+            android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="   ID:"
-                android:textColor="@color/neon_blue"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/playerName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textColor="@color/neon_blue"
-                android:textSize="16sp" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/storage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="   Storage:   "
-                android:textColor="@color/neon_blue"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/localStorage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textColor="@color/neon_blue"
-                android:textSize="16sp" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/Battery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="   Battery:"
-                android:textColor="@color/neon_blue"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/batLife"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textColor="@color/neon_blue"
-                android:textSize="16sp" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="   Location:"
-                android:textColor="@color/neon_blue"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/playerLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textColor="@color/neon_blue"
-                android:textSize="16sp" />
-        </TableRow>
-    </TableLayout>
-
-    <ListView
-        android:id="@+id/inventory"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/shipInfoView"
-        android:layout_below="@+id/inv"
-        android:layout_toRightOf="@+id/shipInfoView"
-        android:background="@drawable/green_border_onlyleft"
-        android:divider="#00000000"
-        android:maxLength="40"
-        android:padding="5dp"
-        android:scrollHorizontally="false"
-        android:stackFromBottom="true"
-        android:textColor="@color/neon_blue"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/inv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/infoView"
-        android:layout_toRightOf="@+id/shipInfoView"
-        android:background="@drawable/green_border_onlyleft"
-        android:padding="5dp"
-        android:paddingLeft="0dp"
-        android:text="   Devices"
-        android:textColor="@color/neon_blue"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/cha"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/shipInfoView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignRight="@+id/shipInfoView"
-        android:background="@drawable/green_border_left"
-        android:padding="5dp"
-        android:paddingLeft="0dp"
-        android:text="   User Info"
-        android:textColor="@color/neon_blue"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
+    </RelativeLayout>
 </RelativeLayout>

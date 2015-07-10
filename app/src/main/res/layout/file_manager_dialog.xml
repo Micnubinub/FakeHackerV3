@@ -3,9 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/round_rect_black"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="4dp"
+    android:paddingTop="4dp">
 
-    <tbs.fakehackerv3.custom_views.HackerTextView
+
+<tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/copy"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

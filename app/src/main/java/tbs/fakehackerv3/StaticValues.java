@@ -21,10 +21,6 @@ public class StaticValues {
     public static final String TAKE_SCREENSHOT = "TAKE_SCREENSHOT";
     public static final String SET_TORCH = "SET_TORCH";
     public static final String GET_FILE_DETAILS = "GET_FILE_DETAILS";
-    public static final String DELETE_FILE = "DELETE_FILE";
-    public static final String DOWNLOAD_FILE = "DOWNLOAD_FILE";
-    public static final String MOVE_FILE = "MOVE_FILE";
-    public static final String STREAM_FILE = "STREAM_FILE";
     public static final String CREATE_DIRECTORY = "CREATE_DIRECTORY";
     public static final String SET_MEDIA_VOLUME = "SET_MEDIA_VOLUME";
     public static final String SET_NOTIFICATION_VOLUME = "SET_NOTIFICATION_VOLUME";

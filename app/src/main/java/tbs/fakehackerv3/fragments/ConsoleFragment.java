@@ -1,18 +1,11 @@
 package tbs.fakehackerv3.fragments;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.StatFs;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.text.format.DateFormat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,17 +13,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 
 import tbs.fakehackerv3.R;
 import tbs.fakehackerv3.console.ConsoleListAdapter;
-import tbs.fakehackerv3.local_system_data.PlayerSystem;
 import tbs.fakehackerv3.player.Commands;
 
 /**
@@ -38,8 +27,6 @@ import tbs.fakehackerv3.player.Commands;
  */
 public class ConsoleFragment extends Fragment {
     public static final ArrayList<String> consoleEntries = new ArrayList<String>();
-    public static final ArrayList<String> inventoryItems = new ArrayList<String>();
-    private static final ArrayList<String> infoEntries = new ArrayList<String>();
     private static final Random random = new Random();
     public static ConsoleListAdapter cl_adapter;
     private static final Runnable notifyConsoleList = new Runnable() {
@@ -52,19 +39,13 @@ public class ConsoleFragment extends Fragment {
             }
         }
     };
-    public static ConsoleListAdapter c3_adapter;
-    public static PlayerSystem player;
     public static FragmentActivity context;
     private static View mainView;
     // Todo
-    private static ConsoleListAdapter c2_adapter;
     private static Commands commands;
-    private static ListView infoList, deviceList, mainListView;
+    private static ListView mainListView;
     private static EditText userCommand;
-    private static Handler handler;
     // BATTERY
-    private static BroadcastReceiver mBatInfoReceiver;
-    private static TextView deviceName, dataStorage, batLife;
     private static boolean runPrintRandomShit;
     private static String[] randomCommandWords = {"acpi", "export", "init", "boot", "chainloader",
             "gettext", "gtpsync", "drivemap", "echo", "loop", "loopback", "xss", "linux", "ls", "partition", "crc", "cat", "gpuid", "cpu",
@@ -131,8 +112,6 @@ public class ConsoleFragment extends Fragment {
     public static void handleCommand(String str) {
         commands.checkCommand(str);
         cl_adapter.notifyDataSetChanged();
-        c2_adapter.notifyDataSetChanged();
-        c3_adapter.notifyDataSetChanged();
     }
 
     private static ListView getListView() {
@@ -140,29 +119,6 @@ public class ConsoleFragment extends Fragment {
     }
 
     private static void initEverythingElse() {
-
-        final DecimalFormat df = new DecimalFormat("0");
-        //  final DecimalFormat mb = new DecimalFormat("0.00");
-
-        // Styling TEXT
-        //cmdEntry = (TextView) findViewById(R.id.commandEntry);
-
-        final Date d = new Date();
-        CharSequence timeString = DateFormat.format("hh: mm: ss -- d/MM/yyyy ",
-                d.getTime());
-
-        infoEntries.add(new String("  " + timeString));
-        infoEntries.add(new String("> Mucrusoft Wendows [Version 6.1.7601]"));
-        infoEntries
-                .add(new String(
-                        "> Copyright (c) 2009 Mucrusoft Corporation. All rights resrved."));
-        // infoEntries.add(new String(
-        // "> Copyright (c) 2078 Vlaas Corporation. All rights reserved"));
-        // infoEntries.add(new
-        // String("> Diamex Software Operating Systems"));
-
-        c2_adapter.notifyDataSetChanged();
-
         consoleEntries
                 .add(new String(
                         "--------------------------------------------------------------------------------------------------"));
@@ -184,66 +140,8 @@ public class ConsoleFragment extends Fragment {
         cl_adapter.notifyDataSetChanged();
 
 
-        mBatInfoReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context ctxt, Intent intent) {
-                player.batLifeInt = intent.getIntExtra(
-                        BatteryManager.EXTRA_LEVEL, 0);
-            } // Update Player Bat Life
-        };
-        context.registerReceiver(mBatInfoReceiver, new IntentFilter(
-                Intent.ACTION_BATTERY_CHANGED));
-
-        deviceName = (TextView) mainView.findViewById(R.id.playerName);
-        dataStorage = (TextView) mainView.findViewById(R.id.localStorage);
-        batLife = (TextView) mainView.findViewById(R.id.batLife);
         userCommand = (EditText) mainView.findViewById(R.id.userCommand);
         final Button submitCMD = (Button) mainView.findViewById(R.id.subCommand);
-
-
-        deviceName.setText(android.os.Build.MODEL);
-
-        String memoryUsage = String.valueOf(df.format(player.storage));
-        dataStorage.setText(memoryUsage + "/" + player.storageStr);
-
-        final Runnable runnableMain = new Runnable() {
-            @Override
-            public void run() {
-                {
-                    player.update();
-                    String memoryUsage = String.valueOf(df
-                            .format(player.storage));
-                    dataStorage.setText(memoryUsage + "/" + player.storageStr);
-
-                    // BatteryLife
-                    batLife.setText(String.valueOf(player.batLifeInt) + "%");
-                    handler.postDelayed(this, 500); // EDIT FOR PERFORMANCE
-                }
-            }
-        };
-        handler.post(runnableMain);
-
-        final Runnable runnableTime = new Runnable() {
-            @Override
-            public void run() {
-                {
-                    Date d = new Date();
-                    CharSequence timeString = DateFormat.format(
-                            "hh: mm: ss -- d/MM/yyyy ", d.getTime());
-                    try {
-                        infoEntries.remove(0);
-                        infoEntries.add(0, "  " + timeString);
-                        c2_adapter.notifyDataSetChanged();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    // UPDATE FILE SPACE:
-
-                    handler.postDelayed(this, 1000);
-                }
-            }
-        };
-        handler.post(runnableTime);
 
         userCommand.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -260,8 +158,6 @@ public class ConsoleFragment extends Fragment {
                             userCommand.setText("");
 
                             cl_adapter.notifyDataSetChanged();
-                            c2_adapter.notifyDataSetChanged();
-                            c3_adapter.notifyDataSetChanged();
                             return true;
                         default:
                             break;
@@ -299,23 +195,10 @@ public class ConsoleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.console_frament, null);
         mainListView = (ListView) mainView.findViewById(R.id.list);
-        infoList = (ListView) mainView.findViewById(R.id.infoView);
-
-        // infoList.setTypeface(null, Typeface.BOLD);
-
-        deviceList = (ListView) mainView.findViewById(R.id.inventory);
-
         cl_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
                 consoleEntries);
         mainListView.setAdapter(cl_adapter);
 
-        c2_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
-                infoEntries);
-        infoList.setAdapter(c2_adapter);
-
-        c3_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
-                inventoryItems);
-        deviceList.setAdapter(c3_adapter);
         initEverythingElse();
 
         return mainView;
@@ -326,9 +209,5 @@ public class ConsoleFragment extends Fragment {
         setRetainInstance(true);
         context = getActivity();
         commands = new Commands();
-        player.Setup(getTotalInternalMemorySize());
-        handler = new Handler();
-        player = new PlayerSystem();
-
     }
 }

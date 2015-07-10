@@ -39,6 +39,8 @@ import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
 import tbs.fakehackerv3.Tools;
 import tbs.fakehackerv3.custom_views.FilePagerSlidingTabStrip;
+import tbs.fakehackerv3.custom_views.HackerEditText;
+import tbs.fakehackerv3.custom_views.HackerTextView;
 
 /**
  * Created by root on 31/07/14.
@@ -60,13 +62,11 @@ public class FileManagerFragment extends Fragment {
     public static final String RESPONSE_MOVE = "RESPONSE_MOVE";
     public static final String RESPONSE_UPLOAD = "RESPONSE_UPLOAD";
     public static final String RESPONSE_DOWNLOAD = "RESPONSE_DOWNLOAD";
-
     public static final String FILE_ATTRIBUTE_SEP = "/:/";
     public static final String[] DOCUMENT_EXTENSIONS = {"doc", "docx", "txt", "rtf", "pdf", "odt", "wpd", "xls", "xlsx", "ods", "ppt", "pptx"};
     public static final String[] VIDEO_EXTENSIONS = {"webm", "mkv", "flv", "vob", "ogv", "ogg", "drc", "mng", "avi", "mov", "qt", "wmv", "yuv", "rm", "rmvb", "asf", "mp4", "m4p", "m4v", "mpg", "mp2", "mpeg", "mpe", "mpv", "m2v", "svi", "3gp", "3g2", "mxf", "roq", "nsv"};
     public static final String[] PICTURE_EXTENSIONS = {"jpg", "jpeg", "tif", "gif", "png", "raw"};
     public static final String[] MUSIC_EXTENSIONS = {"3gp", "act", "aiff", "aac", "amr", "au", "awb", "dct", "dss", "dvf", "flac", "gsm", "", "m4a", "m4p", "mmf", "mp3", "mpc", "msv", "ogg", "oga", "opus", "ra", "rm", "raw", "sln", "tta", "vox", "wav", "wma", "wv", "webm"};
-
 
     private static final Comparator<File> fileComp = new Comparator<File>() {
         @Override
@@ -98,25 +98,6 @@ public class FileManagerFragment extends Fragment {
     private static final Fragment[] fragments = new Fragment[2];
     private static final String[] titles = {"Local", "External"};
     private static final ArrayList<File> tmpTree = new ArrayList<File>();
-    private static final View.OnClickListener dialogClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.delete:
-
-                    break;
-                case R.id.move:
-
-                    break;
-                case R.id.copy:
-
-                    break;
-                case R.id.rename:
-
-                    break;
-            }
-        }
-    };
     public static boolean isInit;
     private static FragmentActivity context;
     //Todo local and external
@@ -128,6 +109,20 @@ public class FileManagerFragment extends Fragment {
     private static Dialog dialog;
     private static MikeFileOperationType tmpMikeFileOperationType;
     private static MikeFile tmpMikeFile;
+    private static String tmpString;
+    private static final View.OnClickListener dialogClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (tmpMikeFileOperationType) {
+                case LOCAL:
+                    handleLocalLongClick(v.getId());
+                    break;
+                case EXTERNAL:
+                    handleExternalLongClick(v.getId());
+                    break;
+            }
+        }
+    };
 
     public static String getCurrentExternalDirectory() {
         if (!(new File(currentExternalDirectory).isDirectory()) || currentExternalDirectory.length() < 1) {
@@ -138,6 +133,40 @@ public class FileManagerFragment extends Fragment {
 
     private static void setCurrentExternalDirectory(String currentExternalDirectory) {
         FileManagerFragment.currentExternalDirectory = currentExternalDirectory;
+    }
+
+    private static void handleLocalLongClick(int id) {
+        switch (id) {
+            case R.id.delete:
+                delete(new File(tmpMikeFile.path), MikeFileOperationType.LOCAL);
+                break;
+            case R.id.copy:
+
+                break;
+            case R.id.rename:
+                renameFile(tmpMikeFile, tmpString);
+                break;
+            case R.id.move:
+
+                break;
+        }
+    }
+
+    private static void handleExternalLongClick(int id) {
+        switch (id) {
+            case R.id.delete:
+
+                break;
+            case R.id.copy:
+
+                break;
+            case R.id.rename:
+
+                break;
+            case R.id.move:
+
+                break;
+        }
     }
 
     private static void openFile(Context context, MikeFile mikeFile) {
@@ -349,6 +378,29 @@ public class FileManagerFragment extends Fragment {
         }
     }
 
+    public static void renameFile(MikeFile file, String newNmae) {
+        renameFile(new File(file.path), newNmae);
+    }
+
+    public static void renameFile(String path, String newNmae) {
+        renameFile(new File(path), newNmae);
+    }
+
+    public static void renameFile(File file, String newNmae) {
+        file.renameTo(new File(file.getParent() + newNmae));
+    }
+
+    public static void handleRename(MikeFile file, String newName, MikeFileOperationType mikeFileOperationType) {
+        switch (mikeFileOperationType) {
+            case EXTERNAL:
+
+                break;
+            case LOCAL:
+                break;
+
+        }
+    }
+
     public static void copyFile(File src, File dst) {
         try {
             final FileInputStream inStream = new FileInputStream(src);
@@ -547,6 +599,39 @@ public class FileManagerFragment extends Fragment {
         dialog.show();
     }
 
+    public static void renameFile(final MikeFile file, final MikeFileOperationType mikeFileOperationType) {
+        tmpMikeFile = file;
+        tmpMikeFileOperationType = mikeFileOperationType;
+        if (dialog != null) {
+            try {
+                dialog.dismiss();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        dialog = new Dialog(context, R.style.CustomDialog);
+        dialog.setContentView(R.layout.file_manager_dialog_rename);
+        final HackerTextView old_file_name = (HackerTextView) dialog.findViewById(R.id.old_filename);
+        old_file_name.setText(file.name);
+        final HackerEditText editText = (HackerEditText) dialog.findViewById(R.id.new_filename);
+        editText.setText(file.name);
+        dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                renameFile(file, mikeFileOperationType);
+            }
+        });
+        dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -575,8 +660,7 @@ public class FileManagerFragment extends Fragment {
 
         tabs = (FilePagerSlidingTabStrip) v.findViewById(R.id.tabs);
         pager = (ViewPager) v.findViewById(R.id.view_pager);
-        pager.setOffscreenPageLimit(4);
-
+        pager.setOffscreenPageLimit(3);
         pagerAdapter = new MyPagerAdapter(getChildFragmentManager());
 
         pager.setAdapter(pagerAdapter);
@@ -855,18 +939,6 @@ public class FileManagerFragment extends Fragment {
         public static final AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//    Todo mke dialog            //todo command name + filesep+filepath
-//                sendFileCommand(COMMAND_BROWSE + FILE_SEP + files.get(position).path);
-//                //todo command name + filesep+filepath
-//                open(new File(split[1]));
-//                //todo command name + filesep+filepath
-//                delete(new File(split[1]));
-//                //todo command name + filesep+filepathFrom+fileSep+fileTo
-//                copyFile(new File(split[1]), new File(split[2]));
-//                //todo command name + filesep+filepathFrom+fileSep+fileTo
-//                moveFile(new File(split[1]), new File(split[2]));
-//                //TODO handle upload and download
-
                 showDialog(files.get(position), MikeFileOperationType.LOCAL);
                 return false;
             }

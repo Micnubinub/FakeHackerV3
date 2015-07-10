@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.IOException;
 
 import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.Message;
@@ -124,14 +123,6 @@ public class RemoteFragment extends Fragment {
         } else if (commandType.contains(StaticValues.SET_TORCH)) {
             builder.append(cvs);
         } else if (commandType.contains(StaticValues.GET_FILE_DETAILS)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.DELETE_FILE)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.DOWNLOAD_FILE)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.MOVE_FILE)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.STREAM_FILE)) {
             builder.append(cvs);
         } else if (commandType.contains(StaticValues.CREATE_DIRECTORY)) {
             builder.append(cvs);
@@ -261,54 +252,6 @@ public class RemoteFragment extends Fragment {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-        } else if (splitCommand[0].contains(StaticValues.DELETE_FILE)) {
-            try {
-                final String commandString = splitCommand[1];
-                final File file = new File(commandString);
-                if (!file.exists()) {
-                } else if (!file.isDirectory()) {
-
-                } else {
-                    //todo
-                    file.delete();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[0].contains(StaticValues.DOWNLOAD_FILE)) {
-            final String commandString = splitCommand[1];
-            final File file = new File(commandString);
-            if (!file.exists()) {
-
-            } else {
-                if (MainActivity.p2PManager != null)
-                    P2PManager.enqueueMessage(new Message(file.getAbsolutePath(), Message.MessageType.FILE));
-            }
-        } else if (splitCommand[0].contains(StaticValues.MOVE_FILE)) {
-            final String commandString = splitCommand[1];
-            final File file = new File(commandString);
-            final File toLocation = new File(splitCommand[2]);
-            final File out = new File(splitCommand[2] + file.getName());
-            if (!file.exists() || !toLocation.exists()) {
-            } else if (!toLocation.isDirectory()) {
-
-            } else {
-                //todo
-                file.renameTo(out);
-            }
-        } else if (splitCommand[0].contains(StaticValues.STREAM_FILE)) {
-//todo
-        } else if (splitCommand[0].contains(StaticValues.CREATE_DIRECTORY)) {
-            final String commandString = splitCommand[1];
-            final File file = new File(commandString);
-            if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    log("createfile failed > ioexeption");
-                    e.printStackTrace();
-                }
             }
         } else if (splitCommand[0].contains(StaticValues.TAKE_SCREENSHOT)) {
             RemoteTools.getScreenShot();

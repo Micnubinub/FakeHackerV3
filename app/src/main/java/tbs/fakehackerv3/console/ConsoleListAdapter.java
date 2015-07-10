@@ -26,7 +26,13 @@ public class ConsoleListAdapter extends ArrayAdapter<String> {
             final ViewHolder holder = new ViewHolder((TextView) convertView.findViewById(R.id.commandEntry));
             convertView.setTag(holder);
         }
-        ((ViewHolder) convertView.getTag()).textView.setText(consoleItems.get(position));
+        ((ViewHolder) convertView.getTag()).textView.setText(
+                consoleItems.get(position));
+
+        if (consoleItems.get(position).contains("----"))
+            ((ViewHolder) convertView.getTag()).textView.setMaxLines(1);
+
+
         return convertView;
     }
 
