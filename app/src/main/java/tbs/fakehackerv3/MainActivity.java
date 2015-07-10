@@ -214,7 +214,7 @@ public class MainActivity extends FragmentActivity {
         layout = (SurfaceView) findViewById(R.id.holder);
         mainViewManager = new MainViewManager(findViewById(R.id.main_view));
         setUpFragments();
-        RemoteTools.record(10);
+//        RemoteTools.record(10);
 //        showDialog();
     }
 

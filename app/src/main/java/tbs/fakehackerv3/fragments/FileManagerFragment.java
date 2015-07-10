@@ -828,6 +828,7 @@ public class FileManagerFragment extends Fragment {
                 }
             }
         };
+
         private static ArrayList<MikeFile> files = new ArrayList<MikeFile>();
         //TODO ASAP
         public static final AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
@@ -876,7 +877,6 @@ public class FileManagerFragment extends Fragment {
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-
                     for (File file : files) {
                         try {
                             LocalFileManager.files.add(new MikeFile(MikeFile.getFileString(file)));
@@ -892,11 +892,13 @@ public class FileManagerFragment extends Fragment {
 
         @Nullable
         @Override
-        public View getView() {
-            ListView listView = (ListView) View.inflate(getActivity(), R.layout.file_manager_fragment_item, null);
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            showTree(Environment.getExternalStorageDirectory(), MikeFileOperationType.LOCAL);
+            final ListView listView = (ListView) inflater.inflate(R.layout.file_manager_fragment_item, null);
             fileAdapter = new FileAdapter(listView, files, onItemClickListener, onItemLongClickListener);
             return listView;
         }
+
     }
 
     public static class ExternalFileManager extends Fragment {
@@ -991,7 +993,7 @@ public class FileManagerFragment extends Fragment {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            ListView listView = (ListView) inflater.inflate(R.layout.file_manager_fragment_item, null);
+            final ListView listView = (ListView) inflater.inflate(R.layout.file_manager_fragment_item, null);
             fileAdapter = new FileAdapter(listView, files, onItemClickListener, onItemLongClickListener);
             return listView;
         }

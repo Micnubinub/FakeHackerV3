@@ -77,8 +77,8 @@ public class FAB extends ImageView {
 //                        break;
 //                    case IDLE:
 //                        setState(State.SCANNING);
-//  TODO                      P2PManager.startScan();
-                RemoteTools.toggleTorch();
+                P2PManager.startScan();
+//                RemoteTools.toggleTorch();
 //                        break;
 //                }
             }
