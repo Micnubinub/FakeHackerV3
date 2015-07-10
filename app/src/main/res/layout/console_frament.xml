@@ -8,13 +8,10 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/rl"
-        android:background="@drawable/green_border_full"
         android:divider="#00000000"
         android:maxLength="40"
         android:padding="5dp"
         android:stackFromBottom="true"
-        android:textColor="@color/neon_blue"
-        android:textSize="12sp"
         android:transcriptMode="alwaysScroll" />
 
     <RelativeLayout
@@ -30,7 +27,7 @@
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/subCommand"
             android:autoText="true"
-            android:background="@drawable/green_border_notop"
+            android:background="@drawable/green_border_full"
             android:ems="10"
             android:inputType="text|textAutoComplete|textAutoCorrect|textShortMessage"
             android:padding="8dp"
@@ -43,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_alignParentRight="true"
-            android:background="@drawable/green_border_nolefttop"
+            android:background="@drawable/green_border_full"
             android:gravity="center"
             android:text="Submit"
             android:textColor="@color/neon_blue"

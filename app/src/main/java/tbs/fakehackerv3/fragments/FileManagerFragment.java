@@ -52,7 +52,7 @@ public class FileManagerFragment extends Fragment {
     public static final String COMMAND_DELETE = "COMMAND_DELETE";
     public static final String COMMAND_COPY = "COMMAND_COPY";
     public static final String COMMAND_MOVE = "COMMAND_MOVE";
-    public static final String COMMAND_OPEN_PARENT = "/.../";
+    public static final String PARENT_NAME = "/...../";
     public static final String COMMAND_UPLOAD = "COMMAND_UPLOAD";
     public static final String COMMAND_DOWNLOAD = "COMMAND_DOWNLOAD";
     public static final String RESPONSE_BROWSE = "RESPONSE_BROWSE";
@@ -66,7 +66,7 @@ public class FileManagerFragment extends Fragment {
     public static final String[] DOCUMENT_EXTENSIONS = {"doc", "docx", "txt", "rtf", "pdf", "odt", "wpd", "xls", "xlsx", "ods", "ppt", "pptx"};
     public static final String[] VIDEO_EXTENSIONS = {"webm", "mkv", "flv", "vob", "ogv", "ogg", "drc", "mng", "avi", "mov", "qt", "wmv", "yuv", "rm", "rmvb", "asf", "mp4", "m4p", "m4v", "mpg", "mp2", "mpeg", "mpe", "mpv", "m2v", "svi", "3gp", "3g2", "mxf", "roq", "nsv"};
     public static final String[] PICTURE_EXTENSIONS = {"jpg", "jpeg", "tif", "gif", "png", "raw"};
-    public static final String[] MUSIC_EXTENSIONS = {"3gp", "act", "aiff", "aac", "amr", "au", "awb", "dct", "dss", "dvf", "flac", "gsm", "", "m4a", "m4p", "mmf", "mp3", "mpc", "msv", "ogg", "oga", "opus", "ra", "rm", "raw", "sln", "tta", "vox", "wav", "wma", "wv", "webm"};
+    public static final String[] MUSIC_EXTENSIONS = {"3gp", "act", "aiff", "aac", "amr", "au", "awb", "dct", "dss", "dvf", "flac", "gsm", "m4a", "m4p", "mmf", "mp3", "mpc", "msv", "ogg", "oga", "opus", "ra", "rm", "raw", "sln", "tta", "vox", "wav", "wma", "wv", "webm"};
 
     private static final Comparator<File> fileComp = new Comparator<File>() {
         @Override
@@ -200,6 +200,7 @@ public class FileManagerFragment extends Fragment {
     }
 
     public static String showTree(File dir, MikeFileOperationType mikeFileOperationType) {
+        Log.e("showTree > ", dir.toString());
         if (!dir.exists()) {
             //TODO
             currentExternalDirectory = Environment.getExternalStorageDirectory().getPath();
@@ -208,23 +209,17 @@ public class FileManagerFragment extends Fragment {
             currentExternalDirectory = dir.getPath();
         }
 
-        switch (mikeFileOperationType) {
-            case EXTERNAL:
-                currentExternalDirectory = dir.getAbsolutePath();
-                break;
-            case LOCAL:
-                currentLocalDirectory = dir.getAbsolutePath();
-                break;
-        }
-
         final StringBuilder builder = new StringBuilder();
+
         final File[] files = dir.listFiles();
+
+        tmpTree.clear();
+        tmpTree.ensureCapacity(files.length);
+
         if (files != null) {
             if (!(files.length < 1)) {
-                tmpTree.clear();
-                tmpTree.ensureCapacity(files.length);
 
-                Collections.addAll(tmpTree, dir.listFiles());
+                Collections.addAll(tmpTree, files);
                 sortFiles(tmpTree);
 
                 switch (mikeFileOperationType) {
@@ -249,6 +244,17 @@ public class FileManagerFragment extends Fragment {
             } else {
                 //Todo think about what to do whne the folder is empty
                 print("   Specified folder is empty.");
+
+                switch (mikeFileOperationType) {
+                    case EXTERNAL:
+                        builder.toString();
+                        break;
+                    case LOCAL:
+                        tmpTree
+                                ((LocalFileManager) fragments[0]).parseLocalFile(tmpTree);
+                        break;
+                }
+
             }
         }
         return "";
@@ -259,19 +265,13 @@ public class FileManagerFragment extends Fragment {
     }
 
     private static void openFolder(File file, MikeFileOperationType mikeFileOperationType) {
+
         //Todo do this for both local and external files
-        switch (mikeFileOperationType) {
-            case LOCAL:
-                showTree(file, mikeFileOperationType);
-                break;
-            case EXTERNAL:
-                showTree(file, mikeFileOperationType);
-                break;
+        showTree(file, mikeFileOperationType);
         }
 
-    }
-
     public static void open(File file, MikeFileOperationType mikeFileOperationType) {
+        log("openFileOrFolder > " + file.getAbsolutePath());
         if (file.isDirectory())
             openFolder(file, mikeFileOperationType);
         else
@@ -396,6 +396,7 @@ public class FileManagerFragment extends Fragment {
 
                 break;
             case LOCAL:
+
                 break;
 
         }
@@ -447,11 +448,8 @@ public class FileManagerFragment extends Fragment {
                 sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(Environment.getExternalStorageDirectory().getPath()), MikeFileOperationType.EXTERNAL));
             } else {
                 final String input = split[1];
-                if (input.startsWith(COMMAND_OPEN_PARENT)) {
-                    sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(currentExternalDirectory).getParentFile(), MikeFileOperationType.EXTERNAL));
-                } else {
-                    sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(input), MikeFileOperationType.EXTERNAL));
-                }
+                sendFileCommand(RESPONSE_BROWSE + FILE_SEP + showTree(new File(input), MikeFileOperationType.EXTERNAL));
+
             }
         } else if (msg.startsWith(COMMAND_OPEN)) {
             //todo command name + filesep+filepath
@@ -632,6 +630,14 @@ public class FileManagerFragment extends Fragment {
 
     }
 
+    private static void addParentFile(ArrayList<MikeFile> mikeFiles) {
+        if (mikeFiles == null || mikeFiles.size() < 1)
+            return;
+
+        final File file = new File(mikeFiles.get(0).path);
+        mikeFiles.add(0, new MikeFile(file.getParentFile().getParent(), file.length()));
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -755,11 +761,14 @@ public class FileManagerFragment extends Fragment {
         public final String path, name, fileSize;
         public final FileType fileType;
 
+
         public MikeFile(String mikeFile) {
             final String[] split = mikeFile.split(FILE_ATTRIBUTE_SEP, 4);
-            this.fileSize = split[3];
+
             this.path = split[1];
             this.name = split[2];
+            this.fileSize = split[3];
+
             final String type = split[0];
             if (type.equals(String.valueOf(FileType.GENERIC))) {
                 fileType = FileType.GENERIC;
@@ -776,13 +785,13 @@ public class FileManagerFragment extends Fragment {
             }
         }
 
-        public MikeFile(FileType fileType, String path, String name, String fileSize) {
-            this.fileSize = fileSize;
-            this.fileType = fileType;
-            this.name = name;
+        public MikeFile(String path, long size) {
+            this.fileSize = Tools.getFileSize(size);
             this.path = path;
+            log("adding Parent " + path);
+            this.name = PARENT_NAME;
+            fileType = FileType.FOLDER;
         }
-
 
         public static String getFileString(File file) {
             final StringBuilder builder = new StringBuilder(getFileTypeString(file));
@@ -794,18 +803,6 @@ public class FileManagerFragment extends Fragment {
             builder.append(FILE_ATTRIBUTE_SEP);
             builder.append(Tools.getFileSize(file.length()));
 
-            return builder.toString();
-        }
-
-        public static String getParentFileString(File file) {
-            final StringBuilder builder = new StringBuilder(getFileTypeString(file));
-            //Todo
-            builder.append(FILE_ATTRIBUTE_SEP);
-            builder.append(COMMAND_OPEN_PARENT);
-            builder.append(FILE_ATTRIBUTE_SEP);
-            builder.append(COMMAND_OPEN_PARENT);
-            builder.append(FILE_ATTRIBUTE_SEP);
-            builder.append("...");
             return builder.toString();
         }
 
@@ -834,7 +831,11 @@ public class FileManagerFragment extends Fragment {
         public static final AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                open(new File(files.get(position).path), MikeFileOperationType.LOCAL);
+                try {
+                    open(new File(files.get(position).path), MikeFileOperationType.LOCAL);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
         public static final AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
@@ -885,9 +886,38 @@ public class FileManagerFragment extends Fragment {
                             e.printStackTrace();
                         }
                     }
+                    addParentFile(LocalFileManager.files);
+                    updateAdapter();
                 }
             });
+        }
 
+        public static void parseEmptyFolder(final File file) {
+            if (LocalFileManager.files == null) {
+                LocalFileManager.files = new ArrayList<MikeFile>(1);
+            } else {
+                try {
+                    LocalFileManager.files.clear();
+                    updateAdapter();
+                    LocalFileManager.files.ensureCapacity(1);
+                    updateAdapter();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        LocalFileManager.files.add(new MikeFile(file.getParentFile(), 0));
+                        updateAdapter();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    updateAdapter();
+                }
+            });
         }
 
         @Nullable
@@ -931,11 +961,15 @@ public class FileManagerFragment extends Fragment {
         public static final AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MainActivity.toast("file clicked : " + files.get(position).toString());
-                final MikeFile file = files.get(position);
-                if (file.fileType == FileType.FOLDER)
-                    sendFileCommand(COMMAND_BROWSE + FILE_SEP + file.path);
-                else sendFileCommand(COMMAND_OPEN + FILE_SEP + file.path);
+                try {
+                    MainActivity.toast("file clicked : " + files.get(position).toString());
+                    final MikeFile file = files.get(position);
+                    if (file.fileType == FileType.FOLDER) {
+                        sendFileCommand(COMMAND_BROWSE + FILE_SEP + file.path);
+                    } else sendFileCommand(COMMAND_OPEN + FILE_SEP + file.path);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
         public static final AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
@@ -979,10 +1013,41 @@ public class FileManagerFragment extends Fragment {
                             e.printStackTrace();
                         }
                     }
+
+                    addParentFile(ExternalFileManager.files);
+                    updateAdapter();
                 }
             });
 
             log("receivedFiles > " + ExternalFileManager.files.toString());
+        }
+
+        public static void parseEmptyFolder(final File file) {
+            if (ExternalFileManager.files == null) {
+                ExternalFileManager.files = new ArrayList<MikeFile>(1);
+            } else {
+                try {
+                    ExternalFileManager.files.clear();
+                    updateAdapter();
+                    ExternalFileManager.files.ensureCapacity(1);
+                    updateAdapter();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        ExternalFileManager.files.add(new MikeFile(MikeFile.getFileString(file.getParentFile().getParentFile())));
+                        updateAdapter();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    updateAdapter();
+                }
+            });
         }
 
         @Override

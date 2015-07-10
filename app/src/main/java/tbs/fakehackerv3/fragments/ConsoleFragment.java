@@ -61,13 +61,13 @@ public class ConsoleFragment extends Fragment {
     };
 
     //Todo make commands and ad to help
-    private static void printRandomShit() {
+    public static void printRandomShit() {
         runPrintRandomShit = true;
         new Thread(printRandomShit).start();
     }
 
     //Todo make command and add to help
-    private static void printRandomShit(int num) {
+    public static void printRandomShit(int num) {
         for (int i = 0; i < num; i++) {
             addConsoleItem(new String(getRandomHackerString()));
         }

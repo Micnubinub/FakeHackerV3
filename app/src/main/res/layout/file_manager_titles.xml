@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     android:weightSum="2">
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/local"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <TextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/external"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

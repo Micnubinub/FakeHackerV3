@@ -17,6 +17,7 @@
 package tbs.fakehackerv3.custom_views;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
@@ -24,7 +25,6 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import tbs.fakehackerv3.R;
 
@@ -34,7 +34,7 @@ public class FilePagerSlidingTabStrip extends FrameLayout {
     public static OnPageChangeListener delegatePageListener;
     private static ViewPager pager;
     private static int currentPosition;
-    private static TextView localTitle, externalTitle;
+    private static HackerTextView localTitle, externalTitle;
     private final PageListener pageListener = new PageListener();
     private final View.OnClickListener listener = new OnClickListener() {
         @Override
@@ -72,17 +72,21 @@ public class FilePagerSlidingTabStrip extends FrameLayout {
     }
 
     public static void scrollToChild(int pos) {
-        externalTitle.setTextColor((pos == 0) ? 0xffffffff : 0xffbbbbbb);
-        localTitle.setTextColor((pos == 1) ? 0xffffffff : 0xffbbbbbb);
+        localTitle.setTextColor((pos == 0) ? 0xffffffff : 0xffbbbbbb);
+        externalTitle.setTextColor((pos == 1) ? 0xffffffff : 0xffbbbbbb);
     }
 
     public void init(Context context) {
         final View view = View.inflate(context, R.layout.file_manager_titles, null);
-        localTitle = (TextView) view.findViewById(R.id.local);
-        externalTitle = (TextView) view.findViewById(R.id.external);
+        localTitle = (HackerTextView) view.findViewById(R.id.local);
+        externalTitle = (HackerTextView) view.findViewById(R.id.external);
+
+        externalTitle.setTypeFaceStyle(Typeface.BOLD);
+        localTitle.setTypeFaceStyle(Typeface.BOLD);
 
         localTitle.setOnClickListener(listener);
         externalTitle.setOnClickListener(listener);
+
         selectPage(0);
         addView(view);
     }
@@ -156,8 +160,6 @@ public class FilePagerSlidingTabStrip extends FrameLayout {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             currentPosition = position;
-            scrollToChild(position);
-
             invalidate();
 
             if (delegatePageListener != null) {

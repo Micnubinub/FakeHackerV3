@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -53,18 +54,15 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private float currentPositionOffset = 0f;
     private Paint rectPaint;
     private Paint dividerPaint;
-    private int indicatorColor = 0xFFaaaaaa;
-    private int underlineColor = 0x1A111111;
+    private int indicatorColor = 0xFFfefefe;
     private int dividerColor = 0x1A111111;
     private boolean shouldExpand = false;
     private boolean textAllCaps = true;
     private int scrollOffset = 52;
     private int indicatorHeight = 8;
-    private int underlineHeight = 2;
     private int dividerPadding = 12;
     private int tabPadding = 24;
     private int dividerWidth = 1;
-    private int tabBackgroundResId;
     private int tabTextSize = 16;
     private int lastScrollX = 0;
     private Locale locale;
@@ -93,7 +91,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
         scrollOffset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, scrollOffset, dm);
         indicatorHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, indicatorHeight, dm);
-        underlineHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, underlineHeight, dm);
         dividerPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dividerPadding, dm);
         tabPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, tabPadding, dm);
         dividerWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dividerWidth, dm);
@@ -174,6 +171,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     private void addTextTab(final int position, String title) {
         final HackerTextView tab = new HackerTextView(getContext());
+        tab.setTypeFaceStyle(Typeface.BOLD);
         tab.setText(title);
         tab.setGravity(Gravity.CENTER);
         tab.setSingleLine();
@@ -202,7 +200,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private void updateTabStyles() {
         for (int i = 0; i < tabCount; i++) {
             final View v = tabsContainer.getChildAt(i);
-            v.setBackgroundResource(tabBackgroundResId);
             if (v instanceof HackerTextView) {
                 final HackerTextView tab = (HackerTextView) v;
                 tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, tabTextSize);
@@ -264,9 +261,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             lineRight = (currentPositionOffset * nextTabRight + (1f - currentPositionOffset) * lineRight);
         }
         canvas.drawRect(lineLeft, height - indicatorHeight, lineRight, height, rectPaint);
-        // draw underline
-        rectPaint.setColor(underlineColor);
-        canvas.drawRect(0, height - underlineHeight, tabsContainer.getWidth(), height, rectPaint);
         // draw divider
 
         dividerPaint.setColor(dividerColor);

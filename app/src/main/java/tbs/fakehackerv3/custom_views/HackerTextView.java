@@ -43,6 +43,20 @@ public class HackerTextView extends TextView {
         setTextColor(0xff22ccff);
     }
 
+    public void setTypeFaceStyle(int typeFace) {
+        switch (typeFace) {
+            case Typeface.BOLD:
+                setTypeface(fontBold);
+                break;
+            case Typeface.ITALIC:
+                setTypeface(fontItalic);
+                break;
+            default:
+                setTypeface(font);
+                break;
+        }
+    }
+
     @Override
     public void setTypeface(Typeface tf) {
         switch (tf.getStyle()) {

@@ -16,8 +16,6 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import tbs.fakehackerv3.custom_views.PagerSlidingTabStrip;
 import tbs.fakehackerv3.fragments.ConsoleFragment;
 import tbs.fakehackerv3.fragments.FileManagerFragment;
@@ -29,8 +27,8 @@ import tbs.fakehackerv3.fragments.Settings;
 
 public class MainActivity extends FragmentActivity {
 
-    private static final ArrayList<Fragment> fragments = new ArrayList<Fragment>(6);
-    private static final ArrayList<String> titles = new ArrayList<String>(6);
+    private static final Fragment[] fragments = new Fragment[5];
+    private static final String[] titles = new String[5];
     public static WifiP2pDevice connectedDevice;
     public static P2PManager p2PManager;
     public static Activity context;
@@ -198,12 +196,6 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    public static void addFragment(Fragment fragment, String title) {
-        if (fragments.contains(fragment)) return;
-
-        fragments.add(fragment);
-        titles.add(title);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,11 +217,20 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void setUpFragments() {
-        addFragment(new MessagingFragent(), "Messaging");
-        addFragment(new RemoteFragment(), "Remote");
-        addFragment(new FileManagerFragment(), "File Manager");
-        addFragment(new ConsoleFragment(), "Console");
-        addFragment(new LogFragment(), "Log");
+        fragments[0] = new MessagingFragent();
+        titles[0] = "Messaging";
+
+        fragments[1] = new RemoteFragment();
+        titles[1] = "Remote";
+
+        fragments[2] = new FileManagerFragment();
+        titles[2] = "File Manager";
+
+        fragments[3] = new ConsoleFragment();
+        titles[3] = "Console";
+
+        fragments[4] = new LogFragment();
+        titles[4] = "Log";
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.view_pager);
@@ -244,24 +245,23 @@ public class MainActivity extends FragmentActivity {
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
-
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return titles.get(position);
+            return titles[position];
         }
 
         @Override
         public int getCount() {
-            return titles.size();
+            return titles.length;
         }
 
         @Override
         public Fragment getItem(int position) {
-            return fragments.get(position);
+            return fragments[position];
         }
     }
 

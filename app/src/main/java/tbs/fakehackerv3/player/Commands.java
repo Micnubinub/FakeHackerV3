@@ -54,6 +54,7 @@ public class Commands {
     public void checkCommand(String userCmd) {
         //TODO ASAP check commands and hijack them for the respective fragments where applicable
         userCmd = userCmd.toLowerCase();
+        ConsoleFragment.printRandomShit(200);
         if (!userCmd.equals("repeat")) {
             lastCom = userCmd;
         }
