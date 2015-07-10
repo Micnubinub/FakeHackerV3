@@ -1,5 +1,6 @@
 package tbs.fakehackerv3.fragments;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -70,7 +71,6 @@ public class FileManagerFragment extends Fragment {
     private static final Comparator<File> fileComp = new Comparator<File>() {
         @Override
         public int compare(File file1, File file2) {
-
             if (file1.isDirectory()) {
                 if (file2.isDirectory()) {
                     return String.valueOf(file1.getName().toLowerCase()).compareTo(file2.getName().toLowerCase());
@@ -97,8 +97,26 @@ public class FileManagerFragment extends Fragment {
     };
     private static final Fragment[] fragments = new Fragment[2];
     private static final String[] titles = {"Local", "External"};
-    //Todo use this list for both ext and local files
     private static final ArrayList<File> tmpTree = new ArrayList<File>();
+    private static final View.OnClickListener dialogClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.delete:
+
+                    break;
+                case R.id.move:
+
+                    break;
+                case R.id.copy:
+
+                    break;
+                case R.id.rename:
+
+                    break;
+            }
+        }
+    };
     public static boolean isInit;
     private static FragmentActivity context;
     //Todo local and external
@@ -107,6 +125,9 @@ public class FileManagerFragment extends Fragment {
     private static ViewPager pager;
     private static MyPagerAdapter pagerAdapter;
     private static FilePagerSlidingTabStrip tabs;
+    private static Dialog dialog;
+    private static MikeFileOperationType tmpMikeFileOperationType;
+    private static MikeFile tmpMikeFile;
 
     public static String getCurrentExternalDirectory() {
         if (!(new File(currentExternalDirectory).isDirectory()) || currentExternalDirectory.length() < 1) {
@@ -158,6 +179,15 @@ public class FileManagerFragment extends Fragment {
             currentExternalDirectory = dir.getPath();
         }
 
+        switch (mikeFileOperationType) {
+            case EXTERNAL:
+                currentExternalDirectory = dir.getAbsolutePath();
+                break;
+            case LOCAL:
+                currentLocalDirectory = dir.getAbsolutePath();
+                break;
+        }
+
         final StringBuilder builder = new StringBuilder();
         final File[] files = dir.listFiles();
         if (files != null) {
@@ -201,8 +231,15 @@ public class FileManagerFragment extends Fragment {
 
     private static void openFolder(File file, MikeFileOperationType mikeFileOperationType) {
         //Todo do this for both local and external files
-        setCurrentExternalDirectory(file.getPath());
-        showTree(file, mikeFileOperationType);
+        switch (mikeFileOperationType) {
+            case LOCAL:
+                showTree(file, mikeFileOperationType);
+                break;
+            case EXTERNAL:
+                showTree(file, mikeFileOperationType);
+                break;
+        }
+
     }
 
     public static void open(File file, MikeFileOperationType mikeFileOperationType) {
@@ -212,16 +249,16 @@ public class FileManagerFragment extends Fragment {
             openFile(new MikeFile(MikeFile.getFileString(file)));
     }
 
-    public static void createFolder(String path) {
-        createFolder(new File(path));
+    public static void createFolder(String path, MikeFileOperationType mikeFileOperationType) {
+        createFolder(new File(path), mikeFileOperationType);
     }
 
-    public static void createFolder(File file) {
+    public static void createFolder(File file, MikeFileOperationType mikeFileOperationType) {
         print("creating : " + file.getPath());
         try {
             // file.createNewFile();
             file.mkdirs();
-            showTree(getCurrentExternalDirectory());
+            showTree(getCurrentExternalDirectory(), mikeFileOperationType);
         } catch (Exception e) {
         }
     }
@@ -230,14 +267,13 @@ public class FileManagerFragment extends Fragment {
     }
 
     public static void delete(String file, MikeFileOperationType mikeFileOperationType) {
-        mik
-        delete(new File(getCurrentExternalDirectory() + "/" + file));
+        delete(new File(getCurrentExternalDirectory() + "/" + file), mikeFileOperationType);
     }
 
-    private static void delete(File file) {
+    private static void delete(File file, MikeFileOperationType mikeFileOperationType) {
         file.delete();
         print(file.getName() + " deleted");
-        showTree(currentExternalDirectory);
+        showTree(currentExternalDirectory, mikeFileOperationType);
     }
 
     public static long getFreeSpace(String path) {
@@ -256,8 +292,8 @@ public class FileManagerFragment extends Fragment {
         return file.length();
     }
 
-    public static void createFile(String name) {
-        createFile(new File(name));
+    public static void createFile(String name, MikeFileOperationType mikeFileOperationType) {
+        createFile(new File(name), mikeFileOperationType);
     }
 
     public static void createFile(File file, MikeFileOperationType mikeFileOperationType) {
@@ -277,10 +313,8 @@ public class FileManagerFragment extends Fragment {
         Collections.sort(list, fileComp);
     }
 
-
     public static int getImageResource(FileType type) {
         int res = R.drawable.file_file;
-
         switch (type) {
             case DOCUMENT:
                 res = R.drawable.file_document;
@@ -328,7 +362,6 @@ public class FileManagerFragment extends Fragment {
             try {
                 final InputStream in = new FileInputStream(src);
                 final OutputStream out = new FileOutputStream(dst);
-
                 // Transfer bytes from in to out
                 byte[] buf = new byte[1024];
                 int len;
@@ -373,7 +406,7 @@ public class FileManagerFragment extends Fragment {
             open(new File(split[1]), MikeFileOperationType.EXTERNAL);
         } else if (msg.startsWith(COMMAND_DELETE)) {
             //todo command name + filesep+filepath
-            delete(new File(split[1]));
+            delete(new File(split[1]), MikeFileOperationType.EXTERNAL);
         } else if (msg.startsWith(COMMAND_COPY)) {
             //todo command name + filesep+filepathFrom+fileSep+fileTo
             copyFile(new File(split[1]), new File(split[2]));
@@ -491,6 +524,27 @@ public class FileManagerFragment extends Fragment {
     private static void log(String msg) {
         LogFragment.log(msg);
         Log.e("File Manager", msg);
+    }
+
+    private static void showDialog(final MikeFile mikeFile, final MikeFileOperationType mikeFileOperationType) {
+        tmpMikeFile = mikeFile;
+        tmpMikeFileOperationType = mikeFileOperationType;
+        if (dialog != null) {
+            try {
+                dialog.dismiss();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        dialog = new Dialog(context, R.style.CustomDialog);
+        dialog.setContentView(R.layout.file_manager_dialog);
+        dialog.findViewById(R.id.delete).setOnClickListener(dialogClickListener);
+        dialog.findViewById(R.id.rename).setOnClickListener(dialogClickListener);
+        dialog.findViewById(R.id.move).setOnClickListener(dialogClickListener);
+        dialog.findViewById(R.id.copy).setOnClickListener(dialogClickListener);
+
+        dialog.show();
     }
 
     @Override
@@ -695,17 +749,13 @@ public class FileManagerFragment extends Fragment {
         public static final AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MainActivity.toast("file clicked : " + files.get(position).toString());
-                final MikeFile file = files.get(position);
-                if (file.fileType == FileType.FOLDER)
-                    sendFileCommand(COMMAND_BROWSE + FILE_SEP + file.path);
-                else sendFileCommand(COMMAND_OPEN + FILE_SEP + file.path);
+                open(new File(files.get(position).path), MikeFileOperationType.LOCAL);
             }
         };
         public static final AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                MainActivity.toast("file longClicked : " + files.get(position).toString());
+                showDialog(files.get(position), MikeFileOperationType.LOCAL);
 //    Todo mke dialog            //todo command name + filesep+filepath
 //                sendFileCommand(COMMAND_BROWSE + FILE_SEP + files.get(position).path);
 //                //todo command name + filesep+filepath
@@ -805,7 +855,6 @@ public class FileManagerFragment extends Fragment {
         public static final AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                MainActivity.toast("file longClicked : " + files.get(position).toString());
 //    Todo mke dialog            //todo command name + filesep+filepath
 //                sendFileCommand(COMMAND_BROWSE + FILE_SEP + files.get(position).path);
 //                //todo command name + filesep+filepath
@@ -817,6 +866,8 @@ public class FileManagerFragment extends Fragment {
 //                //todo command name + filesep+filepathFrom+fileSep+fileTo
 //                moveFile(new File(split[1]), new File(split[2]));
 //                //TODO handle upload and download
+
+                showDialog(files.get(position), MikeFileOperationType.LOCAL);
                 return false;
             }
         };
