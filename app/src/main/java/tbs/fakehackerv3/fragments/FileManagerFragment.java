@@ -224,8 +224,11 @@ public class FileManagerFragment extends Fragment {
 
                 switch (mikeFileOperationType) {
                     case EXTERNAL:
-                        for (int i = 0; i < files.length; i++) {
-                            final File file = files[i];
+                        builder.append(new MikeFile(dir.getParent(), dir.getParentFile().length()).toString());
+                        builder.append(FILE_SEP);
+
+                        for (int i = 0; i < tmpTree.size(); i++) {
+                            final File file = tmpTree.get(i);
                             if ((i < files.length - 1)) {
                                 builder.append(MikeFile.getFileString(file));
                                 builder.append(FILE_SEP);
@@ -233,8 +236,7 @@ public class FileManagerFragment extends Fragment {
                                 builder.append(MikeFile.getFileString(file));
                             }
                         }
-                        builder.toString();
-                        break;
+                        return builder.toString();
                     case LOCAL:
                         ((LocalFileManager) fragments[0]).parseLocalFile(tmpTree);
                         break;
@@ -247,17 +249,21 @@ public class FileManagerFragment extends Fragment {
 
                 switch (mikeFileOperationType) {
                     case EXTERNAL:
-                        builder.toString();
-                        break;
+                        //Todo test
+                        builder.append(new MikeFile(dir.getParent(), dir.getParentFile().length()).toString());
+                        return builder.toString();
                     case LOCAL:
-                        tmpTree
-                                ((LocalFileManager) fragments[0]).parseLocalFile(tmpTree);
+                        ((LocalFileManager) fragments[0]).parseEmptyFolder(dir);
                         break;
                 }
 
             }
         }
         return "";
+    }
+
+    private static void initExternal() {
+        sendFileCommand(COMMAND_BROWSE + FILE_SEP);
     }
 
     private static void showTree(String path, MikeFileOperationType mikeFileOperationType) {
@@ -268,7 +274,7 @@ public class FileManagerFragment extends Fragment {
 
         //Todo do this for both local and external files
         showTree(file, mikeFileOperationType);
-        }
+    }
 
     public static void open(File file, MikeFileOperationType mikeFileOperationType) {
         log("openFileOrFolder > " + file.getAbsolutePath());
@@ -808,7 +814,16 @@ public class FileManagerFragment extends Fragment {
 
         @Override
         public String toString() {
-            return name + " (" + fileSize + ")";
+            final StringBuilder builder = new StringBuilder(String.valueOf(fileType));
+            //Todo
+            builder.append(FILE_ATTRIBUTE_SEP);
+            builder.append(path);
+            builder.append(FILE_ATTRIBUTE_SEP);
+            builder.append(name);
+            builder.append(FILE_ATTRIBUTE_SEP);
+            builder.append(fileSize);
+
+            return builder.toString();
         }
     }
 
@@ -910,7 +925,7 @@ public class FileManagerFragment extends Fragment {
                 @Override
                 public void run() {
                     try {
-                        LocalFileManager.files.add(new MikeFile(file.getParentFile(), 0));
+                        LocalFileManager.files.add(new MikeFile(file.getParent(), file.length()));
                         updateAdapter();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -924,7 +939,10 @@ public class FileManagerFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             showTree(Environment.getExternalStorageDirectory(), MikeFileOperationType.LOCAL);
-            final ListView listView = (ListView) inflater.inflate(R.layout.file_manager_fragment_item, null);
+            final View view = inflater.inflate(R.layout.file_manager_fragment_item, null);
+            final ListView listView = (ListView) view.findViewById(R.id.list);
+            view.findViewById(R.id.placeholder).setVisibility(View.GONE);
+            fileAdapter = new FileAdapter(listView, files, onItemClickListener, onItemLongClickListener);
             fileAdapter = new FileAdapter(listView, files, onItemClickListener, onItemLongClickListener);
             return listView;
         }
@@ -984,7 +1002,7 @@ public class FileManagerFragment extends Fragment {
             context.runOnUiThread(update);
         }
 
-        public static void parseReceivedFiles(String files) {
+        public static void parseReceivedFiles(final String files) {
             final String[] fileA = files.split(FILE_SEP);
 
             if (ExternalFileManager.files == null) {
@@ -1013,9 +1031,6 @@ public class FileManagerFragment extends Fragment {
                             e.printStackTrace();
                         }
                     }
-
-                    addParentFile(ExternalFileManager.files);
-                    updateAdapter();
                 }
             });
 
@@ -1058,9 +1073,11 @@ public class FileManagerFragment extends Fragment {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            final ListView listView = (ListView) inflater.inflate(R.layout.file_manager_fragment_item, null);
+            final View view = inflater.inflate(R.layout.file_manager_fragment_item, null);
+            final ListView listView = (ListView) view.findViewById(R.id.list);
+            view.findViewById(R.id.placeholder).setOnClickListener(placeHolderListener);
             fileAdapter = new FileAdapter(listView, files, onItemClickListener, onItemLongClickListener);
-            return listView;
+            return view;
         }
     }
 

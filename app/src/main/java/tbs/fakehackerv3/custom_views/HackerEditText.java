@@ -9,8 +9,7 @@ import android.widget.EditText;
  * Created by Michael on 7/9/2015.
  */
 public class HackerEditText extends EditText {
-
-    private static Typeface font, fontBold, fontItalic;
+    private static Typeface font, fontBold;
 
     public HackerEditText(Context context) {
         super(context);
@@ -36,9 +35,7 @@ public class HackerEditText extends EditText {
         if (fontBold == null) {
             fontBold = Typeface.createFromAsset(context.getAssets(), "exo_bold.otf");
         }
-        if (fontItalic == null) {
-            fontItalic = Typeface.createFromAsset(context.getAssets(), "exo_italic.otf");
-        }
+
         setTypeface(font);
         setTextColor(0xff22ccff);
         setHintTextColor(0xff0a99dd);
@@ -46,30 +43,25 @@ public class HackerEditText extends EditText {
 
     @Override
     public void setTypeface(Typeface tf) {
-        switch (tf.getStyle()) {
-            case Typeface.BOLD:
-                tf = fontBold;
-                break;
-            case Typeface.ITALIC:
-                tf = fontItalic;
-                break;
-            default:
-                tf = font;
-                break;
-        }
+        if (tf != null)
+            switch (tf.getStyle()) {
+                case Typeface.BOLD:
+                    tf = fontBold;
+                    break;
+                default:
+                    tf = font;
+                    break;
+            }
         super.setTypeface(tf);
     }
 
     @Override
     public void setTypeface(Typeface tf, int style) {
-
         switch (style) {
             case Typeface.BOLD:
                 tf = fontBold;
                 break;
-            case Typeface.ITALIC:
-                tf = fontItalic;
-                break;
+
             default:
                 tf = font;
                 break;

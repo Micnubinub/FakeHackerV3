@@ -26,7 +26,6 @@ import tbs.fakehackerv3.fragments.Settings;
 
 
 public class MainActivity extends FragmentActivity {
-
     private static final Fragment[] fragments = new Fragment[5];
     private static final String[] titles = new String[5];
     public static WifiP2pDevice connectedDevice;
@@ -37,7 +36,6 @@ public class MainActivity extends FragmentActivity {
     public static Settings settings;
     public static boolean connected;
     public static WifiP2pGroup currentGroup;
-    public static SurfaceView layout;
     private static final P2PManager.P2PListener p2pListener = new P2PManager.P2PListener() {
         @Override
         public void onScanStarted() {
@@ -128,6 +126,7 @@ public class MainActivity extends FragmentActivity {
             });
         }
     };
+    public static SurfaceView layout;
     private static PagerSlidingTabStrip tabs;
     private static ViewPager pager;
     private static MyPagerAdapter pagerAdapter;
@@ -196,6 +195,12 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    public static void runOnUIThread(Runnable runnable) {
+        if (context == null)
+            return;
+
+        context.runOnUiThread(runnable);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

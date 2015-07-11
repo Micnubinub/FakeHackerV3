@@ -3,7 +3,6 @@ package tbs.fakehackerv3;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,7 +13,6 @@ public class MainViewManager {
     public static FAB fab;
     public static LinearLayout sidePane;
     private static View mainView;
-    private static ImageView hamburger;
     private static Context context;
     private static TextView connectedToStaticText, connectedToDevice;
     private static boolean isSidePaneOpen;
@@ -22,9 +20,7 @@ public class MainViewManager {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.hamburger:
 
-                    break;
                 case R.id.fab:
 
                     break;
@@ -63,7 +59,6 @@ public class MainViewManager {
     private void init() {
         sidePane = (LinearLayout) mainView.findViewById(R.id.side_pane);
         fab = (FAB) mainView.findViewById(R.id.fab);
-        hamburger = (ImageView) mainView.findViewById(R.id.hamburger);
         connectedToDevice = (TextView) mainView.findViewById(R.id.device_text);
         connectedToStaticText = (TextView) mainView.findViewById(R.id.static_text);
     }

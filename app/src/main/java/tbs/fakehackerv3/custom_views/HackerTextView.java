@@ -10,7 +10,7 @@ import android.widget.TextView;
  */
 public class HackerTextView extends TextView {
 
-    private static Typeface font, fontBold, fontItalic;
+    private static Typeface font, fontBold;
 
     public HackerTextView(Context context) {
         super(context);
@@ -36,9 +36,6 @@ public class HackerTextView extends TextView {
         if (fontBold == null) {
             fontBold = Typeface.createFromAsset(context.getAssets(), "exo_bold.otf");
         }
-        if (fontItalic == null) {
-            fontItalic = Typeface.createFromAsset(context.getAssets(), "exo_italic.otf");
-        }
         setTypeface(font);
         setTextColor(0xff22ccff);
     }
@@ -48,9 +45,6 @@ public class HackerTextView extends TextView {
             case Typeface.BOLD:
                 setTypeface(fontBold);
                 break;
-            case Typeface.ITALIC:
-                setTypeface(fontItalic);
-                break;
             default:
                 setTypeface(font);
                 break;
@@ -59,12 +53,10 @@ public class HackerTextView extends TextView {
 
     @Override
     public void setTypeface(Typeface tf) {
+        if (tf != null)
         switch (tf.getStyle()) {
             case Typeface.BOLD:
                 tf = fontBold;
-                break;
-            case Typeface.ITALIC:
-                tf = fontItalic;
                 break;
             default:
                 tf = font;
@@ -75,13 +67,9 @@ public class HackerTextView extends TextView {
 
     @Override
     public void setTypeface(Typeface tf, int style) {
-
         switch (style) {
             case Typeface.BOLD:
                 tf = fontBold;
-                break;
-            case Typeface.ITALIC:
-                tf = fontItalic;
                 break;
             default:
                 tf = font;

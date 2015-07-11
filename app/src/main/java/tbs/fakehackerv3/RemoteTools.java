@@ -55,7 +55,164 @@ import java.util.List;
  */
 public class RemoteTools {
 
+    private static final Runnable takePictureBack = new Runnable() {
+        @Override
+        public void run() {
+            final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+            MainActivity.layout.setVisibility(View.VISIBLE);
+            final Camera.Parameters parameters = backCamera.getParameters();
+            final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            final Camera.Size cs = sizes.get(0);
+            MainActivity.layout.setLayoutParams(new RelativeLayout.LayoutParams(cs.width, cs.height));
+            MainActivity.layout.requestLayout();
+            MainActivity.layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+            final SurfaceHolder holder = MainActivity.layout.getHolder();
+            holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+            holder.addCallback(new SurfaceHolder.Callback() {
+                @Override
+                public void surfaceCreated(SurfaceHolder holder) {
+
+                }
+
+                @Override
+                public void surfaceChanged(final SurfaceHolder holder, int format, int width, int height) {
+                    try {
+                        backCamera.setPreviewDisplay(holder);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    parameters.setPreviewSize(cs.width, cs.height);
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                    parameters.setJpegQuality(100);
+                    parameters.setRotation(90);
+                    parameters.setPictureSize(cs.width, cs.height);
+                    try {
+                        backCamera.setParameters(parameters);
+                        backCamera.startPreview();
+
+                        backCamera.takePicture(null, null, new Camera.PictureCallback() {
+                            @Override
+                            public void onPictureTaken(byte[] data, Camera camera) {
+                                Log.e("pictureTaken", String.valueOf(data.length));
+                                try {
+                                    String imageFileName = Environment.getExternalStorageDirectory() + "/FHV3/JPEG_" + timeStamp + "_NEW.jpg";
+                                    final File file = new File(imageFileName);
+                                    if (!file.getParentFile().exists())
+                                        file.getParentFile().mkdirs();
+
+                                    final FileOutputStream fileOutputStream = new FileOutputStream(imageFileName);
+                                    fileOutputStream.write(data);
+                                    //                        final Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                MainActivity.layout.setVisibility(View.GONE);
+                                camera.stopPreview();
+                                camera.release();
+
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    holder.removeCallback(this);
+                }
+
+                @Override
+                public void surfaceDestroyed(SurfaceHolder holder) {
+
+                }
+            });
+
+        }
+    };
     public static Camera frontCamera, backCamera;
+    private static final Runnable takePictureFront = new Runnable() {
+        @Override
+        public void run() {
+            final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+            MainActivity.layout.setVisibility(View.VISIBLE);
+            final Camera.Parameters parameters = frontCamera.getParameters();
+            final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            final Camera.Size cs = sizes.get(0);
+            MainActivity.layout.setLayoutParams(new RelativeLayout.LayoutParams(cs.width, cs.height));
+            MainActivity.layout.requestLayout();
+            MainActivity.layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+            final SurfaceHolder holder = MainActivity.layout.getHolder();
+            holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+            holder.addCallback(new SurfaceHolder.Callback() {
+                @Override
+                public void surfaceCreated(SurfaceHolder holder) {
+
+                }
+
+                @Override
+                public void surfaceChanged(final SurfaceHolder holder, int format, int width, int height) {
+                    try {
+                        frontCamera.setPreviewDisplay(holder);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    parameters.setPreviewSize(cs.width, cs.height);
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                    parameters.setJpegQuality(100);
+                    parameters.setRotation(90);
+                    parameters.setPictureSize(cs.width, cs.height);
+                    try {
+                        frontCamera.setParameters(parameters);
+                        frontCamera.startPreview();
+
+                        frontCamera.takePicture(null, null, new Camera.PictureCallback() {
+                            @Override
+                            public void onPictureTaken(byte[] data, Camera camera) {
+                                Log.e("pictureTaken", String.valueOf(data.length));
+                                try {
+                                    String imageFileName = Environment.getExternalStorageDirectory() + "/FHV3/JPEG_" + timeStamp + "_NEW.jpg";
+                                    final File file = new File(imageFileName);
+                                    if (!file.getParentFile().exists())
+                                        file.getParentFile().mkdirs();
+
+                                    final FileOutputStream fileOutputStream = new FileOutputStream(imageFileName);
+                                    fileOutputStream.write(data);
+                                    //                        final Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                MainActivity.layout.setVisibility(View.GONE);
+                                camera.stopPreview();
+                                camera.release();
+
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    holder.removeCallback(this);
+                }
+
+                @Override
+                public void surfaceDestroyed(SurfaceHolder holder) {
+
+                }
+            });
+        }
+    };
     private static Context context;
     private static BluetoothAdapter bluetoothAdapter;
     private static WifiManager wifiManager;
@@ -128,75 +285,7 @@ public class RemoteTools {
     public static void takePictureFront() {
         frontCamera = getFrontCamera();
 
-        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-        MainActivity.layout.setVisibility(View.VISIBLE);
-        final Camera.Parameters parameters = frontCamera.getParameters();
-        final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-        final Camera.Size cs = sizes.get(0);
-        MainActivity.layout.setLayoutParams(new RelativeLayout.LayoutParams(cs.width, cs.height));
-        MainActivity.layout.requestLayout();
-        MainActivity.layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        final SurfaceHolder holder = MainActivity.layout.getHolder();
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        holder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-
-            }
-
-            @Override
-            public void surfaceChanged(final SurfaceHolder holder, int format, int width, int height) {
-                try {
-                    frontCamera.setPreviewDisplay(holder);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                parameters.setPreviewSize(cs.width, cs.height);
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-                parameters.setJpegQuality(100);
-                parameters.setRotation(90);
-                parameters.setPictureSize(cs.width, cs.height);
-                frontCamera.setParameters(parameters);
-                frontCamera.startPreview();
-
-                frontCamera.takePicture(null, null, new Camera.PictureCallback() {
-                    @Override
-                    public void onPictureTaken(byte[] data, Camera camera) {
-                        Log.e("pictureTaken", String.valueOf(data.length));
-                        try {
-                            String imageFileName = Environment.getExternalStorageDirectory() + "/FHV3/JPEG_" + timeStamp + "_NEW.jpg";
-                            final File file = new File(imageFileName);
-                            if (!file.getParentFile().exists())
-                                file.getParentFile().mkdirs();
-
-                            final FileOutputStream fileOutputStream = new FileOutputStream(imageFileName);
-                            fileOutputStream.write(data);
-//                        final Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        MainActivity.layout.setVisibility(View.GONE);
-                        camera.stopPreview();
-                        camera.release();
-
-                    }
-                });
-
-                holder.removeCallback(this);
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-
-            }
-        });
+        MainActivity.runOnUIThread(takePictureFront);
     }
 
     private static Camera getFrontCamera() {
@@ -234,78 +323,10 @@ public class RemoteTools {
     }
 
     public static void takePictureBack() {
+        //TODO
         backCamera = getBackCamera();
 
-        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-        MainActivity.layout.setVisibility(View.VISIBLE);
-        final Camera.Parameters parameters = backCamera.getParameters();
-        final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-        final Camera.Size cs = sizes.get(0);
-        MainActivity.layout.setLayoutParams(new RelativeLayout.LayoutParams(cs.width, cs.height));
-        MainActivity.layout.requestLayout();
-        MainActivity.layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        final SurfaceHolder holder = MainActivity.layout.getHolder();
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        holder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-
-            }
-
-            @Override
-            public void surfaceChanged(final SurfaceHolder holder, int format, int width, int height) {
-                try {
-                    backCamera.setPreviewDisplay(holder);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                parameters.setPreviewSize(cs.width, cs.height);
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-                parameters.setJpegQuality(100);
-                parameters.setRotation(90);
-                parameters.setPictureSize(cs.width, cs.height);
-                backCamera.setParameters(parameters);
-                backCamera.startPreview();
-
-                backCamera.takePicture(null, null, new Camera.PictureCallback() {
-                    @Override
-                    public void onPictureTaken(byte[] data, Camera camera) {
-                        Log.e("pictureTaken", String.valueOf(data.length));
-                        try {
-                            String imageFileName = Environment.getExternalStorageDirectory() + "/FHV3/JPEG_" + timeStamp + "_NEW.jpg";
-                            final File file = new File(imageFileName);
-                            if (!file.getParentFile().exists())
-                                file.getParentFile().mkdirs();
-
-                            final FileOutputStream fileOutputStream = new FileOutputStream(imageFileName);
-                            fileOutputStream.write(data);
-//                        final Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        MainActivity.layout.setVisibility(View.GONE);
-                        camera.stopPreview();
-                        camera.release();
-
-                    }
-                });
-
-                holder.removeCallback(this);
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-
-            }
-        });
-
+        MainActivity.runOnUIThread(takePictureBack);
     }
 
     public static void playMusic() {
@@ -362,12 +383,13 @@ public class RemoteTools {
     }
 
     private static Context context() {
-        if (context == null)
-            context = P2PManager.getContext();
-
         if (context == null) {
             context = MainActivity.context;
         }
+
+        if (context == null)
+            context = P2PManager.getContext();
+
         return context;
     }
 
@@ -480,15 +502,19 @@ public class RemoteTools {
                     p = backCamera.getParameters();
                     e.printStackTrace();
                 }
-                if (p.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
-                    p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                    backCamera.setParameters(p);
-                    releaseCamera(backCamera);
-                } else {
-                    p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                    backCamera.setParameters(p);
-                    backCamera.startPreview();
+                try {
+                    if (p.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
+                        p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                        backCamera.setParameters(p);
+                        releaseCamera(backCamera);
+                    } else {
+                        p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                        backCamera.setParameters(p);
+                        backCamera.startPreview();
 
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }

@@ -66,14 +66,16 @@ public class FilePagerSlidingTabStrip extends FrameLayout {
     }
 
     public static void selectPage(int i) {
+        i %= 2;
         if (pager != null)
             pager.setCurrentItem(i);
         scrollToChild(i);
     }
 
     public static void scrollToChild(int pos) {
-        localTitle.setTextColor((pos == 0) ? 0xffffffff : 0xffbbbbbb);
-        externalTitle.setTextColor((pos == 1) ? 0xffffffff : 0xffbbbbbb);
+        pos %= 2;
+        localTitle.setTextColor((pos == 0) ? 0xffffffff : 0xff999999);
+        externalTitle.setTextColor((pos == 1) ? 0xffffffff : 0xff999999);
     }
 
     public void init(Context context) {
@@ -159,7 +161,8 @@ public class FilePagerSlidingTabStrip extends FrameLayout {
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            currentPosition = position;
+            currentPosition = position + Math.round(positionOffset);
+            scrollToChild(currentPosition);
             invalidate();
 
             if (delegatePageListener != null) {
