@@ -29,6 +29,7 @@
             android:autoText="true"
             android:background="@drawable/green_border_full"
             android:ems="10"
+            android:hint="Enter Command"
             android:inputType="text|textAutoComplete|textAutoCorrect|textShortMessage"
             android:padding="8dp"
             android:scrollHorizontally="false"

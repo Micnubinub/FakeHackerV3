@@ -121,16 +121,6 @@ public class ConsoleFragment extends Fragment {
     private static void initEverythingElse() {
         consoleEntries
                 .add(new String(
-                        "--------------------------------------------------------------------------------------------------"));
-        consoleEntries.add(new String(
-                "Mucrusuft Wendows [Version 6.1.7601]"));
-
-        consoleEntries
-                .add(new String(
-                        "--------------------------------------------------------------------------------------------------"));
-        // CHANGE TEXT
-        consoleEntries
-                .add(new String(
                         "Type [help] to get a list of possible commands. Or type [guide] to view"));
         consoleEntries.add(new String(
                 "the instructions and learn everything works."));

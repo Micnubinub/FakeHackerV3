@@ -218,6 +218,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         P2PManager.destroy();
+        RemoteTools.releaseCameras();
         super.onDestroy();
     }
 
@@ -247,6 +248,7 @@ public class MainActivity extends FragmentActivity {
         tabs.setViewPager(pager);
 
     }
+
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 

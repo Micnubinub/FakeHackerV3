@@ -14,7 +14,8 @@
         android:layout_height="fill_parent"
         android:background="#222222"
         android:gravity="center"
-        android:text="Click to begin chat"
+        android:padding="16dp"
+        android:text="Click to begin External File Management"
         android:textColor="#fff"
         android:textSize="22sp" />
 </FrameLayout>

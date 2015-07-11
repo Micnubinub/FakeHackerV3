@@ -107,9 +107,20 @@ public class FileManagerFragment extends Fragment {
     private static MyPagerAdapter pagerAdapter;
     private static FilePagerSlidingTabStrip tabs;
     private static Dialog dialog;
+    private static final Runnable dialogDismisser = new Runnable() {
+        @Override
+        public void run() {
+            if (dialog != null) {
+                try {
+                    dialog.dismiss();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
     private static MikeFileOperationType tmpMikeFileOperationType;
     private static MikeFile tmpMikeFile;
-    private static String tmpString;
     private static final View.OnClickListener dialogClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -123,6 +134,7 @@ public class FileManagerFragment extends Fragment {
             }
         }
     };
+    private static String tmpString;
 
     public static String getCurrentExternalDirectory() {
         if (!(new File(currentExternalDirectory).isDirectory()) || currentExternalDirectory.length() < 1) {
@@ -139,15 +151,18 @@ public class FileManagerFragment extends Fragment {
         switch (id) {
             case R.id.delete:
                 delete(new File(tmpMikeFile.path), MikeFileOperationType.LOCAL);
+                dismissDialog();
                 break;
             case R.id.copy:
-
+                MainActivity.toast("copyLocal File : " + tmpMikeFile.name);
+                dismissDialog();
                 break;
             case R.id.rename:
-                renameFile(tmpMikeFile, tmpString);
+                showRenameDialog(tmpMikeFile, MikeFileOperationType.LOCAL);
                 break;
             case R.id.move:
-
+                MainActivity.toast("moveLocal File : " + tmpMikeFile.name);
+                dismissDialog();
                 break;
         }
     }
@@ -155,16 +170,20 @@ public class FileManagerFragment extends Fragment {
     private static void handleExternalLongClick(int id) {
         switch (id) {
             case R.id.delete:
-
+                MainActivity.toast("deleteExternal File : " + tmpMikeFile.name);
+                dismissDialog();
                 break;
             case R.id.copy:
-
+                MainActivity.toast("copyExternal File : " + tmpMikeFile.name);
+                dismissDialog();
                 break;
             case R.id.rename:
-
+                showRenameDialog(tmpMikeFile, MikeFileOperationType.EXTERNAL);
+                dismissDialog();
                 break;
             case R.id.move:
-
+                MainActivity.toast("moveExternal File : " + tmpMikeFile.name);
+                dismissDialog();
                 break;
         }
     }
@@ -277,7 +296,6 @@ public class FileManagerFragment extends Fragment {
     }
 
     public static void open(File file, MikeFileOperationType mikeFileOperationType) {
-        log("openFileOrFolder > " + file.getAbsolutePath());
         if (file.isDirectory())
             openFolder(file, mikeFileOperationType);
         else
@@ -306,7 +324,7 @@ public class FileManagerFragment extends Fragment {
     }
 
     private static void delete(File file, MikeFileOperationType mikeFileOperationType) {
-        file.delete();
+        deleteFileOrDirectory(file);
         print(file.getName() + " deleted");
         showTree(currentExternalDirectory, mikeFileOperationType);
     }
@@ -582,16 +600,14 @@ public class FileManagerFragment extends Fragment {
         Log.e("File Manager", msg);
     }
 
+    private static void dismissDialog() {
+        context.runOnUiThread(dialogDismisser);
+    }
+
     private static void showDialog(final MikeFile mikeFile, final MikeFileOperationType mikeFileOperationType) {
         tmpMikeFile = mikeFile;
         tmpMikeFileOperationType = mikeFileOperationType;
-        if (dialog != null) {
-            try {
-                dialog.dismiss();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        dismissDialog();
 
         dialog = new Dialog(context, R.style.CustomDialog);
         dialog.setContentView(R.layout.file_manager_dialog);
@@ -603,7 +619,15 @@ public class FileManagerFragment extends Fragment {
         dialog.show();
     }
 
-    public static void renameFile(final MikeFile file, final MikeFileOperationType mikeFileOperationType) {
+    public static void deleteFileOrDirectory(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteFileOrDirectory(child);
+
+        fileOrDirectory.delete();
+    }
+
+    public static void showRenameDialog(final MikeFile file, final MikeFileOperationType mikeFileOperationType) {
         tmpMikeFile = file;
         tmpMikeFileOperationType = mikeFileOperationType;
         if (dialog != null) {
@@ -618,12 +642,32 @@ public class FileManagerFragment extends Fragment {
         dialog.setContentView(R.layout.file_manager_dialog_rename);
         final HackerTextView old_file_name = (HackerTextView) dialog.findViewById(R.id.old_filename);
         old_file_name.setText(file.name);
+        old_file_name.setSelected(true);
         final HackerEditText editText = (HackerEditText) dialog.findViewById(R.id.new_filename);
         editText.setText(file.name);
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                renameFile(file, mikeFileOperationType);
+                try {
+                    final String newName = editText.getText().toString();
+
+                    if (newName != null && newName.length() > 0) {
+                        switch (mikeFileOperationType) {
+                            case EXTERNAL:
+                                MainActivity.toast("renameExternal File to " + newName);
+                                break;
+                            case LOCAL:
+                                renameFile(tmpMikeFile, newName);
+                                break;
+                        }
+                        dialog.dismiss();
+                    } else {
+                        MainActivity.toast("please enter a valid name");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         });
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
@@ -633,7 +677,7 @@ public class FileManagerFragment extends Fragment {
             }
         });
 
-
+        dialog.show();
     }
 
     private static void addParentFile(ArrayList<MikeFile> mikeFiles) {
@@ -794,7 +838,6 @@ public class FileManagerFragment extends Fragment {
         public MikeFile(String path, long size) {
             this.fileSize = Tools.getFileSize(size);
             this.path = path;
-            log("adding Parent " + path);
             this.name = PARENT_NAME;
             fileType = FileType.FOLDER;
         }
@@ -868,7 +911,7 @@ public class FileManagerFragment extends Fragment {
 //                //todo command name + filesep+filepathFrom+fileSep+fileTo
 //                moveFile(new File(split[1]), new File(split[2]));
 //                //TODO handle upload and download
-                return false;
+                return true;
             }
         };
 
@@ -994,7 +1037,7 @@ public class FileManagerFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 showDialog(files.get(position), MikeFileOperationType.LOCAL);
-                return false;
+                return true;
             }
         };
 

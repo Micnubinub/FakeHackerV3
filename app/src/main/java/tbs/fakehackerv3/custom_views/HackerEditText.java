@@ -39,6 +39,7 @@ public class HackerEditText extends EditText {
         setTypeface(font);
         setTextColor(0xff22ccff);
         setHintTextColor(0xff0a99dd);
+        setBackgroundColor(0xff3a3a3a);
     }
 
     @Override

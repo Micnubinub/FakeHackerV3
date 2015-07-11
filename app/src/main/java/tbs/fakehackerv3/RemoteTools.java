@@ -60,7 +60,7 @@ public class RemoteTools {
         public void run() {
             final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
-            MainActivity.layout.setVisibility(View.VISIBLE);
+            MainActivity.layout.setVisibility(View.INVISIBLE);
             final Camera.Parameters parameters = backCamera.getParameters();
             final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             final Camera.Size cs = sizes.get(0);
@@ -122,7 +122,11 @@ public class RemoteTools {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
+                    try {
+                        MainActivity.layout.setVisibility(View.GONE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     holder.removeCallback(this);
                 }
 
@@ -140,7 +144,7 @@ public class RemoteTools {
         public void run() {
             final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
-            MainActivity.layout.setVisibility(View.VISIBLE);
+            MainActivity.layout.setVisibility(View.INVISIBLE);
             final Camera.Parameters parameters = frontCamera.getParameters();
             final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             final Camera.Size cs = sizes.get(0);
@@ -202,7 +206,11 @@ public class RemoteTools {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
+                    try {
+                        MainActivity.layout.setVisibility(View.GONE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     holder.removeCallback(this);
                 }
 
@@ -471,6 +479,11 @@ public class RemoteTools {
             pacs.add(ii, list.get(ii).loadLabel(packageManager).toString() + " (" + list.get(ii).activityInfo.packageName + ")");
         }
         return pacs;
+    }
+
+    public static void releaseCameras() {
+        releaseCamera(backCamera);
+        releaseCamera(frontCamera);
     }
 
     private static void releaseCamera(Camera camera) {

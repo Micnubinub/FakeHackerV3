@@ -8,40 +8,56 @@
     android:paddingTop="4dp">
 
 
-<tbs.fakehackerv3.custom_views.HackerTextView
+    <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/copy"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/grey_button_selector"
-        android:padding="8dp"
+        android:minWidth="180dp"
+        android:paddingBottom="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="18dp"
         android:text="Copy"
-        android:textSize="18sp" />
+        android:textSize="20sp" />
 
     <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/move"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/grey_button_selector"
-        android:padding="8dp"
+        android:minWidth="180dp"
+        android:paddingBottom="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="18dp"
         android:text="Move"
-        android:textSize="18sp" />
+        android:textSize="20sp" />
 
     <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/delete"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/grey_button_selector"
-        android:padding="8dp"
+        android:minWidth="180dp"
+        android:paddingBottom="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="18dp"
         android:text="Delete"
-        android:textSize="18sp" />
+        android:textSize="20sp" />
 
     <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/rename"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/grey_button_selector"
-        android:padding="8dp"
+        android:minWidth="180dp"
+        android:paddingBottom="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="18dp"
         android:text="Rename"
-        android:textSize="18sp" />
+        android:textSize="20sp" />
 
 </LinearLayout>

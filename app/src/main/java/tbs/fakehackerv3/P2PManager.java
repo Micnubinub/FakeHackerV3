@@ -124,50 +124,26 @@ public class P2PManager extends Service {
             if (wifiP2pInfo == null || ((wifiP2pInfo.groupOwnerAddress == null) && !wifiP2pInfo.isGroupOwner)) {
                 log("connectionInfoFailed > isOwner?" + wifiP2pInfo.isGroupOwner + ", isGroupFormed? " + wifiP2pInfo.groupFormed);
                 requestConnectionInfo("wifip2pinfo listener : wifiInfo" + ((wifiP2pInfo == null) ? "null " : (wifiP2pInfo.groupOwnerAddress == null ? " addr is null " : wifiP2pInfo.groupOwnerAddress)) + String.valueOf(reconnectRetries));
-                if (reconnectRetries > 8) {
-                    manager.cancelConnect(channel, new WifiP2pManager.ActionListener() {
-                        @Override
-                        public void onSuccess() {
-                            log("connection cancelled");
-                            requestConnectionInfo("cancel connection");
-                        }
-
-                        @Override
-                        public void onFailure(int reason) {
-
-                        }
-                    });
-                }
+//                if (reconnectRetries > 8) {
+//                    manager.cancelConnect(channel, new WifiP2pManager.ActionListener() {
+//                        @Override
+//                        public void onSuccess() {
+//                            log("connection cancelled");
+//                            requestConnectionInfo("cancel connection");
+//                        }
+//
+//                        @Override
+//                        public void onFailure(int reason) {
+//
+//                        }
+//                    });
+//                }
                 reconnectRetries++;
                 return;
             }
             toast(String.format("connectionInfo > groupF : %b, groupO : %b, host : %s", wifiP2pInfo.groupFormed, wifiP2pInfo.isGroupOwner, wifiP2pInfo.groupOwnerAddress.toString()));
             handleWifiP2PInfo(wifiP2pInfo);
             log("receivedInfo : " + wifiP2pInfo.groupOwnerAddress.toString() + "\nisOwner? : " + wifiP2pInfo.isGroupOwner);
-        }
-    };
-    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
-        @Override
-        public void onDeviceDisconnected() {
-            p2PListener.onDevicesDisconnected("not sure");
-        }
-
-        @Override
-        public void onDeviceConnected(WifiP2pInfo info) {
-            if (info == null) {
-                requestConnectionInfo("onDevConnected");
-                return;
-            }
-
-            handleWifiP2PInfo(info);
-        }
-
-        @Override
-        public void onPeersChanged() {
-            if (manager != null && !isActive() && !tryingToConnect) {
-                if (!isActive())
-                    manager.requestPeers(channel, wifiP2PPeerListener);
-            }
         }
     };
     private static P2PAdapter adapter;
@@ -193,6 +169,30 @@ public class P2PManager extends Service {
             else {
                 toast("No peers found, try again in a minute");
                 log("No peers found, try again");
+            }
+        }
+    };
+    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
+        @Override
+        public void onDeviceDisconnected() {
+            p2PListener.onDevicesDisconnected("not sure");
+        }
+
+        @Override
+        public void onDeviceConnected(WifiP2pInfo info) {
+            if (info == null) {
+                requestConnectionInfo("onDevConnected");
+                return;
+            }
+
+            handleWifiP2PInfo(info);
+        }
+
+        @Override
+        public void onPeersChanged() {
+            if (manager != null && !isActive() && !tryingToConnect) {
+                if (!isActive())
+                    manager.requestPeers(channel, wifiP2PPeerListener);
             }
         }
     };
@@ -744,7 +744,7 @@ public class P2PManager extends Service {
     public static void disconnectToCurrentDevice() {
         tryingToConnect = false;
         try {
-            manager.cancelConnect(channel, actionListener);
+//            manager.cancelConnect(channel, actionListener);
             manager.removeGroup(channel, actionListener);
         } catch (Exception e) {
             e.printStackTrace();
