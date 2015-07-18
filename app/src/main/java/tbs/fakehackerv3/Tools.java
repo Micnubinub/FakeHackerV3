@@ -38,12 +38,12 @@ public class Tools {
         final Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> list = packageManager.queryIntentActivities(i, 0);
-        // ArrayList<String> pacs = new ArrayList<String>(list.size());
-
-        for (int ii = 0; ii < list.size(); ii++) {
-            //  pacs.add(ii, list.get(ii).activityInfo.packageName);
-            //TODO MainActivity.consoleEntries.add(new ConsoleItem(String.valueOf(ii + 1) + ". " + list.get(ii).loadLabel(packageManager).toString() + " (" + list.get(ii).activityInfo.packageName + ")"));
-        }
+//        ArrayList<String> pacs = new ArrayList<String>(list.size());
+//
+//        for (int ii = 0; ii < list.size(); ii++) {
+//            pacs.add(ii, list.get(ii).activityInfo.packageName);
+//            MainActivity.consoleEntries.add(new ConsoleItem(String.valueOf(ii + 1) + ". " + list.get(ii).loadLabel(packageManager).toString() + " (" + list.get(ii).activityInfo.packageName + ")"));
+//        }
 
     }
 

@@ -29,6 +29,9 @@ public class StaticValues {
     public static final String SET_BRIGHTNESS = "SET_BRIGHTNESS";
     public static final String SET_BRIGHTNESS_MODE = "SET_BRIGHTNESS_MODE";
     public static final String SET_BLUETOOTH = "SET_BLUETOOTH";
+    public static final String GET_APPS = "GET_APPS";
+    public static final String LAUNCH_APP = "LAUNCH_APP";
+    public static final String RECEIVE_APPS = "RECEIVE_APPS";
     public static final String CHAT_MESSAGE = "CHAT_MESSAGE";
     public static final String SPOOF_TOUCH = "SPOOF_TOUCH";
     public static final String SPOOF_TOUCH_FINGER_2 = "SPOOF_TOUCH_FINGER_2";

@@ -2,7 +2,6 @@ package tbs.fakehackerv3.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -28,7 +27,7 @@ import tbs.fakehackerv3.ReceivedMessage;
 /**
  * Created by Michael on 5/22/2015.
  */
-public class MessagingFragent extends Fragment {
+public class MessagingFragent extends P2PFragment {
     private static final MessageAdapter messageAdapter = new MessageAdapter();
     private static final Runnable update = new Runnable() {
         @Override
@@ -37,24 +36,11 @@ public class MessagingFragent extends Fragment {
         }
     };
     private static final ArrayList<ReceivedMessage> messages = new ArrayList<ReceivedMessage>();
-    public static boolean isInit;
-    public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (!P2PManager.isActive()) {
-                MainActivity.toast("click the refresh button on both devices to connect");
-                return;
-            }
-            isInit = true;
-            v.setVisibility(View.GONE);
-            P2PManager.enqueueMessage(new Message("mikeCheck 1,2,1,2", Message.MessageType.MESSAGE));
-        }
-    };
+
     private static ListView messageList;
     private static EditText messageEditText;
     private static ImageView sendMessage;
     private static FragmentActivity context;
-    private static View v;
     private static final View.OnClickListener sendMessageClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -69,6 +55,7 @@ public class MessagingFragent extends Fragment {
             notifyDataSetChanged();
         }
     };
+    private static View v;
 
     private static void notifyDataSetChanged() {
         try {
@@ -104,14 +91,14 @@ public class MessagingFragent extends Fragment {
                     addMessageToDataBase(message);
                 }
 
-                if (!isInit) {
-                    try {
-                        v.findViewById(R.id.placeholder).setVisibility(View.GONE);
-                        isInit = true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+//                if (!isInit) {
+//                    try {
+//                        v.findViewById(R.id.placeholder).setVisibility(View.GONE);
+//                        isInit = true;
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
             }
         });
     }
@@ -170,7 +157,8 @@ public class MessagingFragent extends Fragment {
         });
         sendMessage.setOnClickListener(sendMessageClickListener);
         messageList.setAdapter(messageAdapter);
-        v.findViewById(R.id.placeholder).setOnClickListener(placeHolderListener);
+        placeholder = v.findViewById(R.id.placeholder);
+        placeholder.setOnClickListener(placeHolderListener);
 
         return v;
     }
@@ -179,6 +167,27 @@ public class MessagingFragent extends Fragment {
         //TODO
         getView().setVisibility(View.VISIBLE);
 
+    }
+
+    @Override
+    public void onP2PDisconnected() {
+        placeholder.post(new Runnable() {
+            @Override
+            public void run() {
+                placeholder.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void onP2PConnected() {
+        init();
+        placeholder.post(new Runnable() {
+            @Override
+            public void run() {
+                placeholder.setVisibility(View.GONE);
+            }
+        });
     }
 
     private static class MessageAdapter extends BaseAdapter {
@@ -214,6 +223,5 @@ public class MessagingFragent extends Fragment {
             return convertView;
         }
     }
-
 
 }

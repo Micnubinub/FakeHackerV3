@@ -143,6 +143,15 @@
                 android:text="Ringer Volume"
                 android:textColor="#fff"
                 android:textSize="18sp" />
+
+            <tbs.fakehackerv3.custom_views.HackerTextView
+                android:id="@+id/launch_app"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Launch App"
+                android:textColor="#fff"
+                android:textSize="18sp" />
         </LinearLayout>
     </ScrollView>
 
@@ -154,5 +163,6 @@
         android:gravity="center"
         android:text="Click to gain control"
         android:textColor="#fff"
-        android:textSize="22sp" />
+        android:textSize="22sp"
+        android:visibility="gone" />
 </RelativeLayout>

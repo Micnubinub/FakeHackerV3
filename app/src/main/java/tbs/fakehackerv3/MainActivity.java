@@ -21,6 +21,7 @@ import tbs.fakehackerv3.fragments.ConsoleFragment;
 import tbs.fakehackerv3.fragments.FileManagerFragment;
 import tbs.fakehackerv3.fragments.LogFragment;
 import tbs.fakehackerv3.fragments.MessagingFragent;
+import tbs.fakehackerv3.fragments.P2PFragment;
 import tbs.fakehackerv3.fragments.RemoteFragment;
 import tbs.fakehackerv3.fragments.Settings;
 
@@ -73,13 +74,17 @@ public class MainActivity extends FragmentActivity {
             });
             setConnected(false);
             nullifyGroupAndDevice();
-
+            for (Fragment fragment : fragments) {
+                if (fragment instanceof P2PFragment)
+                    ((P2PFragment) fragment).onP2PDisconnected();
+            }
         }
 
         @Override
         public void onSocketsConfigured() {
             log("socket configured");
             setConnected(true);
+
             P2PManager.manager.requestConnectionInfo(P2PManager.channel, new WifiP2pManager.ConnectionInfoListener() {
                 @Override
                 public void onConnectionInfoAvailable(final WifiP2pInfo info) {
@@ -124,6 +129,10 @@ public class MainActivity extends FragmentActivity {
                     }
                 }
             });
+            for (Fragment fragment : fragments) {
+                if (fragment instanceof P2PFragment)
+                    ((P2PFragment) fragment).onP2PConnected();
+            }
         }
     };
     public static SurfaceView layout;
@@ -140,15 +149,7 @@ public class MainActivity extends FragmentActivity {
                         if (connectedDevice != null) {
                             MainViewManager.setStaticText("Connected to");
                             MainViewManager.setConnectedToDevice(connectedDevice.deviceName + " (" + connectedDevice.deviceAddress + ")");
-                            for (Fragment fragment : fragments) {
-                                if (fragment instanceof MessagingFragent) {
-                                    ((MessagingFragent) fragment).init();
-                                } else if (fragment instanceof FileManagerFragment) {
-                                    ((FileManagerFragment) fragment).init();
-                                } else if (fragment instanceof RemoteFragment) {
-                                    ((RemoteFragment) fragment).init();
-                                }
-                            }
+
                         } else {
                             P2PManager.connectedDeviceNullFix();
                         }

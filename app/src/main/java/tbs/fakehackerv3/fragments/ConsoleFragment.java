@@ -46,31 +46,36 @@ public class ConsoleFragment extends Fragment {
     private static ListView mainListView;
     private static EditText userCommand;
     // BATTERY
-    private static boolean runPrintRandomShit;
     private static String[] randomCommandWords = {"acpi", "export", "init", "boot", "chainloader",
             "gettext", "gtpsync", "drivemap", "echo", "loop", "loopback", "xss", "linux", "ls", "partition", "crc", "cat", "gpuid", "cpu",
             "gpu", "x86", "read", "gparted", "set", "halt", "pxe_unload", "bash", "chmod", "command", "cp",
             "dir", "mkdir"};
+    private static Thread printRandomShitThread;
+    private static int numberOfItemsToPrint;
     private static final Runnable printRandomShit = new Runnable() {
         @Override
         public void run() {
-            while (runPrintRandomShit) {
+            for (int i = 0; i < numberOfItemsToPrint; i++) {
                 addConsoleItem(new String(getRandomHackerString()));
+
+                try {
+                    Thread.sleep(250 + random.nextInt(600));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     };
 
-    //Todo make commands and ad to help
-    public static void printRandomShit() {
-        runPrintRandomShit = true;
-        new Thread(printRandomShit).start();
-    }
-
     //Todo make command and add to help
     public static void printRandomShit(int num) {
-        for (int i = 0; i < num; i++) {
-            addConsoleItem(new String(getRandomHackerString()));
-        }
+        numberOfItemsToPrint = num;
+
+        if (printRandomShitThread == null)
+            printRandomShitThread = new Thread(printRandomShit);
+
+        if (!printRandomShitThread.isAlive())
+            printRandomShitThread.start();
     }
 
     private static String getTotalInternalMemorySize() {
@@ -174,10 +179,13 @@ public class ConsoleFragment extends Fragment {
     }
 
     public static String getRandomHackerString() {
-        if (random.nextBoolean())
-            return randomCommandWords[random.nextInt(randomCommandWords.length)] + " 0x" + Integer.toHexString(random.nextInt());
-        else
-            return randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)] + " 0x" + Integer.toHexString(random.nextInt());
+        if (random.nextBoolean()) {
+            if (random.nextBoolean())
+                return randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)] + " 0x" + Integer.toHexString(random.nextInt());
+            else
+                return randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)];
+        } else
+            return randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)] + " 0x" + Integer.toHexString(random.nextInt());
     }
 
     @Nullable

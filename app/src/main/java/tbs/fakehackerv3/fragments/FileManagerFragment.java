@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import tbs.fakehackerv3.LocalFileMoved;
 import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.Message;
 import tbs.fakehackerv3.P2PManager;
@@ -45,7 +46,7 @@ import tbs.fakehackerv3.custom_views.HackerTextView;
 /**
  * Created by root on 31/07/14.
  */
-public class FileManagerFragment extends Fragment {
+public class FileManagerFragment extends P2PFragment {
     public static final String FILE_SEP = ":::";
     public static final String COMMAND_BROWSE = "COMMAND_BROWSE";
     public static final String COMMAND_OPEN = "COMMAND_OPEN";
@@ -96,16 +97,28 @@ public class FileManagerFragment extends Fragment {
         }
     };
     private static final Fragment[] fragments = new Fragment[2];
-    private static final String[] titles = {"Local", "External"};
     private static final ArrayList<File> tmpTree = new ArrayList<File>();
     public static boolean isInit;
     private static FragmentActivity context;
-    //Todo local and external
+    //Todo local and external, make sure these are correct, as they are important for copy/move
     private static String currentExternalDirectory = Environment.getExternalStorageDirectory().getPath();
     private static String currentLocalDirectory = Environment.getExternalStorageDirectory().getPath();
     private static ViewPager pager;
     private static MyPagerAdapter pagerAdapter;
     private static FilePagerSlidingTabStrip tabs;
+    private static View pasteButton;
+    private static final Runnable showPasteButtonRunnable = new Runnable() {
+        @Override
+        public void run() {
+            pasteButton.setVisibility(View.VISIBLE);
+        }
+    };
+    private static final Runnable hidePasteButtonRunnable = new Runnable() {
+        @Override
+        public void run() {
+            pasteButton.setVisibility(View.GONE);
+        }
+    };
     private static Dialog dialog;
     private static final Runnable dialogDismisser = new Runnable() {
         @Override
@@ -121,6 +134,7 @@ public class FileManagerFragment extends Fragment {
     };
     private static MikeFileOperationType tmpMikeFileOperationType;
     private static MikeFile tmpMikeFile;
+    private static MikeFileOperation mikeFileOperation;
     private static final View.OnClickListener dialogClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -134,17 +148,29 @@ public class FileManagerFragment extends Fragment {
             }
         }
     };
-    private static String tmpString;
+    private static final View.OnClickListener pasteClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final MikeFileOperationType clipBoardOutPutLocation = (pager.getCurrentItem() == 0) ? MikeFileOperationType.LOCAL : MikeFileOperationType.EXTERNAL;
+            switch (clipBoardOutPutLocation) {
+                case EXTERNAL:
+                    log("pasteClickListener > external");
+                    handleExternalOutPutLocation();
+                    break;
+                case LOCAL:
+                    log("pasteClickListener > local");
+                    handleLocalOutPutLocation();
+                    break;
+            }
+
+        }
+    };
 
     public static String getCurrentExternalDirectory() {
         if (!(new File(currentExternalDirectory).isDirectory()) || currentExternalDirectory.length() < 1) {
             return Environment.getExternalStorageDirectory().toString();
         }
         return currentExternalDirectory;
-    }
-
-    private static void setCurrentExternalDirectory(String currentExternalDirectory) {
-        FileManagerFragment.currentExternalDirectory = currentExternalDirectory;
     }
 
     private static void handleLocalLongClick(int id) {
@@ -155,6 +181,8 @@ public class FileManagerFragment extends Fragment {
                 break;
             case R.id.copy:
                 MainActivity.toast("copyLocal File : " + tmpMikeFile.name);
+                mikeFileOperation = MikeFileOperation.COPY_LOCAL;
+                showPasteButton();
                 dismissDialog();
                 break;
             case R.id.rename:
@@ -162,8 +190,72 @@ public class FileManagerFragment extends Fragment {
                 break;
             case R.id.move:
                 MainActivity.toast("moveLocal File : " + tmpMikeFile.name);
+                mikeFileOperation = MikeFileOperation.MOVE_LOCAL;
+                showPasteButton();
                 dismissDialog();
                 break;
+        }
+    }
+
+    public static void handleLocalOutPutLocation() {
+        switch (mikeFileOperation) {
+            case COPY_EXTERNAL:
+                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path);
+                break;
+            case COPY_LOCAL:
+                copyFile(tmpMikeFile.path, currentLocalDirectory + "/" + tmpMikeFile.name);
+                break;
+            case MOVE_EXTERNAL:
+                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path);
+                break;
+            case MOVE_LOCAL:
+                moveFile(tmpMikeFile.path, currentLocalDirectory + "/" + tmpMikeFile.name);
+                break;
+        }
+        showTree(currentLocalDirectory, MikeFileOperationType.LOCAL);
+    }
+
+    public static void handleExternalOutPutLocation() {
+        switch (mikeFileOperation) {
+            case COPY_EXTERNAL:
+
+                break;
+            case COPY_LOCAL:
+
+                break;
+            case MOVE_EXTERNAL:
+                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + "the files contents, maybe, look at google's upload method");
+                P2PManager.addLocalFileMovedListener(new LocalFileMoved() {
+                    @Override
+                    public void onLocalFileMoved(String path) {
+                        //Todo
+
+                        if (true) {
+                            P2PManager.removeLocalFileMovedListener(this);
+                        }
+                    }
+                });
+                break;
+            case MOVE_LOCAL:
+                sendFileCommand(COMMAND_MOVE + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory);
+                break;
+        }
+        showTree(currentExternalDirectory, MikeFileOperationType.EXTERNAL);
+    }
+
+    private static void showPasteButton() {
+        try {
+            context.runOnUiThread(showPasteButtonRunnable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void hidePasteButton() {
+        try {
+            context.runOnUiThread(hidePasteButtonRunnable);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -174,6 +266,7 @@ public class FileManagerFragment extends Fragment {
                 dismissDialog();
                 break;
             case R.id.copy:
+                mikeFileOperation = MikeFileOperation.COPY_EXTERNAL;
                 MainActivity.toast("copyExternal File : " + tmpMikeFile.name);
                 dismissDialog();
                 break;
@@ -182,6 +275,7 @@ public class FileManagerFragment extends Fragment {
                 dismissDialog();
                 break;
             case R.id.move:
+                mikeFileOperation = MikeFileOperation.MOVE_EXTERNAL;
                 MainActivity.toast("moveExternal File : " + tmpMikeFile.name);
                 dismissDialog();
                 break;
@@ -220,14 +314,27 @@ public class FileManagerFragment extends Fragment {
 
     public static String showTree(File dir, MikeFileOperationType mikeFileOperationType) {
         Log.e("showTree > ", dir.toString());
-        if (!dir.exists()) {
-            //TODO
-            currentExternalDirectory = Environment.getExternalStorageDirectory().getPath();
-            dir = new File(currentExternalDirectory);
-        } else {
-            currentExternalDirectory = dir.getPath();
-        }
 
+        switch (mikeFileOperationType) {
+            case LOCAL:
+                if (!dir.exists()) {
+                    //TODO
+                    currentLocalDirectory = Environment.getExternalStorageDirectory().getPath();
+                    dir = new File(currentLocalDirectory);
+                } else {
+                    currentLocalDirectory = dir.getPath();
+                }
+                break;
+            case EXTERNAL:
+                if (!dir.exists()) {
+                    //TODO
+                    currentExternalDirectory = Environment.getExternalStorageDirectory().getPath();
+                    dir = new File(currentExternalDirectory);
+                } else {
+                    currentExternalDirectory = dir.getPath();
+                }
+                break;
+        }
         final StringBuilder builder = new StringBuilder();
 
         final File[] files = dir.listFiles();
@@ -402,16 +509,17 @@ public class FileManagerFragment extends Fragment {
         }
     }
 
-    public static void renameFile(MikeFile file, String newNmae) {
-        renameFile(new File(file.path), newNmae);
+    public static void renameFile(MikeFile file, String newName) {
+        renameFile(new File(file.path), newName);
     }
 
-    public static void renameFile(String path, String newNmae) {
-        renameFile(new File(path), newNmae);
+    public static void renameFile(String path, String newName) {
+        renameFile(new File(path), newName);
     }
 
-    public static void renameFile(File file, String newNmae) {
-        file.renameTo(new File(file.getParent() + newNmae));
+    public static void renameFile(File file, String newName) {
+        file.renameTo(new File(file.getParent() + "/" + newName));
+        showTree(file.getParentFile(), MikeFileOperationType.LOCAL);
     }
 
     public static void handleRename(MikeFile file, String newName, MikeFileOperationType mikeFileOperationType) {
@@ -420,13 +528,32 @@ public class FileManagerFragment extends Fragment {
 
                 break;
             case LOCAL:
-
+                renameFile(file, newName);
                 break;
 
         }
     }
 
+    public static void copyFile(String src, String dst) {
+        copyFile(new File(src), new File(dst));
+    }
+
     public static void copyFile(File src, File dst) {
+        log("copyFrom > " + src.getAbsolutePath() + " to " + dst.getAbsolutePath());
+
+        try {
+            dst.getParentFile().mkdirs();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+//        if (!dst.exists())
+//            try {
+//                dst.createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
         try {
             final FileInputStream inStream = new FileInputStream(src);
             final FileOutputStream outStream = new FileOutputStream(dst);
@@ -436,6 +563,7 @@ public class FileManagerFragment extends Fragment {
             inStream.close();
             outStream.close();
         } catch (IOException e) {
+            log("failedFirst > " + e.getMessage());
             try {
                 final InputStream in = new FileInputStream(src);
                 final OutputStream out = new FileOutputStream(dst);
@@ -449,14 +577,24 @@ public class FileManagerFragment extends Fragment {
                 out.close();
             } catch (Exception e1) {
                 log("failed to copy file > from " + src.getAbsolutePath() + " to " + dst.getAbsolutePath());
-                e.printStackTrace();
+                log("failedSecond > " + e1.getMessage());
                 e1.printStackTrace();
             }
         }
     }
 
+    public static void moveFile(String from, String to) {
+        moveFile(new File(from), new File(to));
+    }
+
     public static void moveFile(File from, File to) {
         try {
+            try {
+                to.getParentFile().mkdirs();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             from.renameTo(to);
         } catch (Exception e) {
             e.printStackTrace();
@@ -721,11 +859,27 @@ public class FileManagerFragment extends Fragment {
 
         pager.setAdapter(pagerAdapter);
         tabs.setViewPager(pager);
+        pasteButton = v.findViewById(R.id.paste);
+        pasteButton.setOnClickListener(pasteClickListener);
+    }
 
+    @Override
+    public void onP2PDisconnected() {
+        ((P2PFragment) fragments[1]).onP2PDisconnected();
+    }
+
+    @Override
+    public void onP2PConnected() {
+        init();
+        ((P2PFragment) fragments[1]).onP2PConnected();
     }
 
     private enum MikeFileOperationType {
         LOCAL, EXTERNAL
+    }
+
+    private enum MikeFileOperation {
+        MOVE_LOCAL, COPY_LOCAL, MOVE_EXTERNAL, COPY_EXTERNAL
     }
 
     public enum FileType {
@@ -992,7 +1146,7 @@ public class FileManagerFragment extends Fragment {
 
     }
 
-    public static class ExternalFileManager extends Fragment {
+    public static class ExternalFileManager extends P2PFragment {
         //Todo add this to onCreateView
         public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
             @Override
@@ -1001,7 +1155,6 @@ public class FileManagerFragment extends Fragment {
                     MainActivity.toast("click the refresh button on both devices to connect");
                     return;
                 }
-                isInit = true;
                 v.setVisibility(View.GONE);
                 sendFileCommand(COMMAND_BROWSE + FILE_SEP);
             }
@@ -1108,19 +1261,37 @@ public class FileManagerFragment extends Fragment {
             });
         }
 
-        @Override
-        public void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-        }
 
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            //Todo p2pfragment
             final View view = inflater.inflate(R.layout.file_manager_fragment_item, null);
             final ListView listView = (ListView) view.findViewById(R.id.list);
-            view.findViewById(R.id.placeholder).setOnClickListener(placeHolderListener);
+            placeholder = view.findViewById(R.id.placeholder);
+            placeholder.setOnClickListener(placeHolderListener);
             fileAdapter = new FileAdapter(listView, files, onItemClickListener, onItemLongClickListener);
             return view;
+        }
+
+        @Override
+        public void onP2PDisconnected() {
+            placeholder.post(new Runnable() {
+                @Override
+                public void run() {
+                    placeholder.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+
+        @Override
+        public void onP2PConnected() {
+            placeholder.post(new Runnable() {
+                @Override
+                public void run() {
+                    placeholder.setVisibility(View.GONE);
+                }
+            });
         }
     }
 
@@ -1131,13 +1302,8 @@ public class FileManagerFragment extends Fragment {
         }
 
         @Override
-        public CharSequence getPageTitle(int position) {
-            return titles[position];
-        }
-
-        @Override
         public int getCount() {
-            return titles.length;
+            return 2;
         }
 
         @Override

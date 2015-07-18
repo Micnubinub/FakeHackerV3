@@ -24,6 +24,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,6 +58,7 @@ public class P2PManager extends Service {
         public void onFailure(int reason) {
         }
     };
+    private static final ArrayList<LocalFileMoved> LocalFileMovedListeners = new ArrayList<LocalFileMoved>();
     public static Thread mainThread, getClientSocketThread, getServerSocketThread, listenerThread;
     public static ServerSocket serverSocket;
     public static WifiP2pManager manager;
@@ -146,6 +150,30 @@ public class P2PManager extends Service {
             log("receivedInfo : " + wifiP2pInfo.groupOwnerAddress.toString() + "\nisOwner? : " + wifiP2pInfo.isGroupOwner);
         }
     };
+    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
+        @Override
+        public void onDeviceDisconnected() {
+            p2PListener.onDevicesDisconnected("not sure");
+        }
+
+        @Override
+        public void onDeviceConnected(WifiP2pInfo info) {
+            if (info == null) {
+                requestConnectionInfo("onDevConnected");
+                return;
+            }
+
+            handleWifiP2PInfo(info);
+        }
+
+        @Override
+        public void onPeersChanged() {
+            if (manager != null && !isActive() && !tryingToConnect) {
+                if (!isActive())
+                    manager.requestPeers(channel, wifiP2PPeerListener);
+            }
+        }
+    };
     private static P2PAdapter adapter;
     public static final WifiP2pManager.PeerListListener wifiP2PPeerListener = new WifiP2pManager.PeerListListener() {
         @Override
@@ -169,30 +197,6 @@ public class P2PManager extends Service {
             else {
                 toast("No peers found, try again in a minute");
                 log("No peers found, try again");
-            }
-        }
-    };
-    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
-        @Override
-        public void onDeviceDisconnected() {
-            p2PListener.onDevicesDisconnected("not sure");
-        }
-
-        @Override
-        public void onDeviceConnected(WifiP2pInfo info) {
-            if (info == null) {
-                requestConnectionInfo("onDevConnected");
-                return;
-            }
-
-            handleWifiP2PInfo(info);
-        }
-
-        @Override
-        public void onPeersChanged() {
-            if (manager != null && !isActive() && !tryingToConnect) {
-                if (!isActive())
-                    manager.requestPeers(channel, wifiP2PPeerListener);
             }
         }
     };
@@ -614,24 +618,33 @@ public class P2PManager extends Service {
         }
     }
 
-    public synchronized static boolean copyFile(String fileName, InputStream inputStream) {
-        //Todo apply file name
-        byte buf[] = new byte[1024];
-        int len;
+    public synchronized static boolean uploadFile(String path) {
+        //Todo do this immediately after sending the
+        //Todo look at googles' implementation of receiveFile
         try {
-            if (outputStream == null) {
-                getInputAndOutputStream(getSocket());
-            }
-            while ((len = inputStream.read(buf)) != -1) {
-                outputStream.write(buf, 0, len);
-            }
-            outputStream.flush();
+            final FileInputStream inputStream = new FileInputStream(new File(path));
+            //Todo apply file name
+            byte buf[] = new byte[1024];
+            int len;
+            try {
+                if (outputStream == null) {
+                    getInputAndOutputStream(getSocket());
+                }
+                while ((len = inputStream.read(buf)) != -1) {
+                    outputStream.write(buf, 0, len);
+                }
+                outputStream.flush();
 
-        } catch (IOException e) {
-            log("p2pfailed to copyFile >> " + e.toString());
-            return false;
+            } catch (IOException e) {
+                log("p2pfailed to copyFile >> " + e.toString());
+                return false;
+            }
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-        return true;
+
+        return false;
     }
 
     public static void destroy() {
@@ -877,6 +890,24 @@ public class P2PManager extends Service {
         }
 
         return true;
+    }
+
+    public static void addLocalFileMovedListener(LocalFileMoved LocalFileMovedListener) {
+        //Todo loop through these listeners when a upload is done
+        try {
+            LocalFileMovedListeners.add(LocalFileMovedListener);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeLocalFileMovedListener(LocalFileMoved LocalFileMovedListener) {
+        try {
+            if (LocalFileMovedListeners.contains(LocalFileMovedListener))
+                LocalFileMovedListeners.remove(LocalFileMovedListener);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void connectedDeviceNullFix() {

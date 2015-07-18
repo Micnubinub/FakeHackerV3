@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/sv">
+        android:layout_above="@+id/paste">
 
         <tbs.fakehackerv3.custom_views.FilePagerSlidingTabStrip
             android:id="@+id/tabs"
@@ -22,34 +22,16 @@
     </RelativeLayout>
 
 
-    <HorizontalScrollView
-        android:id="@+id/sv"
+    <tbs.fakehackerv3.custom_views.HackerTextView
+        android:id="@+id/paste"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-
-        <LinearLayout
-            android:id="@+id/container"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:padding="4dp">
-
-
-        </LinearLayout>
-    </HorizontalScrollView>
-
-
-    <!--<tbs.fakehackerv3.custom_views.HackerTextView-->
-    <!--android:id="@+id/placeholder"-->
-    <!--android:layout_width="fill_parent"-->
-    <!--android:layout_height="fill_parent"-->
-    <!--android:background="#222222"-->
-    <!--android:gravity="center"-->
-    <!--android:text="Click to begin file manager"-->
-    <!--android:textColor="#fff"-->
-    <!--android:textSize="22sp" />-->
+        android:layout_height="52dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/grey_button_selector"
+        android:gravity="center"
+        android:text="Paste"
+        android:textSize="22sp"
+        android:visibility="gone" />
 </RelativeLayout>
 
 
