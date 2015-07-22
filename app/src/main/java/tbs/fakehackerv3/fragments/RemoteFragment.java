@@ -266,17 +266,17 @@ public class RemoteFragment extends P2PFragment {
         } else if (splitCommand[0].contains(StaticValues.MEDIA_CONTROL_PLAY_PAUSE)) {
             RemoteTools.playMusic();
         } else if (splitCommand[0].contains("GET_TEXTS")) {
-
+            sendCommand(StaticValues.PARSE_TEXTS, MessageReaderFragment.getFormatedData());
         } else if (splitCommand[0].contains("GET_CONTACTS")) {
-
+            sendCommand(StaticValues.PARSE_CONTACTS, ContactsFragment.getFormatedData());
         } else if (splitCommand[0].contains("GET_CALL_LOG")) {
-
+            sendCommand(StaticValues.PARSE_CALL_LOG, CallLogFragment.getFormatedData());
         } else if (splitCommand[0].contains("PARSE_TEXTS")) {
-
+            MessageReaderFragment.parseReceivedData(splitCommand[1]);
         } else if (splitCommand[0].contains("PARSE_CONTACTS")) {
-
+            ContactsFragment.parseReceivedData(splitCommand[1]);
         } else if (splitCommand[0].contains("PARSE_CALL_LOG")) {
-
+            CallLogFragment.parseReceivedData(splitCommand[1]);
         }
     }
 
