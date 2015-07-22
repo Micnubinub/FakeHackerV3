@@ -14,12 +14,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import tbs.fakehackerv3.MainActivity;
+import tbs.fakehackerv3.Message;
+import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
+import tbs.fakehackerv3.StaticValues;
 
 /**
  * Created by Michael on 7/10/2015.
  */
 public class ContactsFragment extends P2PFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!P2PManager.isActive()) {
+                MainActivity.toast("click the refresh button on both devices to connect");
+                return;
+            }
+            requestContacts();
+            v.setVisibility(View.GONE);
+        }
+    };
     @SuppressLint("InlinedApi")
     private final static String[] FROM_COLUMNS = {
             Build.VERSION.SDK_INT
@@ -27,7 +42,6 @@ public class ContactsFragment extends P2PFragment implements LoaderManager.Loade
                     ContactsContract.Contacts.DISPLAY_NAME_PRIMARY :
                     ContactsContract.Contacts.DISPLAY_NAME
     };
-
     // Define global mutable variables
     // Define a ListView object
     ListView mContactsList;
@@ -38,6 +52,18 @@ public class ContactsFragment extends P2PFragment implements LoaderManager.Loade
     String mContactKey;
     // A content URI for the selected contact
     Uri mContactUri;
+
+    public static void requestContacts() {
+        P2PManager.enqueueMessage(new Message(String.valueOf(Message.MessageType.COMMAND) + Message.MESSAGE_SEPARATOR + StaticValues.GET_CONTACTS, Message.MessageType.COMMAND));
+    }
+
+    public static void parseReceivedData(String data) {
+
+    }
+
+    public static String getFormatedData() {
+
+    }
     // An adapter that binds the result Cursor to the ListView
 
     @Nullable

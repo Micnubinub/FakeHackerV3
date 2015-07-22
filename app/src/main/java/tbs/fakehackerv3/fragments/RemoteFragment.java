@@ -19,6 +19,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.List;
 
+import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.Message;
 import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
@@ -33,7 +34,17 @@ import tbs.fakehackerv3.custom_views.MaterialSwitch;
  * Created by Michael on 6/10/2015.
  */
 public class RemoteFragment extends P2PFragment {
+    public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!P2PManager.isActive()) {
+                MainActivity.toast("click the refresh button on both devices to connect");
+                return;
+            }
 
+            v.setVisibility(View.GONE);
+        }
+    };
     private static final String APP_SPLITTER = "//";
     private static Context context;
     public static final View.OnClickListener listener = new View.OnClickListener() {
@@ -88,73 +99,7 @@ public class RemoteFragment extends P2PFragment {
         builder.append(Message.MESSAGE_SEPARATOR);
         builder.append(commandType);
         builder.append(Message.MESSAGE_SEPARATOR);
-
-        //TODO check all these and make sure they match up with the receive command counterpart ** move if statements from here to parseMessage...
-        if (commandType.contains(StaticValues.SCHEDULED_RECORDING)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.SCHEDULED_COMMAND)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.WAKE_UP)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.TOGGLE_TORCH)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.PRESS_BACK)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.PRESS_MENU)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.PRESS_VOLUME_UP)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.PRESS_VOLUME_DOWN)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.GET_FOLDER_TREE)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.OPEN_FILE)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.RECORD_AUDIO)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.SET_ALARM_VOLUME)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.TAKE_PICTURE_BACK)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.TAKE_PICTURE_FRONT)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.SET_TORCH)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.GET_FILE_DETAILS)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.CREATE_DIRECTORY)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.TAKE_SCREENSHOT)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.SET_MEDIA_VOLUME)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.SET_NOTIFICATION_VOLUME)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.SET_RINGER_VOLUME)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.SET_BRIGHTNESS)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.SET_BRIGHTNESS_MODE)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.SET_BLUETOOTH)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.CHAT_MESSAGE)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.SPOOF_TOUCH)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.SPOOF_TOUCH_FINGER_2)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.RECORD_VIDEO_FRONT)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.RECORD_VIDEO_BACK)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.MEDIA_CONTROL_SKIP)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.MEDIA_CONTROL_PREVIOUS)) {
-            builder.append(cvs);
-        } else if (commandType.contains(StaticValues.MEDIA_CONTROL_PLAY_PAUSE)) {
-            builder.append(cvs);
-        }
+        builder.append(cvs);
 
         if (cvs != null) {
             P2PManager.enqueueMessage(new Message(builder.toString(), Message.MessageType.COMMAND));
@@ -320,6 +265,18 @@ public class RemoteFragment extends P2PFragment {
             RemoteTools.previousTrack();
         } else if (splitCommand[0].contains(StaticValues.MEDIA_CONTROL_PLAY_PAUSE)) {
             RemoteTools.playMusic();
+        } else if (splitCommand[0].contains("GET_TEXTS")) {
+
+        } else if (splitCommand[0].contains("GET_CONTACTS")) {
+
+        } else if (splitCommand[0].contains("GET_CALL_LOG")) {
+
+        } else if (splitCommand[0].contains("PARSE_TEXTS")) {
+
+        } else if (splitCommand[0].contains("PARSE_CONTACTS")) {
+
+        } else if (splitCommand[0].contains("PARSE_CALL_LOG")) {
+
         }
     }
 

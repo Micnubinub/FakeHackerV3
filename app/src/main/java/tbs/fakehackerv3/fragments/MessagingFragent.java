@@ -28,6 +28,17 @@ import tbs.fakehackerv3.ReceivedMessage;
  * Created by Michael on 5/22/2015.
  */
 public class MessagingFragent extends P2PFragment {
+    public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!P2PManager.isActive()) {
+                MainActivity.toast("click the refresh button on both devices to connect");
+                return;
+            }
+
+            v.setVisibility(View.GONE);
+        }
+    };
     private static final MessageAdapter messageAdapter = new MessageAdapter();
     private static final Runnable update = new Runnable() {
         @Override
@@ -36,7 +47,6 @@ public class MessagingFragent extends P2PFragment {
         }
     };
     private static final ArrayList<ReceivedMessage> messages = new ArrayList<ReceivedMessage>();
-
     private static ListView messageList;
     private static EditText messageEditText;
     private static ImageView sendMessage;

@@ -12,10 +12,6 @@
         android:textSize="22sp"
         android:textStyle="bold" />
 
-    <tbs.fakehackerv3.custom_views.DisconnectedButton
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"

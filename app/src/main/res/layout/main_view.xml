@@ -45,6 +45,7 @@
         android:id="@+id/container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_above="@+id/disconnect_button"
         android:layout_below="@+id/top_panel"
         android:orientation="vertical">
 
@@ -59,35 +60,17 @@
             android:layout_height="fill_parent"
             android:paddingLeft="4dp"
             android:paddingRight="4dp" />
-
     </LinearLayout>
 
     <!--<RelativeLayout-->
     <!--android:layout_width="wrap_content"-->
     <!--android:layout_height="fill_parent"></RelativeLayout>-->
 
-    <LinearLayout
-        android:id="@+id/side_pane"
+    <tbs.fakehackerv3.custom_views.DisconnectedButton
+        android:id="@+id/disconnect_button"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/top_panel"
-        android:orientation="vertical"
-        android:visibility="gone" />
-
-    <tbs.fakehackerv3.FAB
-        android:id="@+id/fab"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="36dp"
-        android:paddingBottom="8dp"
-        android:paddingLeft="7dp"
-        android:paddingRight="8dp"
-        android:paddingTop="4dp">
-
-        <requestFocus />
-    </tbs.fakehackerv3.FAB>
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
 
     <SurfaceView
         android:id="@+id/holder"

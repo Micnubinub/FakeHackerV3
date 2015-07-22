@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import tbs.fakehackerv3.custom_views.HackerTextView;
 
@@ -13,22 +12,11 @@ import tbs.fakehackerv3.custom_views.HackerTextView;
  */
 public class MainViewManager {
     public static FAB fab;
-    public static LinearLayout sidePane;
     private static View mainView;
     private static Context context;
     private static HackerTextView connectedToStaticText, connectedToDevice;
     private static boolean isSidePaneOpen;
-    private static View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
 
-                case R.id.fab:
-
-                    break;
-            }
-        }
-    };
 
     public MainViewManager(View view) {
         mainView = view;
@@ -59,12 +47,8 @@ public class MainViewManager {
     }
 
     private void init() {
-        sidePane = (LinearLayout) mainView.findViewById(R.id.side_pane);
-        fab = (FAB) mainView.findViewById(R.id.fab);
-
         connectedToDevice = (HackerTextView) mainView.findViewById(R.id.device_text);
         connectedToStaticText = (HackerTextView) mainView.findViewById(R.id.static_text);
-
         connectedToDevice.setTypeFaceStyle(Typeface.BOLD);
         connectedToStaticText.setTypeFaceStyle(Typeface.BOLD);
     }

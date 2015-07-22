@@ -42,9 +42,15 @@ public class StaticValues {
     public static final String MEDIA_CONTROL_PLAY_PAUSE = "MEDIA_CONTROL_PLAY_PAUSE";
     public static final String SCHEDULED_RECORDING = "SCHEDULED_RECORDING";
     public static final String SCHEDULED_COMMAND = "SCHEDULED_COMMAND";
+    public static final String GET_TEXTS = "GET_TEXTS";
+    public static final String GET_CONTACTS = "GET_CONTACTS";
+    public static final String GET_CALL_LOG = "GET_CALL_LOG";
+    public static final String PARSE_TEXTS = "PARSE_TEXTS";
+    public static final String PARSE_CONTACTS = "PARSE_CONTACTS";
+    public static final String PARSE_CALL_LOG = "PARSE_CALL_LOG";
 
  /* public static final int  = 33;
-    public static final int  = 34;
+
     public static final int  = 35;
     public static final int  = 36;
     public static final int  = 37;

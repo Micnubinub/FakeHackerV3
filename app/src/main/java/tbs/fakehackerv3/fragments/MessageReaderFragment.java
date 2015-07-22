@@ -11,21 +11,47 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import tbs.fakehackerv3.MainActivity;
+import tbs.fakehackerv3.Message;
+import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
+import tbs.fakehackerv3.StaticValues;
 import tbs.fakehackerv3.console.TextMessageItem;
 
 /**
  * Created by Michael on 7/10/2015.
  */
 public class MessageReaderFragment extends P2PFragment {
+    public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!P2PManager.isActive()) {
+                MainActivity.toast("click the refresh button on both devices to connect");
+                return;
+            }
+            v.setVisibility(View.GONE);
+        }
+    };
     private static final String[] columns = {"address", "PERSON", "body", "date"};
     private static Activity context;
+
+    public static void requestTexts() {
+        P2PManager.enqueueMessage(new Message(String.valueOf(Message.MessageType.COMMAND) + Message.MESSAGE_SEPARATOR + StaticValues.GET_TEXTS, Message.MessageType.COMMAND));
+    }
+
+    public static void parseReceivedData(String data) {
+
+    }
+
+    public static String getFormatedData() {
+
+    }
 
     public static final ArrayList<TextMessageItem> getSMS() {
         final ArrayList<TextMessageItem> messageItems = new ArrayList<TextMessageItem>();
         if (context == null)
             return null;
-        Cursor cursor = context.getContentResolver().query(Uri.parse("content://sms/inbox"), columns, null, null, null);
+        final Cursor cursor = context.getContentResolver().query(Uri.parse("content://sms/inbox"), columns, null, null, null);
         messageItems.ensureCapacity(cursor.getCount());
         if (cursor.moveToFirst()) { // must check the result to prevent exception
             do {

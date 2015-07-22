@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import tbs.fakehackerv3.custom_views.DisconnectedButton;
 import tbs.fakehackerv3.custom_views.PagerSlidingTabStrip;
 import tbs.fakehackerv3.fragments.CallLogFragment;
 import tbs.fakehackerv3.fragments.ConsoleFragment;
@@ -40,6 +41,8 @@ public class MainActivity extends FragmentActivity {
     public static Settings settings;
     public static boolean connected;
     public static WifiP2pGroup currentGroup;
+    public static SurfaceView layout;
+    private static DisconnectedButton disconnectedButton;
     private static final P2PManager.P2PListener p2pListener = new P2PManager.P2PListener() {
         @Override
         public void onScanStarted() {
@@ -81,13 +84,15 @@ public class MainActivity extends FragmentActivity {
                 if (fragment instanceof P2PFragment)
                     ((P2PFragment) fragment).onP2PDisconnected();
             }
+
+            showDisconnectButton();
         }
 
         @Override
         public void onSocketsConfigured() {
             log("socket configured");
             setConnected(true);
-
+            hideDisconnectButton();
             P2PManager.manager.requestConnectionInfo(P2PManager.channel, new WifiP2pManager.ConnectionInfoListener() {
                 @Override
                 public void onConnectionInfoAvailable(final WifiP2pInfo info) {
@@ -138,7 +143,6 @@ public class MainActivity extends FragmentActivity {
             }
         }
     };
-    public static SurfaceView layout;
     private static PagerSlidingTabStrip tabs;
     private static ViewPager pager;
     private static MyPagerAdapter pagerAdapter;
@@ -206,6 +210,14 @@ public class MainActivity extends FragmentActivity {
         context.runOnUiThread(runnable);
     }
 
+    public static void showDisconnectButton() {
+        disconnectedButton.show();
+    }
+
+    public static void hideDisconnectButton() {
+        disconnectedButton.hide();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -269,8 +281,9 @@ public class MainActivity extends FragmentActivity {
         pager.setAdapter(pagerAdapter);
         tabs.setViewPager(pager);
 
+        disconnectedButton = (DisconnectedButton) findViewById(R.id.disconnect_button);
+        disconnectedButton.show();
     }
-
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
