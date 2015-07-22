@@ -62,7 +62,9 @@ public class ContactsFragment extends P2PFragment implements LoaderManager.Loade
     }
 
     public static String getFormatedData() {
+        final String builder = new String();
 
+        return builder.toString();
     }
     // An adapter that binds the result Cursor to the ListView
 

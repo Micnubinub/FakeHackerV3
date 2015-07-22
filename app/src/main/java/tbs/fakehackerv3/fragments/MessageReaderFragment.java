@@ -44,7 +44,10 @@ public class MessageReaderFragment extends P2PFragment {
     }
 
     public static String getFormatedData() {
+        final StringBuilder builder = new StringBuilder();
 
+
+        return builder.toString();
     }
 
     public static final ArrayList<TextMessageItem> getSMS() {

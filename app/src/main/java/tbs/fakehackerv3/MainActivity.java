@@ -20,7 +20,6 @@ import tbs.fakehackerv3.custom_views.DisconnectedButton;
 import tbs.fakehackerv3.custom_views.PagerSlidingTabStrip;
 import tbs.fakehackerv3.fragments.CallLogFragment;
 import tbs.fakehackerv3.fragments.ConsoleFragment;
-import tbs.fakehackerv3.fragments.ContactsFragment;
 import tbs.fakehackerv3.fragments.FileManagerFragment;
 import tbs.fakehackerv3.fragments.LogFragment;
 import tbs.fakehackerv3.fragments.MessageReaderFragment;
@@ -31,8 +30,8 @@ import tbs.fakehackerv3.fragments.Settings;
 
 
 public class MainActivity extends FragmentActivity {
-    private static final Fragment[] fragments = new Fragment[8];
-    private static final String[] titles = new String[8];
+    private static final Fragment[] fragments = new Fragment[7];
+    private static final String[] titles = new String[7];
     public static WifiP2pDevice connectedDevice;
     public static P2PManager p2PManager;
     public static Activity context;
@@ -257,20 +256,21 @@ public class MainActivity extends FragmentActivity {
         fragments[2] = new FileManagerFragment();
         titles[2] = "File Manager";
 
-        fragments[3] = new ConsoleFragment();
-        titles[3] = "Console";
 
-        fragments[4] = new LogFragment();
-        titles[4] = "Log";
+        fragments[3] = new MessageReaderFragment();
+        titles[3] = "Texts";
 
-        fragments[5] = new MessageReaderFragment();
-        titles[5] = "Log";
+        fragments[4] = new CallLogFragment();
+        titles[4] = "Call Log";
 
-        fragments[6] = new ContactsFragment();
+        fragments[5] = new ConsoleFragment();
+        titles[5] = "Console";
+
+        fragments[6] = new LogFragment();
         titles[6] = "Log";
 
-        fragments[7] = new CallLogFragment();
-        titles[7] = "Log";
+//        fragments[7] = new ContactsFragment();
+//        titles[7] = "Log";
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.view_pager);
