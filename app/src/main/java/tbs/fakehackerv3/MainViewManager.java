@@ -1,10 +1,12 @@
 package tbs.fakehackerv3;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+
+import tbs.fakehackerv3.custom_views.HackerTextView;
 
 /**
  * Created by Michael on 6/13/2015.
@@ -14,7 +16,7 @@ public class MainViewManager {
     public static LinearLayout sidePane;
     private static View mainView;
     private static Context context;
-    private static TextView connectedToStaticText, connectedToDevice;
+    private static HackerTextView connectedToStaticText, connectedToDevice;
     private static boolean isSidePaneOpen;
     private static View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -59,8 +61,12 @@ public class MainViewManager {
     private void init() {
         sidePane = (LinearLayout) mainView.findViewById(R.id.side_pane);
         fab = (FAB) mainView.findViewById(R.id.fab);
-        connectedToDevice = (TextView) mainView.findViewById(R.id.device_text);
-        connectedToStaticText = (TextView) mainView.findViewById(R.id.static_text);
+
+        connectedToDevice = (HackerTextView) mainView.findViewById(R.id.device_text);
+        connectedToStaticText = (HackerTextView) mainView.findViewById(R.id.static_text);
+
+        connectedToDevice.setTypeFaceStyle(Typeface.BOLD);
+        connectedToStaticText.setTypeFaceStyle(Typeface.BOLD);
     }
 
     private int dpToPixels(int dp) {

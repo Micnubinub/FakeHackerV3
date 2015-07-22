@@ -6,14 +6,27 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.TextView;
+import android.widget.FrameLayout;
+
+import tbs.fakehackerv3.P2PManager;
+import tbs.fakehackerv3.R;
 
 /**
  * Created by Michael on 7/18/2015.
  */
-public class DisconnectedButton extends TextView {
+public class DisconnectedButton extends FrameLayout {
     private static final android.animation.ValueAnimator animator = android.animation.ValueAnimator.ofFloat(0, 1);
     private static final DecelerateInterpolator interpolator = new DecelerateInterpolator();
+    private static final LayoutParams param = new LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+    private static final View.OnClickListener clickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.close_button)
+                hide();
+            else
+                P2PManager.startScan();
+        }
+    };
     private static float animatedValue;
     private static View view;
     private static final Runnable invalidator = new Runnable() {
@@ -75,21 +88,17 @@ public class DisconnectedButton extends TextView {
 
     public DisconnectedButton(Context context) {
         super(context);
-        init(this);
+        init();
     }
 
     public DisconnectedButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(this);
+        init();
     }
 
     public DisconnectedButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(this);
-    }
-
-    private static void init(View view) {
-
+        init();
     }
 
     public static void hide() {
@@ -123,6 +132,17 @@ public class DisconnectedButton extends TextView {
         }
         if (view != null)
             view.postDelayed(invalidator, 8);
+    }
+
+    private void init() {
+        view = View.inflate(getContext(), R.layout.disconnected_button, null);
+        view.setOnClickListener(clickListener);
+        final HackerTextView text = (HackerTextView) view.findViewById(R.id.text);
+        text.setSelected(true);
+        final HackerTextView closeButton = (HackerTextView) view.findViewById(R.id.close_button);
+        closeButton.setTextColor(0xffd01716);
+        closeButton.setOnClickListener(clickListener);
+        addView(view, param);
     }
 
     @Override

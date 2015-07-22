@@ -5,6 +5,8 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+import tbs.fakehackerv3.Tools;
+
 /**
  * Created by Michael on 7/9/2015.
  */
@@ -37,7 +39,8 @@ public class HackerTextView extends TextView {
             fontBold = Typeface.createFromAsset(context.getAssets(), "exo_bold.otf");
         }
         setTypeface(font);
-        setTextColor(0xff22ccff);
+        setTextColor(Tools.getTextColor(context));
+        setBackgroundColor(Tools.getBackgroundColor(context));
     }
 
     public void setTypeFaceStyle(int typeFace) {
@@ -53,16 +56,25 @@ public class HackerTextView extends TextView {
 
     @Override
     public void setTypeface(Typeface tf) {
-        if (tf != null)
-        switch (tf.getStyle()) {
-            case Typeface.BOLD:
-                tf = fontBold;
-                break;
-            default:
-                tf = font;
-                break;
+        if (tf != null) {
+            switch (tf.getStyle()) {
+                case Typeface.BOLD:
+                    tf = fontBold;
+                    break;
+                default:
+                    tf = font;
+                    break;
+            }
+        } else {
+            tf = font;
         }
         super.setTypeface(tf);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        setTypeface(getTypeface());
+        super.onAttachedToWindow();
     }
 
     @Override

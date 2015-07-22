@@ -11,6 +11,23 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/MaterialSwitch.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/custom_views/PagerSlidingTabStrip.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/player/Commands.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/AbstractWheel.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/AbstractWheelView.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/ItemsRange.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/OnWheelChangedListener.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/OnWheelClickedListener.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/OnWheelScrollListener.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/WheelHorizontalScroller.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/WheelHorizontalView.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/WheelRecycler.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/WheelScroller.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/WheelVerticalScroller.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/WheelVerticalView.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/adapters/AbstractWheelAdapter.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/adapters/AbstractWheelTextAdapter.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/adapters/ArrayWheelAdapter.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/adapters/NumericWheelAdapter.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/tbs/fakehackerv3/scroll_wheel/adapters/WheelViewAdapter.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/bottom_shadow.xml" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/button_normal.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/button_pressed.png" charset="windows-1252" />

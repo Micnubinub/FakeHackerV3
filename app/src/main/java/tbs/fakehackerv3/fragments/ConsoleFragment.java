@@ -50,7 +50,6 @@ public class ConsoleFragment extends Fragment {
             "gettext", "gtpsync", "drivemap", "echo", "loop", "loopback", "xss", "linux", "ls", "partition", "crc", "cat", "gpuid", "cpu",
             "gpu", "x86", "read", "gparted", "set", "halt", "pxe_unload", "bash", "chmod", "command", "cp",
             "dir", "mkdir"};
-    private static Thread printRandomShitThread;
     private static int numberOfItemsToPrint;
     private static final Runnable printRandomShit = new Runnable() {
         @Override
@@ -59,10 +58,20 @@ public class ConsoleFragment extends Fragment {
                 addConsoleItem(new String(getRandomHackerString()));
 
                 try {
-                    Thread.sleep(250 + random.nextInt(600));
+                    Thread.sleep(50 + random.nextInt(200));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            }
+            try {
+                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                Thread.currentThread().join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     };
@@ -70,12 +79,7 @@ public class ConsoleFragment extends Fragment {
     //Todo make command and add to help
     public static void printRandomShit(int num) {
         numberOfItemsToPrint = num;
-
-        if (printRandomShitThread == null)
-            printRandomShitThread = new Thread(printRandomShit);
-
-        if (!printRandomShitThread.isAlive())
-            printRandomShitThread.start();
+        new Thread(printRandomShit).start();
     }
 
     private static String getTotalInternalMemorySize() {

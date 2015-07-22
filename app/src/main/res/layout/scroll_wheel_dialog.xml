@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_rect_black"
+    android:orientation="vertical">
+
+    <tbs.fakehackerv3.custom_views.HackerTextView
+        android:id="@id/title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="8dp"
+        android:text="Scheduled Ads"
+        android:textColor="@color/dark_grey_text"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+
+    <LinearLayout
+        android:id="@+id/subject"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <tbs.fakehackerv3.custom_views.HackerTextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:maxLines="1"
+            android:padding="10dp"
+            android:text="Minutes"
+            android:textColor="@color/dark_grey_text"
+            android:textSize="18sp" />
+
+        <tbs.fakehackerv3.custom_views.HackerTextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:maxLines="1"
+            android:padding="10dp"
+            android:text="Seconds"
+            android:textColor="@color/dark_grey_text"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/body"
+        android:layout_width="fill_parent"
+        android:layout_height="82dp"
+        android:layout_below="@+id/subject"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="4dp">
+
+        <tbs.fakehackerv3.scroll_wheel.WheelVerticalView
+            android:id="@+id/minutes"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
+        <tbs.fakehackerv3.scroll_wheel.WheelVerticalView
+            android:id="@+id/seconds"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/save_cancel"
+        layout="@layout/save_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/body"
+        android:layout_margin="8dp" />
+
+</RelativeLayout>

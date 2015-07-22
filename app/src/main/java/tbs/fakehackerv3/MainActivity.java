@@ -17,9 +17,12 @@ import android.view.SurfaceView;
 import android.widget.Toast;
 
 import tbs.fakehackerv3.custom_views.PagerSlidingTabStrip;
+import tbs.fakehackerv3.fragments.CallLogFragment;
 import tbs.fakehackerv3.fragments.ConsoleFragment;
+import tbs.fakehackerv3.fragments.ContactsFragment;
 import tbs.fakehackerv3.fragments.FileManagerFragment;
 import tbs.fakehackerv3.fragments.LogFragment;
+import tbs.fakehackerv3.fragments.MessageReaderFragment;
 import tbs.fakehackerv3.fragments.MessagingFragent;
 import tbs.fakehackerv3.fragments.P2PFragment;
 import tbs.fakehackerv3.fragments.RemoteFragment;
@@ -27,8 +30,8 @@ import tbs.fakehackerv3.fragments.Settings;
 
 
 public class MainActivity extends FragmentActivity {
-    private static final Fragment[] fragments = new Fragment[5];
-    private static final String[] titles = new String[5];
+    private static final Fragment[] fragments = new Fragment[8];
+    private static final String[] titles = new String[8];
     public static WifiP2pDevice connectedDevice;
     public static P2PManager p2PManager;
     public static Activity context;
@@ -218,8 +221,17 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onDestroy() {
-        P2PManager.destroy();
         RemoteTools.releaseCameras();
+        try {
+            runOnUIThread(new Runnable() {
+                @Override
+                public void run() {
+                    Tools.showStopServiceDialog(layout, context);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
@@ -238,6 +250,15 @@ public class MainActivity extends FragmentActivity {
 
         fragments[4] = new LogFragment();
         titles[4] = "Log";
+
+        fragments[5] = new MessageReaderFragment();
+        titles[5] = "Log";
+
+        fragments[6] = new ContactsFragment();
+        titles[6] = "Log";
+
+        fragments[7] = new CallLogFragment();
+        titles[7] = "Log";
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.view_pager);

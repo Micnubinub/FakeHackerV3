@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_view"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="#ff222222">
 
     <LinearLayout
         android:id="@+id/top_panel"
@@ -18,8 +19,8 @@
             android:padding="8dp"
             android:singleLine="true"
             android:text="Not connected"
-            android:textColor="#fff"
-            android:textSize="22sp" />
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
         <tbs.fakehackerv3.custom_views.HackerTextView
             android:id="@+id/device_text"
@@ -36,7 +37,6 @@
             android:paddingTop="8dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:textColor="#fff"
             android:textSize="22sp" />
 
     </LinearLayout>

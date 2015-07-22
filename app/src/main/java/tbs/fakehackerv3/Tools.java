@@ -3,12 +3,14 @@ package tbs.fakehackerv3;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,8 +18,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 
-import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,6 +32,9 @@ import java.util.Random;
 public class Tools {
 
     public static final Random random = new Random();
+    private static final String BACKGROUND_COLOR = "BACKGROUND_COLOR";
+    private static final String TEXT_COLOR = "TEXT_COLOR";
+
 
     public static void getPackages(Context context) {
         final PackageManager packageManager = context.getPackageManager();
@@ -101,7 +104,6 @@ public class Tools {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(2500);
                     Thread.sleep(2500);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -200,194 +202,7 @@ public class Tools {
     }
 
 
-    public static void handleMessage(Message message) {
-        switch (message.messageType) {
-            case MESSAGE:
-                handleReceivedMessage(message.getMessage());
-                break;
-            case FILE:
-                handleReceiveFile(message.getMessage());
-                break;
-            case COMMAND:
-                handleReceivedCommand(message.getMessage());
-                break;
-        }
-    }
-
-    public static void handleReceivedMessage(String message) {
-        //TODO
-    }
-
-    public static void handleReceiveFile(String file) {
-        //TODO
-    }
-
-    public static void handleReceivedCommand(String command) {
-        final String[] splitCommand = command.split(Message.MESSAGE_SEPARATOR);
-        final String commandString = splitCommand[2];
-        //TODO check all these
-        if (splitCommand[1].contains(StaticValues.SCHEDULED_RECORDING)) {
-            final long when = Long.parseLong(commandString);
-            final int duration = Integer.parseInt(splitCommand[3]);
-            RemoteTools.record(duration, when);
-        } else if (splitCommand[1].contains(StaticValues.SCHEDULED_COMMAND)) {
-            final long when = Long.parseLong(commandString);
-            //todo
-        } else if (splitCommand[1].contains(StaticValues.TOGGLE_TORCH)) {
-            RemoteTools.toggleTorch();
-        } else if (splitCommand[1].contains(StaticValues.PRESS_HOME)) {
-            //todo
-        } else if (splitCommand[1].contains(StaticValues.PRESS_BACK)) {
-            //todo
-        } else if (splitCommand[1].contains(StaticValues.PRESS_MENU)) {
-            //todo
-        } else if (splitCommand[1].contains(StaticValues.PRESS_VOLUME_UP)) {
-            //todo
-        } else if (splitCommand[1].contains(StaticValues.PRESS_VOLUME_DOWN)) {
-            //todo
-        } else if (splitCommand[1].contains(StaticValues.GET_FOLDER_TREE)) {
-            try {
-                final File file = new File(commandString);
-                if (!file.exists()) {
-                } else if (!file.isDirectory()) {
-
-                } else {
-                    //todo
-                    file.listFiles();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.OPEN_FILE)) {
-            try {
-                final File file = new File(commandString);
-                if (!file.exists()) {
-                } else if (!file.isDirectory()) {
-
-                } else {
-                    //todo
-                    file.listFiles();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.RECORD_AUDIO)) {
-            try {
-                RemoteTools.record(Integer.parseInt(commandString));
-            } catch (NumberFormatException e) {
-                log("record failed > not a number");
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.SET_ALARM_VOLUME)) {
-            try {
-                RemoteTools.setVolumeAlarm(Integer.parseInt(commandString));
-            } catch (NumberFormatException e) {
-                log("set alarm failed > not a number");
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.TAKE_PICTURE_BACK)) {
-            RemoteTools.takePictureBack();
-        } else if (splitCommand[1].contains(StaticValues.TAKE_PICTURE_FRONT)) {
-            RemoteTools.takePictureFront();
-        } else if (splitCommand[1].contains(StaticValues.SET_TORCH)) {
-            //todo add this
-        } else if (splitCommand[1].contains(StaticValues.GET_FILE_DETAILS)) {
-            try {
-                final File file = new File(commandString);
-                if (!file.exists()) {
-
-                } else {
-                    //todo
-                    file.length();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.CREATE_DIRECTORY)) {
-            final File file = new File(commandString);
-            if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    log("createfile failed > ioexeption");
-                    e.printStackTrace();
-                }
-            }
-        } else if (splitCommand[1].contains(StaticValues.TAKE_SCREENSHOT)) {
-            try {
-                RemoteTools.getScreenShot();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.SET_MEDIA_VOLUME)) {
-            try {
-                RemoteTools.setVolumeMedia(Integer.parseInt(commandString));
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.SET_NOTIFICATION_VOLUME)) {
-            try {
-                RemoteTools.setVolumeNotification(Integer.parseInt(commandString));
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.SET_RINGER_VOLUME)) {
-            try {
-                RemoteTools.setVolumeRinger(Integer.parseInt(commandString));
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.SET_BRIGHTNESS)) {
-            try {
-                RemoteTools.setBrightness(Integer.parseInt(commandString));
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.SET_BRIGHTNESS_MODE)) {
-            try {
-                RemoteTools.setBrightnessAuto(Integer.parseInt(commandString) > 0);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.SET_BLUETOOTH)) {
-            try {
-                RemoteTools.setBluetooth(Integer.parseInt(commandString) > 0);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        } else if (splitCommand[1].contains(StaticValues.SPOOF_TOUCH)) {
-            //todo
-        } else if (splitCommand[1].contains(StaticValues.SPOOF_TOUCH_FINGER_2)) {
-            //todo
-        } else if (splitCommand[1].contains(StaticValues.RECORD_VIDEO_FRONT)) {
-            //todo
-        } else if (splitCommand[1].contains(StaticValues.RECORD_VIDEO_BACK)) {
-            //todo
-        } else if (splitCommand[1].contains(StaticValues.MEDIA_CONTROL_SKIP)) {
-            RemoteTools.skipTrack();
-        } else if (splitCommand[1].contains(StaticValues.MEDIA_CONTROL_PREVIOUS)) {
-            RemoteTools.previousTrack();
-        } else if (splitCommand[1].contains(StaticValues.MEDIA_CONTROL_PLAY_PAUSE)) {
-            RemoteTools.playMusic();
-        }
-    }
-
-    public static void sendMessage(String message) {
-        //TODO
-        if (MainActivity.p2PManager != null)
-            P2PManager.enqueueMessage(new Message(message, Message.MessageType.MESSAGE));
-    }
-
-    public static void sendFile(File file) {
-        //TODO
-        if (MainActivity.p2PManager != null) {
-            //TODO maybe add a prefix >> receiveFile then listen for it when getting a message_background and makes sure the device
-            //todo is ready to receive a file
-            P2PManager.enqueueMessage(new Message(file.getName(), Message.MessageType.FILE));
-        }
-    }
-
-    public static void showStopServiceDialog(final Context context) {
+    public static void showStopServiceDialog(final View view, final Context context) {
         final Dialog dialog = new Dialog(context, R.style.CustomDialog);
         //TODO add don't ask again checkbox
         dialog.setContentView(R.layout.stop_service_dialog);
@@ -396,11 +211,13 @@ public class Tools {
             public void onClick(View v) {
 
                 try {
+                    P2PManager.destroy();
                     context.stopService(new Intent(context, P2PManager.class));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 dialog.dismiss();
+
             }
         });
 
@@ -410,7 +227,42 @@ public class Tools {
                 dialog.dismiss();
             }
         });
+
         dialog.show();
+    }
+
+    //Todo implement
+    public static int getBackgroundColor(Context context) {
+        try {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            return prefs.getInt(BACKGROUND_COLOR, 0xff222222);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0xff222222;
+    }
+
+    public static int getTextColor(Context context) {
+        try {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            return prefs.getInt(TEXT_COLOR, 0xff22ccff);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0xff22ccff;
+    }
+
+    public static void setBackgroundColor(Context context, int color) {
+        final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putInt(BACKGROUND_COLOR, color);
+        editor.commit();
+    }
+
+    public static void setTextColor(Context context, int color) {
+        final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putInt(TEXT_COLOR, color);
+        editor.commit();
     }
 
     private static void log(String msg) {

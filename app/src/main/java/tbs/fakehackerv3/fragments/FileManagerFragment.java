@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import tbs.fakehackerv3.LocalFileMoved;
 import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.Message;
 import tbs.fakehackerv3.P2PManager;
@@ -56,6 +55,7 @@ public class FileManagerFragment extends P2PFragment {
     public static final String PARENT_NAME = "/...../";
     public static final String COMMAND_UPLOAD = "COMMAND_UPLOAD";
     public static final String COMMAND_DOWNLOAD = "COMMAND_DOWNLOAD";
+    public static final String READY_TO_RECEIVE_FILE = "/READY_TO_RECEIVE_FILE\\";
     public static final String RESPONSE_BROWSE = "RESPONSE_BROWSE";
     public static final String RESPONSE_OPEN = "RESPONSE_OPEN";
     public static final String RESPONSE_DELETE = "RESPONSE_DELETE";
@@ -99,6 +99,7 @@ public class FileManagerFragment extends P2PFragment {
     private static final Fragment[] fragments = new Fragment[2];
     private static final ArrayList<File> tmpTree = new ArrayList<File>();
     public static boolean isInit;
+    public static String tmpFileBeingDownloadedPath, tmpFileBeingUploadedPath;
     private static FragmentActivity context;
     //Todo local and external, make sure these are correct, as they are important for copy/move
     private static String currentExternalDirectory = Environment.getExternalStorageDirectory().getPath();
@@ -120,7 +121,7 @@ public class FileManagerFragment extends P2PFragment {
         }
     };
     private static Dialog dialog;
-    private static final Runnable dialogDismisser = new Runnable() {
+    private static final Runnable dialogDismissal = new Runnable() {
         @Override
         public void run() {
             if (dialog != null) {
@@ -200,13 +201,13 @@ public class FileManagerFragment extends P2PFragment {
     public static void handleLocalOutPutLocation() {
         switch (mikeFileOperation) {
             case COPY_EXTERNAL:
-                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path);
+                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name);
                 break;
             case COPY_LOCAL:
                 copyFile(tmpMikeFile.path, currentLocalDirectory + "/" + tmpMikeFile.name);
                 break;
             case MOVE_EXTERNAL:
-                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path);
+                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name);
                 break;
             case MOVE_LOCAL:
                 moveFile(tmpMikeFile.path, currentLocalDirectory + "/" + tmpMikeFile.name);
@@ -218,26 +219,29 @@ public class FileManagerFragment extends P2PFragment {
     public static void handleExternalOutPutLocation() {
         switch (mikeFileOperation) {
             case COPY_EXTERNAL:
-
+                sendFileCommand(COMMAND_COPY + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name);
                 break;
             case COPY_LOCAL:
+                tmpFileBeingUploadedPath = tmpMikeFile.path;
+                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name);
 
                 break;
             case MOVE_EXTERNAL:
-                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + "the files contents, maybe, look at google's upload method");
-                P2PManager.addLocalFileMovedListener(new LocalFileMoved() {
-                    @Override
-                    public void onLocalFileMoved(String path) {
-                        //Todo
-
-                        if (true) {
-                            P2PManager.removeLocalFileMovedListener(this);
-                        }
-                    }
-                });
+                sendFileCommand(COMMAND_MOVE + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name);
+//                P2PManager.addLocalFileMovedListener(new LocalFileMoved() {
+//                    @Override
+//                    public void onLocalFileMoved(String path) {
+//                        //Todo
+//
+//                        if (true) {
+//                            P2PManager.removeLocalFileMovedListener(this);
+//                        }
+//                    }
+//                });
                 break;
             case MOVE_LOCAL:
-                sendFileCommand(COMMAND_MOVE + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory);
+                tmpFileBeingUploadedPath = tmpMikeFile.path;
+                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name);
                 break;
         }
         showTree(currentExternalDirectory, MikeFileOperationType.EXTERNAL);
@@ -268,6 +272,7 @@ public class FileManagerFragment extends P2PFragment {
             case R.id.copy:
                 mikeFileOperation = MikeFileOperation.COPY_EXTERNAL;
                 MainActivity.toast("copyExternal File : " + tmpMikeFile.name);
+                showPasteButton();
                 dismissDialog();
                 break;
             case R.id.rename:
@@ -277,6 +282,7 @@ public class FileManagerFragment extends P2PFragment {
             case R.id.move:
                 mikeFileOperation = MikeFileOperation.MOVE_EXTERNAL;
                 MainActivity.toast("moveExternal File : " + tmpMikeFile.name);
+                showPasteButton();
                 dismissDialog();
                 break;
         }
@@ -501,11 +507,14 @@ public class FileManagerFragment extends P2PFragment {
             log("handleMessage > msg == null or len < 1");
             return;
         }
-
-        if (msg.startsWith("COMMAND")) {
-            handleCommand(msg);
+        if (msg.startsWith(READY_TO_RECEIVE_FILE)) {
+            P2PManager.sendFile();
         } else {
-            handleResponse(msg);
+            if (msg.startsWith("COMMAND")) {
+                handleCommand(msg);
+            } else {
+                handleResponse(msg);
+            }
         }
     }
 
@@ -626,10 +635,19 @@ public class FileManagerFragment extends P2PFragment {
             //todo command name + filesep+filepathFrom+fileSep+fileTo
             moveFile(new File(split[1]), new File(split[2]));
         } else if (msg.startsWith(COMMAND_DOWNLOAD)) {
-            //todo command name + fileSep+fileTo
+            //todo command name + fileSep +filePath + fileSep +filePathTo
+            sendFileCommand(COMMAND_UPLOAD + FILE_SEP + split[2]);
+            tmpFileBeingUploadedPath = split[1];
         } else if (msg.startsWith(COMMAND_UPLOAD)) {
             //todo command name + fileSep+fileFrom
-
+            tmpFileBeingDownloadedPath = split[1];
+            try {
+                final File file = new File(tmpFileBeingDownloadedPath);
+                file.getParentFile().mkdirs();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            sendFileCommand(READY_TO_RECEIVE_FILE);
         }
     }
 
@@ -739,7 +757,7 @@ public class FileManagerFragment extends P2PFragment {
     }
 
     private static void dismissDialog() {
-        context.runOnUiThread(dialogDismisser);
+        context.runOnUiThread(dialogDismissal);
     }
 
     private static void showDialog(final MikeFile mikeFile, final MikeFileOperationType mikeFileOperationType) {
@@ -1189,7 +1207,7 @@ public class FileManagerFragment extends P2PFragment {
         public static final AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                showDialog(files.get(position), MikeFileOperationType.LOCAL);
+                showDialog(files.get(position), MikeFileOperationType.EXTERNAL);
                 return true;
             }
         };
@@ -1286,12 +1304,12 @@ public class FileManagerFragment extends P2PFragment {
 
         @Override
         public void onP2PConnected() {
-            placeholder.post(new Runnable() {
-                @Override
-                public void run() {
-                    placeholder.setVisibility(View.GONE);
-                }
-            });
+//            placeholder.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    placeholder.setVisibility(View.GONE);
+//                }
+//            });
         }
     }
 

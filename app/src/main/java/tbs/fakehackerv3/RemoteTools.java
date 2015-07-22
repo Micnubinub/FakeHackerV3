@@ -341,29 +341,82 @@ public class RemoteTools {
         final Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
         final KeyEvent downEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
         downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
-        context().sendBroadcast(downIntent);
+        try {
+            MainActivity.context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    context().sendBroadcast(downIntent);
+                }
+            });
+        } catch (Exception e) {
+            context().sendBroadcast(downIntent);
+            e.printStackTrace();
+        }
     }
 
     public static void skipTrack() {
         final Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
         final KeyEvent downEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT);
         downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
-        context().sendBroadcast(downIntent);
+        try {
+            MainActivity.context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    context().sendBroadcast(downIntent);
+                }
+            });
+        } catch (Exception e) {
+            context().sendBroadcast(downIntent);
+            e.printStackTrace();
+        }
     }
 
     public static void previousTrack() {
         final Intent downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
         final KeyEvent downEvent = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS);
         downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
-        context().sendBroadcast(downIntent);
+        try {
+            MainActivity.context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    context().sendBroadcast(downIntent);
+                }
+            });
+        } catch (Exception e) {
+            context().sendBroadcast(downIntent);
+            e.printStackTrace();
+        }
     }
 
-    public static void setBrightness(int percent) {
-        Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-        Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, ((int) ((percent / 100f) * 255)));
+    public static void setBrightness(final int percent) {
+
+        try {
+            MainActivity.context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+                    Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, ((int) ((percent / 100f) * 255)));
+                }
+            });
+        } catch (Exception e) {
+            Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+            Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, ((int) ((percent / 100f) * 255)));
+            e.printStackTrace();
+        }
     }
 
-    public static void setBrightnessAuto(boolean on) {
+    public static void setBrightnessAuto(final boolean on) {
+        try {
+            MainActivity.context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, on ? Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC : Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+                }
+            });
+        } catch (Exception e) {
+            Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, on ? Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC : Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+            e.printStackTrace();
+        }
         Settings.System.putInt(context().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, on ? Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC : Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
     }
 
@@ -374,20 +427,60 @@ public class RemoteTools {
         setVolumeRinger(percent);
     }
 
-    public static void setVolumeMedia(int percent) {
-        Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_MUSIC, Math.round((percent / 100f) * 15));
+    public static void setVolumeMedia(final int percent) {
+        try {
+            MainActivity.context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_MUSIC, Math.round((percent / 100f) * 15));
+                }
+            });
+        } catch (Exception e) {
+            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_MUSIC, Math.round((percent / 100f) * 15));
+            e.printStackTrace();
+        }
     }
 
-    public static void setVolumeAlarm(int percent) {
-        Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_ALARM, Math.round((percent / 100f) * 15));
+    public static void setVolumeAlarm(final int percent) {
+        try {
+            MainActivity.context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_ALARM, Math.round((percent / 100f) * 15));
+                }
+            });
+        } catch (Exception e) {
+            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_ALARM, Math.round((percent / 100f) * 15));
+            e.printStackTrace();
+        }
     }
 
-    public static void setVolumeNotification(int percent) {
-        Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_NOTIFICATION, Math.round((percent / 100f) * 15));
+    public static void setVolumeNotification(final int percent) {
+        try {
+            MainActivity.context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_NOTIFICATION, Math.round((percent / 100f) * 15));
+                }
+            });
+        } catch (Exception e) {
+            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_NOTIFICATION, Math.round((percent / 100f) * 15));
+            e.printStackTrace();
+        }
     }
 
-    public static void setVolumeRinger(int percent) {
-        Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_RING, ((int) ((percent / 100f) * 15)));
+    public static void setVolumeRinger(final int percent) {
+        try {
+            MainActivity.context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_RING, ((int) ((percent / 100f) * 15)));
+                }
+            });
+        } catch (Exception e) {
+            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_RING, ((int) ((percent / 100f) * 15)));
+            e.printStackTrace();
+        }
     }
 
     private static Context context() {
