@@ -33,8 +33,8 @@ import tbs.fakehackerv3.fragments.Settings;
 
 
 public class MainActivity extends FragmentActivity {
-    private static final Fragment[] fragments = new Fragment[7];
-    private static final String[] titles = new String[7];
+    private static final Fragment[] fragments = new Fragment[6];
+    private static final String[] titles = new String[6];
     public static WifiP2pDevice connectedDevice;
     public static P2PManager p2PManager;
     public static Activity context;
@@ -274,15 +274,15 @@ public class MainActivity extends FragmentActivity {
         fragments[5] = new ConsoleFragment();
         titles[5] = "Console";
 
-        fragments[6] = new LogFragment();
-        titles[6] = "Log";
+//        fragments[6] = new LogFragment();
+//        titles[6] = "Log";
 
 //        fragments[7] = new ContactsFragment();
 //        titles[7] = "Log";
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.view_pager);
-        pager.setOffscreenPageLimit(7);
+        pager.setOffscreenPageLimit(6);
 
         pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
 

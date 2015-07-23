@@ -760,8 +760,6 @@ public class RemoteFragment extends P2PFragment {
     public static void handleConsoleCommand(String command) {
         command = command.replace("remote ", "").trim();
 
-        log("remote handlng > " + command);
-
         if (command.contains("setbrightness")) {
             sendCommand(StaticValues.SET_BRIGHTNESS, command.replace("setbrightness ", "").trim());
         } else if (command.contains("setmediavolume")) {

@@ -79,6 +79,7 @@ public class DisconnectedButton extends FrameLayout {
         try {
             if (animationType == AnimationType.OUT)
                 return;
+
             animationType = AnimationType.OUT;
             view.post(new Runnable() {
                 @Override

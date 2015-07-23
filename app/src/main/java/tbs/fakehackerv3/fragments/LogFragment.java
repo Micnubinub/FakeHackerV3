@@ -25,18 +25,22 @@ public class LogFragment extends Fragment {
     private static LogAdapter adapter;
 
     public static void log(final String string) {
-        if (context != null)
-            context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    logs.add(string);
-                    try {
-                        adapter.notifyDataSetChanged();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+        try {
+            if (context != null)
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        logs.add(string);
+                        try {
+                            adapter.notifyDataSetChanged();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
+                });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -89,7 +93,7 @@ public class LogFragment extends Fragment {
     public static class ViewHolder {
         final TextView textView;
 
-        public ViewHolder(TextView textView) {
+        private ViewHolder(TextView textView) {
             this.textView = textView;
         }
     }
