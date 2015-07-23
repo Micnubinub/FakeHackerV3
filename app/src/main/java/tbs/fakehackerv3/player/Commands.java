@@ -12,7 +12,12 @@ import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.RemoteTools;
 import tbs.fakehackerv3.Tools;
 import tbs.fakehackerv3.console.CommandItem;
+import tbs.fakehackerv3.fragments.CallLogFragment;
 import tbs.fakehackerv3.fragments.ConsoleFragment;
+import tbs.fakehackerv3.fragments.FileManagerFragment;
+import tbs.fakehackerv3.fragments.MessageReaderFragment;
+import tbs.fakehackerv3.fragments.MessagingFragent;
+import tbs.fakehackerv3.fragments.RemoteFragment;
 
 
 public class Commands {
@@ -54,10 +59,28 @@ public class Commands {
     public void checkCommand(String userCmd) {
         //TODO ASAP check commands and hijack them for the respective fragments where applicable
         userCmd = userCmd.toLowerCase();
-        ConsoleFragment.printRandomShit(50);
+
         if (!userCmd.equals("repeat")) {
             lastCom = userCmd;
         }
+
+        if (userCmd.startsWith("calllog")) {
+            CallLogFragment.handleConsoleCommand(userCmd);
+            return;
+        } else if (userCmd.startsWith("filemanager")) {
+            FileManagerFragment.handleConsoleCommand(userCmd);
+            return;
+        } else if (userCmd.startsWith("chat")) {
+            MessagingFragent.handleConsoleCommand(userCmd);
+            return;
+        } else if (userCmd.startsWith("remote")) {
+            RemoteFragment.handleConsoleCommand(userCmd);
+            return;
+        } else if (userCmd.startsWith("textreader")) {
+            MessageReaderFragment.handleConsoleCommand(userCmd);
+            return;
+        }
+
 /* Todo
         if (userCmd.equals("toggleflash")) {
             Tools.toggleTorch(ConsoleFragment.context);
@@ -602,5 +625,12 @@ public class Commands {
         print(" Special");
         seperator(); // Bluetooth
         print(" there are many special commands that you will have to discover yourself :)");
+
+        "setbackground html color code";
+        "settextcolor html color code";
+
+
     }
+
+
 }

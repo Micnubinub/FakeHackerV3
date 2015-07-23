@@ -123,10 +123,6 @@ public class ConsoleFragment extends Fragment {
         cl_adapter.notifyDataSetChanged();
     }
 
-    private static ListView getListView() {
-        return mainListView;
-    }
-
     private static void initEverythingElse() {
         consoleEntries
                 .add(new String(
@@ -197,8 +193,7 @@ public class ConsoleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.console_frament, null);
         mainListView = (ListView) mainView.findViewById(R.id.list);
-        cl_adapter = new ConsoleListAdapter(context, R.layout.console_entry,
-                consoleEntries);
+        cl_adapter = new ConsoleListAdapter(context, R.layout.console_entry, consoleEntries);
         mainListView.setAdapter(cl_adapter);
 
         initEverythingElse();

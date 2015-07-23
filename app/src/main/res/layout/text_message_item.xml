@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
+
+    <tbs.fakehackerv3.custom_views.HackerTextView
+        android:id="@+id/sent_by"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Test"
+        android:textSize="18sp" />
 
     <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/body"
@@ -17,7 +25,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/body"
+        android:maxLines="1"
         android:padding="8dp"
         android:text="Test"
         android:textSize="15sp" />
-</RelativeLayout>
+</LinearLayout>

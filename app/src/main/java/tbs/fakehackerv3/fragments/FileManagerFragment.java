@@ -844,6 +844,10 @@ public class FileManagerFragment extends P2PFragment {
         mikeFiles.add(0, new MikeFile(file.getParentFile().getParent(), file.length()));
     }
 
+    public static void handleConsoleCommand(String command) {
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -1329,5 +1333,4 @@ public class FileManagerFragment extends P2PFragment {
             return fragments[position];
         }
     }
-
 }

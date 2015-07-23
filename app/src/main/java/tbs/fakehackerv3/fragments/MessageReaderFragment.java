@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -32,7 +34,8 @@ public class MessageReaderFragment extends P2PFragment {
             v.setVisibility(View.GONE);
         }
     };
-    private static final String[] columns = {"address", "PERSON", "body", "date"};
+    private static final String[] columns = {"address", "person", "body", "date"};
+    public static ArrayList<TextMessageItem> textMessageItems;
     private static Activity context;
 
     public static void requestTexts() {
@@ -40,13 +43,33 @@ public class MessageReaderFragment extends P2PFragment {
     }
 
     public static void parseReceivedData(String data) {
-
+        TextMessageItem.getTextMessageItems(data);
     }
 
     public static String getFormatedData() {
         final StringBuilder builder = new StringBuilder();
+        final Cursor cursor = context.getContentResolver().query(Uri.parse("content://sms/inbox"), columns, null, null, null);
+        textMessageItems.ensureCapacity(cursor.getCount());
+        if (cursor.moveToFirst()) { // must check the result to prevent exception
+            do {
+                final String body = context.getString(cursor.getColumnIndex("body"));
+                final String address = context.getString(cursor.getColumnIndex("address"));
+                final String person = context.getString(cursor.getColumnIndex("person"));
+                final String date = context.getString(cursor.getColumnIndex("date"));
 
+                builder.append(((person == null) || (person.length() < 1)) ? address : person);
+                builder.append("//");
+                builder.append(body);
+                builder.append("//");
+                builder.append(date);
 
+                if (!cursor.isLast()) {
+                    builder.append(":/:/");
+                }
+            } while (cursor.moveToNext());
+        } else {
+            // empty box, no SMS
+        }
         return builder.toString();
     }
 
@@ -69,6 +92,10 @@ public class MessageReaderFragment extends P2PFragment {
         }
 
         return messageItems;
+    }
+
+    public static void handleConsoleCommand(String command) {
+
     }
 
     @Override
@@ -104,5 +131,58 @@ public class MessageReaderFragment extends P2PFragment {
                 placeholder.setVisibility(View.GONE);
             }
         });
+    }
+
+    private static class MessageReaderAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return textMessageItems.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final ViewHolder holder;
+
+            if (convertView == null) {
+                convertView = View.inflate(context, R.layout.disconnected_button, null);
+                final TextView sent_by = (TextView) convertView.findViewById(R.id.sent_by);
+                final TextView body = (TextView) convertView.findViewById(R.id.body);
+                final TextView date = (TextView) convertView.findViewById(R.id.date);
+
+                holder = new ViewHolder(sent_by, body, date);
+
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            final TextMessageItem item = textMessageItems.get(position);
+            holder.sent_by.setText(item.number);
+            holder.date.setText(item.getDate());
+            holder.body.setText(item.body);
+
+            return convertView;
+        }
+
+        private static class ViewHolder {
+            final TextView sent_by, body, date;
+
+            public ViewHolder(TextView sent_by, TextView body, TextView date) {
+                this.sent_by = sent_by;
+                this.body = body;
+                this.date = date;
+            }
+        }
     }
 }

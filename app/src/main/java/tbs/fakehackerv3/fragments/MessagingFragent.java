@@ -132,6 +132,10 @@ public class MessagingFragent extends P2PFragment {
         }
     }
 
+    public static void handleConsoleCommand(String command) {
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,11 +169,11 @@ public class MessagingFragent extends P2PFragment {
 
             }
         });
+
         sendMessage.setOnClickListener(sendMessageClickListener);
         messageList.setAdapter(messageAdapter);
         placeholder = v.findViewById(R.id.placeholder);
         placeholder.setOnClickListener(placeHolderListener);
-
         return v;
     }
 
@@ -233,5 +237,4 @@ public class MessagingFragent extends P2PFragment {
             return convertView;
         }
     }
-
 }

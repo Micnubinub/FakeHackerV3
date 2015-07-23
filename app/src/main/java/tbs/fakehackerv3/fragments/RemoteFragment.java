@@ -697,16 +697,15 @@ public class RemoteFragment extends P2PFragment {
         dialog.show();
     }*/
 
+    public static void handleConsoleCommand(String command) {
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         context = getActivity();
-    }
-
-    public void init() {
-        //TODO
-        getView().setVisibility(View.VISIBLE);
     }
 
 
@@ -762,6 +761,11 @@ public class RemoteFragment extends P2PFragment {
         dialog.show();
     }*/
 
+    public void init() {
+        //TODO
+        getView().setVisibility(View.VISIBLE);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -795,17 +799,6 @@ public class RemoteFragment extends P2PFragment {
             }
         });
     }
-
-    @Override
-    public void onP2PConnected() {
-        init();
-        placeholder.post(new Runnable() {
-            @Override
-            public void run() {
-                placeholder.setVisibility(View.GONE);
-            }
-        });
-    }
  /* Todo  private static void showSilentModeDialog() {
         final Dialog dialog = getDialog();
         dialog.setContentView(R.layout.switch_item);
@@ -832,45 +825,23 @@ public class RemoteFragment extends P2PFragment {
     }
 */
 
+    @Override
+    public void onP2PConnected() {
+        init();
+        placeholder.post(new Runnable() {
+            @Override
+            public void run() {
+                placeholder.setVisibility(View.GONE);
+            }
+        });
+    }
+
     private static class App {
         public final String name, address;
 
         public App(String name, String address) {
             this.name = name;
             this.address = address;
-        }
-    }
-
-    private static class ReceivedAppAdapter extends BaseAdapter {
-        private final App[] apps;
-
-        public ReceivedAppAdapter(App[] apps) {
-            this.apps = apps;
-        }
-
-        @Override
-        public int getCount() {
-            return apps == null ? 0 : apps.length;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null)
-                convertView = View.inflate(context, R.layout.app_item, null);
-
-            final App app = apps[position];
-            ((TextView) convertView).setText(app.name + " (" + app.address + ")");
-            return convertView;
         }
     }
 
@@ -986,5 +957,38 @@ public class RemoteFragment extends P2PFragment {
 //        minutes.addChangingListener(wheelListener);
 //        return dialog;
 //    }
+
+    private static class ReceivedAppAdapter extends BaseAdapter {
+        private final App[] apps;
+
+        public ReceivedAppAdapter(App[] apps) {
+            this.apps = apps;
+        }
+
+        @Override
+        public int getCount() {
+            return apps == null ? 0 : apps.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null)
+                convertView = View.inflate(context, R.layout.app_item, null);
+
+            final App app = apps[position];
+            ((TextView) convertView).setText(app.name + " (" + app.address + ")");
+            return convertView;
+        }
+    }
 
 }
