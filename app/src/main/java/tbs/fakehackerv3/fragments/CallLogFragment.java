@@ -39,7 +39,6 @@ public class CallLogFragment extends P2PFragment {
             v.setVisibility(View.GONE);
         }
     };
-    public static final ArrayList<CallLogItem> callLogItems = new ArrayList<CallLogItem>();
     private static final String callLogColumns[] = {
             CallLog.Calls._ID,
             CallLog.Calls.NUMBER,
@@ -48,26 +47,55 @@ public class CallLogFragment extends P2PFragment {
             CallLog.Calls.TYPE};
     private static Activity context;
     private static ListView listView;
-    private static CallLogAdapter adapter;
-    private static final Runnable notify = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                adapter.notifyDataSetChanged();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
+
 
     public static void requestCallLog() {
         P2PManager.enqueueMessage(new Message(String.valueOf(Message.MessageType.COMMAND) + Message.MESSAGE_SEPARATOR + StaticValues.GET_CALL_LOG, Message.MessageType.COMMAND));
     }
 
-    public static void parseReceivedData(String data) {
+    public static void parseReceivedData(final String data) {
         //Todo notify data set changed
-        CallLogItem.getCallLogItems(data);
+        ;
+        try {
+            listView.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        listView.setAdapter(new CallLogAdapter(CallLogItem.getCallLogItems(data)));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    placeHolder.setVisibility(View.GONE);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
+
+    public static void parseReceivedData(final String data) {
+        //Todo notify data set changed
+        ;
+        try {
+            listView.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        listView.setAdapter(new CallLogAdapter(CallLogItem.getCallLogItems(data)));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    placeHolder.setVisibility(View.GONE);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static View placeHolder;
 
     public static String getFormatedData() {
         final StringBuilder builder = new StringBuilder();
@@ -127,13 +155,6 @@ public class CallLogFragment extends P2PFragment {
         requestCallLog();
     }
 
-    public static void notifyDataSetChanged() {
-        try {
-            context.runOnUiThread(notify);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -147,10 +168,8 @@ public class CallLogFragment extends P2PFragment {
         final View v = inflater.inflate(R.layout.text_message_fragment, null);
         placeholder = v.findViewById(R.id.placeholder);
         placeholder.setOnClickListener(placeHolderListener);
+        placeHolder = placeholder;
         listView = (ListView) v.findViewById(R.id.list);
-        adapter = new CallLogAdapter();
-        listView.setAdapter(adapter);
-        getCallLog(getActivity());
         return v;
     }
 
@@ -170,6 +189,11 @@ public class CallLogFragment extends P2PFragment {
     }
 
     private static class CallLogAdapter extends BaseAdapter {
+        final ArrayList<CallLogItem> callLogItems;
+
+        public CallLogAdapter(ArrayList<CallLogItem> callLogItems) {
+            this.callLogItems = callLogItems;
+        }
 
         @Override
         public int getCount() {
@@ -203,7 +227,7 @@ public class CallLogFragment extends P2PFragment {
             }
 
             final CallLogItem item = callLogItems.get(position);
-            holder.duration.setText(String.valueOf(item.duration));
+            holder.duration.setText(String.valueOf(item.duration) + "seconds");
             holder.type.setText(item.type);
             holder.date.setText(item.getDate());
             holder.from_to.setText(item.number);

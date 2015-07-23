@@ -1,11 +1,11 @@
 package tbs.fakehackerv3.custom_views;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.P2PManager;
@@ -18,7 +18,6 @@ public class DisconnectedButton extends FrameLayout {
     private static final android.animation.ValueAnimator animator = android.animation.ValueAnimator.ofFloat(0, 1);
     private static final DecelerateInterpolator interpolator = new DecelerateInterpolator();
     private static final LayoutParams param = new LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-    private static final RelativeLayout.LayoutParams contianerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.FILL_PARENT);
     private static float animatedValue;
     private static View view;
     private static final Runnable invalidator = new Runnable() {
@@ -26,10 +25,6 @@ public class DisconnectedButton extends FrameLayout {
         public void run() {
             try {
                 view.invalidate();
-                contianerParams.height = MainActivity.mainView.getHeight() - MainActivity.topPanel.getHeight() - Math.round(y - setY);
-                MainActivity.container.setLayoutParams(contianerParams);
-                MainActivity.container.invalidate();
-
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -139,6 +134,7 @@ public class DisconnectedButton extends FrameLayout {
         closeButton.setTextColor(0xffd01716);
         closeButton.setOnClickListener(clickListener);
         closeButton.setBackgroundResource(R.drawable.round_rect);
+        closeButton.setTypeFaceStyle(Typeface.BOLD);
         container = this;
         addView(view, param);
 

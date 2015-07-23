@@ -8,6 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="false"
+        android:divider="@color/grey"
+        android:dividerHeight="1dp"
         android:orientation="vertical" />
 
     <tbs.fakehackerv3.custom_views.HackerTextView

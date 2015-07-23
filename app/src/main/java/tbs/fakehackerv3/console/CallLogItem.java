@@ -5,8 +5,6 @@ import android.provider.CallLog;
 import java.util.ArrayList;
 import java.util.Date;
 
-import tbs.fakehackerv3.fragments.CallLogFragment;
-
 /**
  * Created by Michael on 7/22/2015.
  */
@@ -61,24 +59,17 @@ public class CallLogItem {
 
     }
 
-    public static void getCallLogItems(String callLogItems) {
+    public static ArrayList<CallLogItem> getCallLogItems(String callLogItems) {
         final String[] items = callLogItems.split(":/:/");
-        final ArrayList<CallLogItem> callLogItems1 = CallLogFragment.callLogItems;
-        try {
-            callLogItems1.clear();
-            callLogItems1.ensureCapacity(items.length);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        final ArrayList<CallLogItem> callLogItems1 = new ArrayList<CallLogItem>(items.length);
         for (String item : items) {
             try {
                 callLogItems1.add(new CallLogItem(item));
-                CallLogFragment.notifyDataSetChanged();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        return callLogItems1;
     }
 
     public String getDate() {

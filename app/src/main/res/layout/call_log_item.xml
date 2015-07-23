@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:padding="8dp"
-        android:text="Test"
         android:textSize="18sp" />
 
     <tbs.fakehackerv3.custom_views.HackerTextView
@@ -23,7 +22,6 @@
         android:paddingBottom="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:text="Test"
         android:textSize="16sp" />
 
     <tbs.fakehackerv3.custom_views.HackerTextView
@@ -36,7 +34,6 @@
         android:paddingBottom="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:text="Test"
         android:textSize="16sp" />
 
     <tbs.fakehackerv3.custom_views.HackerTextView
@@ -48,7 +45,6 @@
         android:paddingBottom="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:text="Test"
         android:textSize="16sp" />
 
 </RelativeLayout>

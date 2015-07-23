@@ -36,34 +36,37 @@ public class MessageReaderFragment extends P2PFragment {
             v.setVisibility(View.GONE);
         }
     };
-    public static final ArrayList<TextMessageItem> textMessageItems = new ArrayList<TextMessageItem>();
     private static final String[] columns = {"ADDRESS", "BODY", "DATE"};
     private static Activity context;
     private static ListView listView;
-    private static MessageReaderAdapter adapter;
-    private static final Runnable notify = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                adapter.notifyDataSetChanged();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
+    private static View placeHolder;
 
     public static void requestTexts() {
         P2PManager.enqueueMessage(new Message(String.valueOf(Message.MessageType.COMMAND) + Message.MESSAGE_SEPARATOR + StaticValues.GET_TEXTS, Message.MessageType.COMMAND));
     }
 
-    public static void parseReceivedData(String data) {
-        TextMessageItem.getTextMessageItems(data);
+    public static void parseReceivedData(final String data) {
+
+        try {
+            listView.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        listView.setAdapter(new MessageReaderAdapter(TextMessageItem.getTextMessageItems(data)));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    placeHolder.setVisibility(View.GONE);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static String getFormatedData() {
         final StringBuilder builder = new StringBuilder();
         final Cursor cursor = context.getContentResolver().query(Uri.parse("content://sms/inbox"), columns, null, null, null);
-        textMessageItems.ensureCapacity(cursor.getCount());
         if (cursor.moveToFirst()) { // must check the result to prevent exception
             do {
                 final String body = cursor.getString(cursor.getColumnIndex("BODY"));
@@ -84,10 +87,6 @@ public class MessageReaderFragment extends P2PFragment {
             // empty box, no SMS
         }
         return builder.toString();
-    }
-
-    public static void notifyDataSetChanged() {
-        context.runOnUiThread(notify);
     }
 
     public static final ArrayList<TextMessageItem> getSMS() {
@@ -131,9 +130,8 @@ public class MessageReaderFragment extends P2PFragment {
         final View v = inflater.inflate(R.layout.text_message_fragment, null);
         placeholder = v.findViewById(R.id.placeholder);
         placeholder.setOnClickListener(placeHolderListener);
+        placeHolder = placeholder;
         listView = (ListView) v.findViewById(R.id.list);
-        adapter = new MessageReaderAdapter();
-        listView.setAdapter(adapter);
         return v;
     }
 
@@ -152,6 +150,12 @@ public class MessageReaderFragment extends P2PFragment {
     }
 
     private static class MessageReaderAdapter extends BaseAdapter {
+        final ArrayList<TextMessageItem> textMessageItems;
+
+        public MessageReaderAdapter(ArrayList<TextMessageItem> textMessageItems) {
+
+            this.textMessageItems = textMessageItems;
+        }
 
         @Override
         public int getCount() {

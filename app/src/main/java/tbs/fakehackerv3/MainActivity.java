@@ -230,6 +230,7 @@ public class MainActivity extends FragmentActivity {
         topPanel = findViewById(R.id.top_panel);
         container = findViewById(R.id.container);
         mainViewManager = new MainViewManager(mainView);
+        mainView.setBackgroundColor(Tools.getBackgroundColor(context));
         setUpFragments();
 //        RemoteTools.record(10);
 //        showDialog();

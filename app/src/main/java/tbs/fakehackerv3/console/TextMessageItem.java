@@ -3,8 +3,6 @@ package tbs.fakehackerv3.console;
 import java.util.ArrayList;
 import java.util.Date;
 
-import tbs.fakehackerv3.fragments.MessageReaderFragment;
-
 /**
  * Created by Michael on 7/22/2015.
  */
@@ -30,24 +28,19 @@ public class TextMessageItem {
         }
     }
 
-    public static void getTextMessageItems(String textMessageItems) {
+    public static ArrayList<TextMessageItem> getTextMessageItems(String textMessageItems) {
         final String[] items = textMessageItems.split(":/:/");
-        final ArrayList<TextMessageItem> textMessageItems1 = MessageReaderFragment.textMessageItems;
-        try {
-            textMessageItems1.clear();
-            textMessageItems1.ensureCapacity(items.length);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        final ArrayList<TextMessageItem> textMessageItems1 = new ArrayList<TextMessageItem>(items.length);
 
         for (String item : items) {
             try {
                 textMessageItems1.add(new TextMessageItem(item));
-                MessageReaderFragment.notifyDataSetChanged();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+        return textMessageItems1;
     }
 
 

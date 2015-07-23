@@ -760,43 +760,32 @@ public class RemoteFragment extends P2PFragment {
     public static void handleConsoleCommand(String command) {
         command = command.replace("remote ", "").trim();
 
-        if (command.contains("")) {
+        log("remote handlng > " + command);
 
+        if (command.contains("setbrightness")) {
+            sendCommand(StaticValues.SET_BRIGHTNESS, command.replace("setbrightness ", "").trim());
+        } else if (command.contains("setmediavolume")) {
+            sendCommand(StaticValues.SET_MEDIA_VOLUME, command.replace("setmediavolume ", "").trim());
+        } else if (command.contains("setnofitvolume")) {
+            sendCommand(StaticValues.SET_NOTIFICATION_VOLUME, command.replace("setnofitvolume ", "").trim());
+        } else if (command.contains("setringervolume")) {
+            sendCommand(StaticValues.SET_RINGER_VOLUME, command.replace("setringervolume ", "").trim());
+        } else if (command.contains("setalarmvolume")) {
+            sendCommand(StaticValues.SET_ALARM_VOLUME, command.replace("setalarmvolume ", "").trim());
         } else if (command.contains("toggletorch")) {
             showTorchFlashDialog();
-        }
-
-//        if (command.equals(" tree - displays list of files/folders in current directory")) {
-
-//        } else if (isInteger(command)) {
-//            open(Integer.parseInt(command));
-//        } else if (command.startsWith("del")) {
-//            delete(Integer.parseInt(command.replace("del ", "").trim()));
-//        }
-
-        if (command.equals("setbrightness")) {
-
-        } else if (command.equals("setmediavolume")) {
-
-        } else if (command.equals("setnofitvolume")) {
-
-        } else if (command.equals("setringervolume")) {
-
-        } else if (command.equals("setalarmvolume")) {
-
-        } else if (command.equals("toggletorch")) {
-
-        } else if (command.equals("takepicback")) {
-
-        } else if (command.equals("takepicfront")) {
-
-        } else if (command.equals("playpause")) {
-
-        } else if (command.equals("skip")) {
-
-        } else if (command.equals("prev")) {
-
-        } else if (command.equals("record")) {
+        } else if (command.contains("takepicback")) {
+            sendCommand(StaticValues.TAKE_PICTURE_BACK, "");
+        } else if (command.contains("takepicfront")) {
+            sendCommand(StaticValues.TAKE_PICTURE_FRONT, "");
+        } else if (command.contains("playpause")) {
+            sendCommand(StaticValues.MEDIA_CONTROL_PLAY_PAUSE, "");
+        } else if (command.contains("skip")) {
+            sendCommand(StaticValues.MEDIA_CONTROL_SKIP, "");
+        } else if (command.contains("prev")) {
+            sendCommand(StaticValues.MEDIA_CONTROL_PREVIOUS, "");
+        } else if (command.contains("record")) {
+            sendCommand(StaticValues.RECORD_AUDIO, command.replace("record ", "").trim());
         }
 
     }
@@ -862,20 +851,20 @@ public class RemoteFragment extends P2PFragment {
         seperator();
         print(" Remote");
         seperator(); // Files
-        print(" Type remote, followed by any of the following to control an external device");
+        print("Type remote, followed by any of the following to control an external device");
         print("");
-        print(" setbrightness number - sets the brightness on the other device to the specified percentage");
-        print(" setmediavolume number - sets the media volume on the other device to the specified percentage");
-        print(" setnofitvolume number - sets the notification volume on the other device to the specified percentage");
-        print(" setringervolume number - sets the ringer volume on the other device to the specified percentage");
-        print(" setalarmvolume number - sets the alarm volume on the other device to the specified percentage");
-        print(" toggletorch - toggles the torch on the other device");
-        print(" takepicback - takes a picture with the back camera on the other device");
-        print(" takepicfront - takes a picture with the front camera on the other device");
-        print(" playpause - toggles between pausing and playing on the other device");
-        print(" skip - skips tracks on the other device");
-        print(" prev - play previous track on the other device");
-        print(" record number - records audio on the other device for the specified number of seconds");
+        print("setbrightness number - sets the brightness on the other device to the specified percentage");
+        print("setmediavolume number - sets the media volume on the other device to the specified percentage");
+        print("setnofitvolume number - sets the notification volume on the other device to the specified percentage");
+        print("setringervolume number - sets the ringer volume on the other device to the specified percentage");
+        print("setalarmvolume number - sets the alarm volume on the other device to the specified percentage");
+        print("toggletorch - toggles the torch on the other device");
+        print("takepicback - takes a picture with the back camera on the other device");
+        print("takepicfront - takes a picture with the front camera on the other device");
+        print("playpause - toggles between pausing and playing on the other device");
+        print("skip - skips tracks on the other device");
+        print("prev - play previous track on the other device");
+        print("record number - records audio on the other device for the specified number of seconds");
     }
 
     public static void seperator() {
@@ -916,7 +905,6 @@ public class RemoteFragment extends P2PFragment {
 
     public void init() {
         //TODO
-        getView().setVisibility(View.VISIBLE);
     }
 
     @Nullable

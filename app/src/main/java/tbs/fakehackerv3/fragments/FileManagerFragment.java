@@ -354,8 +354,6 @@ public class FileManagerFragment extends P2PFragment {
                 Collections.addAll(tmpTree, files);
                 sortFiles(tmpTree);
 
-                printTree();
-
                 switch (mikeFileOperationType) {
                     case EXTERNAL:
                         builder.append(new MikeFile(dir.getParent(), dir.getParentFile().length()).toString());
@@ -372,6 +370,7 @@ public class FileManagerFragment extends P2PFragment {
                         }
                         return builder.toString();
                     case LOCAL:
+                        printTree();
                         ((LocalFileManager) fragments[0]).parseLocalFile(tmpTree);
                         break;
                 }
@@ -387,6 +386,8 @@ public class FileManagerFragment extends P2PFragment {
                         builder.append(new MikeFile(dir.getParent(), dir.getParentFile().length()).toString());
                         return builder.toString();
                     case LOCAL:
+                        tmpTree.clear();
+                        printTree();
                         ((LocalFileManager) fragments[0]).parseEmptyFolder(dir);
                         break;
                 }
@@ -416,8 +417,6 @@ public class FileManagerFragment extends P2PFragment {
     }
 
     private static void openFolder(File file, MikeFileOperationType mikeFileOperationType) {
-
-        //Todo do this for both local and external files
         showTree(file, mikeFileOperationType);
     }
 
@@ -904,6 +903,7 @@ public class FileManagerFragment extends P2PFragment {
     }
 
     public static void handleConsoleCommand(String command) {
+        log("handlng > " + command);
         command = command.replace("filemanager ", "").trim();
 
         if (command.equals(" tree - displays list of files/folders in current directory")) {
@@ -955,17 +955,17 @@ public class FileManagerFragment extends P2PFragment {
         seperator();
         print(" FileManager");
         seperator(); // Files
-        print(" Type filemanager, followed by any of the following to manage files");
+        print("Type filemanager, followed by any of the following to manage files");
         print("");
 
-        print(" tree - displays list of files/folders in current directory");
-        print(" number - enter a number to open a file or directory that corresponds with it in the tree");
-        print(" del number - deletes the file that corresponds with num in the tree");
-        print(" mkdir name - creates a folder in the current directory");
-        print(" mkfile name.extension - creates a file in the current directory");
-        print(" copy number - copies the corresponding file, then waits for the paste command");
-        print(" move number - moves the corresponding file, then waits for the paste command");
-        print(" paste - pastes the copied/moved file in the current directory");
+        print("tree - displays list of files/folders in current directory");
+        print("number - enter a number to open a file or directory that corresponds with it in the tree");
+        print("del number - deletes the file that corresponds with num in the tree");
+        print("mkdir name - creates a folder in the current directory");
+        print("mkfile name.extension - creates a file in the current directory");
+        print("copy number - copies the corresponding file, then waits for the paste command");
+        print("move number - moves the corresponding file, then waits for the paste command");
+        print("paste - pastes the copied/moved file in the current directory");
     }
 
     public static void seperator() {

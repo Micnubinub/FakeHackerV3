@@ -40,7 +40,7 @@ public class HackerTextView extends TextView {
         }
         setTypeface(font);
         setTextColor(Tools.getTextColor(context));
-//        setBackgroundColor(Tools.getBackgroundColor(context));
+//
     }
 
     public void setTypeFaceStyle(int typeFace) {

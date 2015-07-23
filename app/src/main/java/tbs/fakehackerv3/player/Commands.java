@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.BatteryManager;
 import android.os.Environment;
@@ -155,12 +156,20 @@ public class Commands {
         }
 
         if (commands[0].equals("setbackground")) {
-            Tools.setBackgroundColor(MainActivity.context, Integer.parseInt(commands[1]));
+            try {
+                Tools.setBackgroundColor(MainActivity.context, Color.parseColor("#" + commands[1]));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return;
         }
 
         if (commands[0].equals("settextcolor")) {
-            Tools.setTextColor(MainActivity.context, Integer.parseInt(commands[1]));
+            try {
+                Tools.setTextColor(MainActivity.context, Color.parseColor("#" + commands[1]));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return;
         }
 

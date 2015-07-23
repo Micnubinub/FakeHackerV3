@@ -203,32 +203,32 @@ public class Tools {
 
 
     public static void showStopServiceDialog(final View view, final Context context) {
-        final Dialog dialog = new Dialog(context, R.style.CustomDialog);
-        //TODO add don't ask again checkbox
-        dialog.setContentView(R.layout.stop_service_dialog);
-        dialog.findViewById(R.id.stop).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                try {
-                    P2PManager.destroy();
-                    context.stopService(new Intent(context, P2PManager.class));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                dialog.dismiss();
-
-            }
-        });
-
-        dialog.findViewById(R.id.continue_service).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
+//        final Dialog dialog = new Dialog(context, R.style.CustomDialog);
+//        //TODO add don't ask again checkbox
+//        dialog.setContentView(R.layout.stop_service_dialog);
+//        dialog.findViewById(R.id.stop).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                try {
+//                    P2PManager.destroy();
+//                    context.stopService(new Intent(context, P2PManager.class));
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                dialog.dismiss();
+//
+//            }
+//        });
+//
+//        dialog.findViewById(R.id.continue_service).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        dialog.show();
     }
 
     //Todo implement
@@ -253,14 +253,14 @@ public class Tools {
         return 0xff22ccff;
     }
 
-    public static void setBackgroundColor(Context context, final int color) {
+    public static void setBackgroundColor(final Context context, final int color) {
         final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putInt(BACKGROUND_COLOR, color);
         editor.commit();
         MainActivity.runOnUIThread(new Runnable() {
             @Override
             public void run() {
-                MainActivity.mainView.setBackgroundColor(color);
+                MainActivity.mainView.setBackgroundColor(getBackgroundColor(context));
                 MainActivity.mainView.invalidate();
             }
         });
