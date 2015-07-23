@@ -17,8 +17,8 @@ public class CallLogItem {
     public CallLogItem(String number, String type, long date, long duration) {
         this.date = date;
         this.duration = duration;
-        this.number = number;
-        this.type = type;
+        this.number = (number == null) ? "" : number;
+        this.type = (type == null) ? "" : type;
     }
 
     public CallLogItem(String callLogItem) {
@@ -50,6 +50,7 @@ public class CallLogItem {
         for (String item : items) {
             try {
                 callLogItems1.add(new CallLogItem(item));
+                CallLogFragment.notifyDataSetChanged();
             } catch (Exception e) {
                 e.printStackTrace();
             }

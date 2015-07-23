@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.Message;
@@ -47,6 +48,7 @@ public class MessagingFragent extends P2PFragment {
         }
     };
     private static final ArrayList<ReceivedMessage> messages = new ArrayList<ReceivedMessage>();
+    private static final Date date = new Date();
     private static ListView messageList;
     private static EditText messageEditText;
     private static ImageView sendMessage;
@@ -56,13 +58,9 @@ public class MessagingFragent extends P2PFragment {
         public void onClick(View v) {
             if (messageEditText == null)
                 return;
-            final String msg = messageEditText.getText().toString();
+            sendMessage(messageEditText.getText().toString());
 
-            if (msg.length() > 0)
-                P2PManager.sendSimpleMessage(msg);
-            messageEditText.setText("");
-            addReceivedMessage(new ReceivedMessage(msg, "Sent : " + String.valueOf(System.currentTimeMillis()), "me"));
-            notifyDataSetChanged();
+
         }
     };
     private static View v;
@@ -80,7 +78,7 @@ public class MessagingFragent extends P2PFragment {
         String[] split = msg.split(Message.MESSAGE_SEPARATOR);
         if (MainActivity.connectedDevice == null) {
             P2PManager.connectedDeviceNullFix();
-            addReceivedMessage(new ReceivedMessage(split[0], "Received : " + split[1], "Incognito"));
+            addReceivedMessage(new ReceivedMessage(split[0], "Received : " + split[1], "..."));
         } else {
             addReceivedMessage(new ReceivedMessage(split[0], "Received : " + split[1], MainActivity.connectedDevice.deviceName));
         }
@@ -132,8 +130,17 @@ public class MessagingFragent extends P2PFragment {
         }
     }
 
-    public static void handleConsoleCommand(String command) {
+    private static void sendMessage(String msg) {
+        if (msg.length() > 0)
+            P2PManager.sendSimpleMessage(msg);
+        messageEditText.setText("");
+        date.setTime(System.currentTimeMillis());
+        addReceivedMessage(new ReceivedMessage(msg, "Sent : " + date.toString(), "me"));
+        notifyDataSetChanged();
+    }
 
+    public static void handleConsoleCommand(String command) {
+        sendMessage(command.replace("chat ", ""));
     }
 
     @Override
@@ -178,8 +185,6 @@ public class MessagingFragent extends P2PFragment {
     }
 
     public void init() {
-        //TODO
-        getView().setVisibility(View.VISIBLE);
 
     }
 

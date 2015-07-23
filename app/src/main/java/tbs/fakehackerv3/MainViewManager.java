@@ -11,7 +11,6 @@ import tbs.fakehackerv3.custom_views.HackerTextView;
  * Created by Michael on 6/13/2015.
  */
 public class MainViewManager {
-    public static FAB fab;
     private static View mainView;
     private static Context context;
     private static HackerTextView connectedToStaticText, connectedToDevice;

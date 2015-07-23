@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -31,12 +32,25 @@ public class MessageReaderFragment extends P2PFragment {
                 MainActivity.toast("click the refresh button on both devices to connect");
                 return;
             }
+            requestTexts();
             v.setVisibility(View.GONE);
         }
     };
-    private static final String[] columns = {"address", "person", "body", "date"};
-    public static ArrayList<TextMessageItem> textMessageItems;
+    public static final ArrayList<TextMessageItem> textMessageItems = new ArrayList<TextMessageItem>();
+    private static final String[] columns = {"ADDRESS", "PERSON", "BODY", "DATE"};
     private static Activity context;
+    private static ListView listView;
+    private static MessageReaderAdapter adapter;
+    private static final Runnable notify = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                adapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     public static void requestTexts() {
         P2PManager.enqueueMessage(new Message(String.valueOf(Message.MessageType.COMMAND) + Message.MESSAGE_SEPARATOR + StaticValues.GET_TEXTS, Message.MessageType.COMMAND));
@@ -52,10 +66,10 @@ public class MessageReaderFragment extends P2PFragment {
         textMessageItems.ensureCapacity(cursor.getCount());
         if (cursor.moveToFirst()) { // must check the result to prevent exception
             do {
-                final String body = context.getString(cursor.getColumnIndex("body"));
-                final String address = context.getString(cursor.getColumnIndex("address"));
-                final String person = context.getString(cursor.getColumnIndex("person"));
-                final String date = context.getString(cursor.getColumnIndex("date"));
+                final String body = cursor.getString(cursor.getColumnIndex("BODY"));
+                final String address = cursor.getString(cursor.getColumnIndex("ADDRESS"));
+                final String person = cursor.getString(cursor.getColumnIndex("PERSON"));
+                final String date = cursor.getString(cursor.getColumnIndex("DATE"));
 
                 builder.append(((person == null) || (person.length() < 1)) ? address : person);
                 builder.append("//");
@@ -71,6 +85,10 @@ public class MessageReaderFragment extends P2PFragment {
             // empty box, no SMS
         }
         return builder.toString();
+    }
+
+    public static void notifyDataSetChanged() {
+        context.runOnUiThread(notify);
     }
 
     public static final ArrayList<TextMessageItem> getSMS() {
@@ -95,7 +113,11 @@ public class MessageReaderFragment extends P2PFragment {
     }
 
     public static void handleConsoleCommand(String command) {
-
+        if (!P2PManager.isActive()) {
+            MainActivity.toast("click the refresh button on both devices to connect");
+            return;
+        }
+        requestTexts();
     }
 
     @Override
@@ -107,9 +129,12 @@ public class MessageReaderFragment extends P2PFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.file_manager_fragment, null);
+        final View v = inflater.inflate(R.layout.text_message_fragment, null);
         placeholder = v.findViewById(R.id.placeholder);
         placeholder.setOnClickListener(placeHolderListener);
+        listView = (ListView) v.findViewById(R.id.list);
+        adapter = new MessageReaderAdapter();
+        listView.setAdapter(adapter);
         return v;
     }
 
@@ -125,12 +150,6 @@ public class MessageReaderFragment extends P2PFragment {
 
     @Override
     public void onP2PConnected() {
-        placeholder.post(new Runnable() {
-            @Override
-            public void run() {
-                placeholder.setVisibility(View.GONE);
-            }
-        });
     }
 
     private static class MessageReaderAdapter extends BaseAdapter {
@@ -155,7 +174,7 @@ public class MessageReaderFragment extends P2PFragment {
             final ViewHolder holder;
 
             if (convertView == null) {
-                convertView = View.inflate(context, R.layout.disconnected_button, null);
+                convertView = View.inflate(context, R.layout.text_message_item, null);
                 final TextView sent_by = (TextView) convertView.findViewById(R.id.sent_by);
                 final TextView body = (TextView) convertView.findViewById(R.id.body);
                 final TextView date = (TextView) convertView.findViewById(R.id.date);

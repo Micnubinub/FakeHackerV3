@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.Toast;
 
 import tbs.fakehackerv3.custom_views.DisconnectedButton;
@@ -39,6 +40,7 @@ public class MainActivity extends FragmentActivity {
     //Fragments
     public static Settings settings;
     public static boolean connected;
+    public static View mainView;
     public static WifiP2pGroup currentGroup;
     public static SurfaceView layout;
     private static DisconnectedButton disconnectedButton;
@@ -224,7 +226,8 @@ public class MainActivity extends FragmentActivity {
         p2PManager = P2PManager.getP2PManager(this, p2pListener);
         setContentView(R.layout.main_view);
         layout = (SurfaceView) findViewById(R.id.holder);
-        mainViewManager = new MainViewManager(findViewById(R.id.main_view));
+        mainView = findViewById(R.id.main_view);
+        mainViewManager = new MainViewManager(mainView);
         setUpFragments();
 //        RemoteTools.record(10);
 //        showDialog();
@@ -274,7 +277,7 @@ public class MainActivity extends FragmentActivity {
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         pager = (ViewPager) findViewById(R.id.view_pager);
-        pager.setOffscreenPageLimit(4);
+        pager.setOffscreenPageLimit(7);
 
         pagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
 

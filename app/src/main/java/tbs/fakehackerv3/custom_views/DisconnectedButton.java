@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
+import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
 
@@ -23,6 +24,8 @@ public class DisconnectedButton extends FrameLayout {
         public void run() {
             try {
                 view.invalidate();
+                MainActivity.mainView.requestLayout();
+                MainActivity.mainView.invalidate();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -30,7 +33,7 @@ public class DisconnectedButton extends FrameLayout {
     };
     private static AnimationType animationType;
     private static FrameLayout container;
-    private static int viewHeight;
+    private static int viewHeight, y;
     private static final android.animation.ValueAnimator.AnimatorUpdateListener updateListener = new android.animation.ValueAnimator.AnimatorUpdateListener() {
         @Override
         public void onAnimationUpdate(android.animation.ValueAnimator animation) {
@@ -108,10 +111,10 @@ public class DisconnectedButton extends FrameLayout {
     private static void update() {
         switch (animationType) {
             case IN:
-                view.setY((viewHeight * animatedValue) - viewHeight);
+                container.setY(y + (viewHeight - (viewHeight * animatedValue)));
                 break;
             case OUT:
-                view.setY(-(viewHeight * animatedValue));
+                container.setY(y + (viewHeight * animatedValue));
                 break;
         }
         if (view != null)
@@ -131,7 +134,7 @@ public class DisconnectedButton extends FrameLayout {
         addView(view, param);
 
         animator.setInterpolator(interpolator);
-        animator.setDuration(1500);
+        animator.setDuration(750);
         animator.addUpdateListener(updateListener);
     }
 
@@ -139,6 +142,7 @@ public class DisconnectedButton extends FrameLayout {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         viewHeight = h;
+        y = MainActivity.mainView.getHeight() - h;
     }
 
     private enum AnimationType {

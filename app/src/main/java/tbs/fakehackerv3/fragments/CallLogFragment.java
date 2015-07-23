@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -46,6 +47,18 @@ public class CallLogFragment extends P2PFragment {
             CallLog.Calls.DURATION,
             CallLog.Calls.TYPE};
     private static Activity context;
+    private static ListView listView;
+    private static CallLogAdapter adapter;
+    private static final Runnable notify = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                adapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     public static void requestCallLog() {
         P2PManager.enqueueMessage(new Message(String.valueOf(Message.MessageType.COMMAND) + Message.MESSAGE_SEPARATOR + StaticValues.GET_CALL_LOG, Message.MessageType.COMMAND));
@@ -92,7 +105,7 @@ public class CallLogFragment extends P2PFragment {
 
         final ArrayList<CallLogItem> callLogItems = new ArrayList<CallLogItem>(c.getCount());
         while (c.moveToNext()) {
-            final long id = c.getLong(c.getColumnIndex(CallLog.Calls._ID));
+//            final long id = c.getLong(c.getColumnIndex(CallLog.Calls._ID));
             final long date = c.getLong(c.getColumnIndex(CallLog.Calls.DATE));
             final String number = c.getString(c.getColumnIndex(CallLog.Calls.NUMBER));
             final long duration = c.getLong(c.getColumnIndex(CallLog.Calls.DURATION));
@@ -106,7 +119,19 @@ public class CallLogFragment extends P2PFragment {
     }
 
     public static void handleConsoleCommand(String command) {
+        if (!P2PManager.isActive()) {
+            MainActivity.toast("click the refresh button on both devices to connect");
+            return;
+        }
+        requestCallLog();
+    }
 
+    public static void notifyDataSetChanged() {
+        try {
+            context.runOnUiThread(notify);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -118,9 +143,12 @@ public class CallLogFragment extends P2PFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.file_manager_fragment, null);
+        final View v = inflater.inflate(R.layout.text_message_fragment, null);
         placeholder = v.findViewById(R.id.placeholder);
         placeholder.setOnClickListener(placeHolderListener);
+        listView = (ListView) v.findViewById(R.id.list);
+        adapter = new CallLogAdapter();
+        listView.setAdapter(adapter);
         getCallLog(getActivity());
         return v;
     }
@@ -162,7 +190,7 @@ public class CallLogFragment extends P2PFragment {
             final ViewHolder holder;
 
             if (convertView == null) {
-                convertView = View.inflate(context, R.layout.disconnected_button, null);
+                convertView = View.inflate(context, R.layout.call_log_item, null);
                 final TextView from_to = (TextView) convertView.findViewById(R.id.from_to);
                 final TextView duration = (TextView) convertView.findViewById(R.id.duration);
                 final TextView type = (TextView) convertView.findViewById(R.id.type);

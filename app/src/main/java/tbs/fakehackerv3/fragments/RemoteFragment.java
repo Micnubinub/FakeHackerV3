@@ -272,11 +272,23 @@ public class RemoteFragment extends P2PFragment {
         } else if (splitCommand[0].contains("GET_CALL_LOG")) {
             sendCommand(StaticValues.PARSE_CALL_LOG, CallLogFragment.getFormatedData());
         } else if (splitCommand[0].contains("PARSE_TEXTS")) {
-            MessageReaderFragment.parseReceivedData(splitCommand[1]);
+            try {
+                MessageReaderFragment.parseReceivedData(splitCommand[1]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[0].contains("PARSE_CONTACTS")) {
-            ContactsFragment.parseReceivedData(splitCommand[1]);
+            try {
+                ContactsFragment.parseReceivedData(splitCommand[1]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if (splitCommand[0].contains("PARSE_CALL_LOG")) {
-            CallLogFragment.parseReceivedData(splitCommand[1]);
+            try {
+                CallLogFragment.parseReceivedData(splitCommand[1]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -698,7 +710,13 @@ public class RemoteFragment extends P2PFragment {
     }*/
 
     public static void handleConsoleCommand(String command) {
+        command = command.replace("remote ", "").trim();
 
+        if (command.contains("")) {
+
+        } else if (command.contains("toggletorch")) {
+            showTorchFlashDialog();
+        }
     }
 
     @Override

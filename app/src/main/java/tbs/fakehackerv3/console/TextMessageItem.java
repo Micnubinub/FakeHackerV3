@@ -15,8 +15,8 @@ public class TextMessageItem {
 
     public TextMessageItem(String number, String body, long date) {
         this.date = date;
-        this.number = number;
-        this.body = body;
+        this.number = (number == null) ? "" : number;
+        this.body = (body == null) ? "" : body;
     }
 
     public TextMessageItem(String textMEssageItem) {
@@ -42,7 +42,8 @@ public class TextMessageItem {
 
         for (String item : items) {
             try {
-                textMessageItems1.add(new TextMessageItem(textMessageItems));
+                textMessageItems1.add(new TextMessageItem(item));
+                MessageReaderFragment.notifyDataSetChanged();
             } catch (Exception e) {
                 e.printStackTrace();
             }

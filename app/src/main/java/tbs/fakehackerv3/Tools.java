@@ -253,16 +253,24 @@ public class Tools {
         return 0xff22ccff;
     }
 
-    public static void setBackgroundColor(Context context, int color) {
+    public static void setBackgroundColor(Context context, final int color) {
         final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putInt(BACKGROUND_COLOR, color);
         editor.commit();
+        MainActivity.runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.mainView.setBackgroundColor(color);
+                MainActivity.mainView.invalidate();
+            }
+        });
     }
 
     public static void setTextColor(Context context, int color) {
         final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putInt(TEXT_COLOR, color);
         editor.commit();
+        MainActivity.toast("Settings will be applied when the app restarts");
     }
 
     private static void log(String msg) {

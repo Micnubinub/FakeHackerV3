@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
+import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.net.wifi.WifiManager;
 import android.os.Environment;
@@ -433,6 +434,9 @@ public class RemoteTools {
                 @Override
                 public void run() {
                     Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_MUSIC, Math.round((percent / 100f) * 15));
+                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
+                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                    audio.setStreamVolume(AudioManager.STREAM_MUSIC, Math.round((percent / 100f) * maxVolume), 0);
                 }
             });
         } catch (Exception e) {
@@ -447,6 +451,9 @@ public class RemoteTools {
                 @Override
                 public void run() {
                     Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_ALARM, Math.round((percent / 100f) * 15));
+                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
+                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_ALARM);
+                    audio.setStreamVolume(AudioManager.STREAM_ALARM, Math.round((percent / 100f) * maxVolume), 0);
                 }
             });
         } catch (Exception e) {
@@ -461,6 +468,9 @@ public class RemoteTools {
                 @Override
                 public void run() {
                     Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_NOTIFICATION, Math.round((percent / 100f) * 15));
+                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
+                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
+                    audio.setStreamVolume(AudioManager.STREAM_NOTIFICATION, Math.round((percent / 100f) * maxVolume), 0);
                 }
             });
         } catch (Exception e) {
@@ -475,6 +485,9 @@ public class RemoteTools {
                 @Override
                 public void run() {
                     Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_RING, ((int) ((percent / 100f) * 15)));
+                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
+                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_RING);
+                    audio.setStreamVolume(AudioManager.STREAM_RING, Math.round((percent / 100f) * maxVolume), 0);
                 }
             });
         } catch (Exception e) {

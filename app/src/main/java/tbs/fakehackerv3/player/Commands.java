@@ -175,13 +175,12 @@ public class Commands {
 */
 
         if (userCmd.equals("totalspace")) {
-            //Todo print("Total space : " + Tools.fileSize(FileManagerFragment.getTotalSpace(Environment.getExternalStorageDirectory().getPath())));
-            print("");
+            print("Total space : " + Tools.getFileSize(FileManagerFragment.getTotalSpace(Environment.getExternalStorageDirectory().getPath())));
             return;
         }
 
         if (userCmd.equals("freespace")) {
-            //Todo  print("Free space :" + Tools.fileSize(FileManagerFragment.getFreeSpace(Environment.getExternalStorageDirectory().getPath())));
+            print("Free space :" + Tools.getFileSize(FileManagerFragment.getFreeSpace(Environment.getExternalStorageDirectory().getPath())));
             print("");
             return;
         }
@@ -626,8 +625,8 @@ public class Commands {
         seperator(); // Bluetooth
         print(" there are many special commands that you will have to discover yourself :)");
 
-        "setbackground html color code";
-        "settextcolor html color code";
+//        "setbackground html color code";
+//        "settextcolor html color code";
 
 
     }

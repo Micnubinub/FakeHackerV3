@@ -24,6 +24,21 @@ public class LogFragment extends Fragment {
     private static FragmentActivity context;
     private static LogAdapter adapter;
 
+    public static void log(final String string) {
+        if (context != null)
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    logs.add(string);
+                    try {
+                        adapter.notifyDataSetChanged();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,20 +84,6 @@ public class LogFragment extends Fragment {
             holder.textView.setText(logs.get(position));
             return convertView;
         }
-    }
-
-    public static void log(final String string) {
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                logs.add(string);
-                try {
-                    adapter.notifyDataSetChanged();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     public static class ViewHolder {
