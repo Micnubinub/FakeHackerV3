@@ -719,11 +719,8 @@ public class RemoteFragment extends P2PFragment {
         }
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-        context = getActivity();
+    private static void print(String string) {
+        ConsoleFragment.addConsoleItem(string);
     }
 
 
@@ -779,43 +776,36 @@ public class RemoteFragment extends P2PFragment {
         dialog.show();
     }*/
 
-    public void init() {
-        //TODO
-        getView().setVisibility(View.VISIBLE);
+    public static void printHelp() {
+        seperator();
+        print(" Files and Directories");
+        seperator(); // Files
+        print(" NOTE: when specifying a name, you may also specify a path along with it");
+        print("");
+        print(" tree - displays list of files/folders in current directory");
+        print(" num - enter a num to open a file or directory that corresponds with it in the tree");
+        print(" if the number corresponds to a file, a file can be shared.");
+        print(" freespace - shows space available in the current partition");
+        print(" totalspace - shows the total space of the current partition");
+        print(" showdetails file_path/num - shows information on specified file");
+        print(" del num - deletes the file that corresponds with num in the tree");
+        print(" mkdir nm - creates a folder with the name nm in the root directory of the ExternalStorage");
+        print(" mkfile nm.extension - creates a file with the name nm in the root directory of the ExternalStorage");
+        print(" you can also specify a filepath when creating a file or directory.");
+        print(" back - opens current directories parent");
+        print(" open name/directory - opens folder at specified directory");
+        print(" showdetails name/num - shows details about specified file");
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //Todo
-        final View v = View.inflate(getActivity(), R.layout.remote, null);
-
-        v.findViewById(R.id.flash).setOnClickListener(listener);
-        v.findViewById(R.id.bluetooth).setOnClickListener(listener);
-        v.findViewById(R.id.take_pic_back).setOnClickListener(listener);
-        v.findViewById(R.id.take_pic_front).setOnClickListener(listener);
-        v.findViewById(R.id.media_control).setOnClickListener(listener);
-        v.findViewById(R.id.brightness).setOnClickListener(listener);
-//        v.findViewById(R.id.screen_timeout).setOnClickListener(listener);
-        v.findViewById(R.id.alarm_volume).setOnClickListener(listener);
-        v.findViewById(R.id.media_volume).setOnClickListener(listener);
-        v.findViewById(R.id.notification_volume).setOnClickListener(listener);
-        v.findViewById(R.id.ringer_volume).setOnClickListener(listener);
-
-        placeholder = v.findViewById(R.id.placeholder);
-        placeholder.setOnClickListener(placeHolderListener);
-
-        return v;
+    public static void seperator() {
+        ConsoleFragment.addConsoleItem("--------------------------------------------------------------------------------------------------");
     }
 
     @Override
-    public void onP2PDisconnected() {
-        placeholder.post(new Runnable() {
-            @Override
-            public void run() {
-                placeholder.setVisibility(View.VISIBLE);
-            }
-        });
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        context = getActivity();
     }
  /* Todo  private static void showSilentModeDialog() {
         final Dialog dialog = getDialog();
@@ -843,24 +833,33 @@ public class RemoteFragment extends P2PFragment {
     }
 */
 
-    @Override
-    public void onP2PConnected() {
-        init();
-        placeholder.post(new Runnable() {
-            @Override
-            public void run() {
-                placeholder.setVisibility(View.GONE);
-            }
-        });
+    public void init() {
+        //TODO
+        getView().setVisibility(View.VISIBLE);
     }
 
-    private static class App {
-        public final String name, address;
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //Todo
+        final View v = View.inflate(getActivity(), R.layout.remote, null);
 
-        public App(String name, String address) {
-            this.name = name;
-            this.address = address;
-        }
+        v.findViewById(R.id.flash).setOnClickListener(listener);
+        v.findViewById(R.id.bluetooth).setOnClickListener(listener);
+        v.findViewById(R.id.take_pic_back).setOnClickListener(listener);
+        v.findViewById(R.id.take_pic_front).setOnClickListener(listener);
+        v.findViewById(R.id.media_control).setOnClickListener(listener);
+        v.findViewById(R.id.brightness).setOnClickListener(listener);
+//        v.findViewById(R.id.screen_timeout).setOnClickListener(listener);
+        v.findViewById(R.id.alarm_volume).setOnClickListener(listener);
+        v.findViewById(R.id.media_volume).setOnClickListener(listener);
+        v.findViewById(R.id.notification_volume).setOnClickListener(listener);
+        v.findViewById(R.id.ringer_volume).setOnClickListener(listener);
+
+        placeholder = v.findViewById(R.id.placeholder);
+        placeholder.setOnClickListener(placeHolderListener);
+
+        return v;
     }
 
 //    private static Dialog getScheduledAds() {
@@ -975,6 +974,36 @@ public class RemoteFragment extends P2PFragment {
 //        minutes.addChangingListener(wheelListener);
 //        return dialog;
 //    }
+
+    @Override
+    public void onP2PDisconnected() {
+        placeholder.post(new Runnable() {
+            @Override
+            public void run() {
+                placeholder.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void onP2PConnected() {
+        init();
+        placeholder.post(new Runnable() {
+            @Override
+            public void run() {
+                placeholder.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private static class App {
+        public final String name, address;
+
+        public App(String name, String address) {
+            this.name = name;
+            this.address = address;
+        }
+    }
 
     private static class ReceivedAppAdapter extends BaseAdapter {
         private final App[] apps;

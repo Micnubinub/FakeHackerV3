@@ -82,6 +82,7 @@ public class CallLogFragment extends P2PFragment {
                 final String number = c.getString(c.getColumnIndex(CallLog.Calls.NUMBER));
                 final long duration = c.getLong(c.getColumnIndex(CallLog.Calls.DURATION));
                 final String type = c.getString(c.getColumnIndex(CallLog.Calls.TYPE));
+
                 builder.append(date);
                 builder.append("//");
                 builder.append(number);

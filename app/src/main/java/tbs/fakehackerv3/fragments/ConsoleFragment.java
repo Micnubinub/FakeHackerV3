@@ -144,14 +144,8 @@ public class ConsoleFragment extends Fragment {
                     switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
-                            // consoleEntries.add(new String(
-                            // localSystem.location.name
-                            // + " > "
-                            // + userCommand.getText()
-                            // .toString()));
                             commands.checkCommand(userCommand.getText().toString());
                             userCommand.setText("");
-
                             cl_adapter.notifyDataSetChanged();
                             return true;
                         default:
@@ -175,7 +169,6 @@ public class ConsoleFragment extends Fragment {
         consoleEntries.add(consoleItem);
         if (context != null)
             context.runOnUiThread(notifyConsoleList);
-
     }
 
     public static String getRandomHackerString() {
@@ -186,6 +179,10 @@ public class ConsoleFragment extends Fragment {
                 return randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)];
         } else
             return randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)] + " 0x" + Integer.toHexString(random.nextInt());
+    }
+
+    public static void notifyDataSetChanged() {
+        mainListView.post(notifyConsoleList);
     }
 
     @Nullable

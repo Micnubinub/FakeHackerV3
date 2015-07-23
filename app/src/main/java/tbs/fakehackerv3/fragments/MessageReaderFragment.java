@@ -37,7 +37,7 @@ public class MessageReaderFragment extends P2PFragment {
         }
     };
     public static final ArrayList<TextMessageItem> textMessageItems = new ArrayList<TextMessageItem>();
-    private static final String[] columns = {"ADDRESS", "PERSON", "BODY", "DATE"};
+    private static final String[] columns = {"ADDRESS", "BODY", "DATE"};
     private static Activity context;
     private static ListView listView;
     private static MessageReaderAdapter adapter;
@@ -68,10 +68,9 @@ public class MessageReaderFragment extends P2PFragment {
             do {
                 final String body = cursor.getString(cursor.getColumnIndex("BODY"));
                 final String address = cursor.getString(cursor.getColumnIndex("ADDRESS"));
-                final String person = cursor.getString(cursor.getColumnIndex("PERSON"));
                 final String date = cursor.getString(cursor.getColumnIndex("DATE"));
 
-                builder.append(((person == null) || (person.length() < 1)) ? address : person);
+                builder.append(address);
                 builder.append("//");
                 builder.append(body);
                 builder.append("//");

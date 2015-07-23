@@ -1,5 +1,7 @@
 package tbs.fakehackerv3.console;
 
+import android.provider.CallLog;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -34,7 +36,29 @@ public class CallLogItem {
             e.printStackTrace();
         }
         this.number = items[1];
-        this.type = items[3];
+        String type = items[3];
+        try {
+            switch (Integer.parseInt(type)) {
+                case CallLog.Calls.INCOMING_TYPE:
+                    type = "Incoming";
+                    break;
+                case CallLog.Calls.OUTGOING_TYPE:
+                    type = "Outgoing";
+                    break;
+                case CallLog.Calls.MISSED_TYPE:
+                    type = "Missed";
+                    break;
+                case CallLog.Calls.VOICEMAIL_TYPE:
+                    type = "VoiceMail";
+                    break;
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        this.type = type;
+
     }
 
     public static void getCallLogItems(String callLogItems) {

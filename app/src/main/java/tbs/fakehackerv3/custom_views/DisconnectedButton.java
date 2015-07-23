@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.P2PManager;
@@ -17,6 +18,7 @@ public class DisconnectedButton extends FrameLayout {
     private static final android.animation.ValueAnimator animator = android.animation.ValueAnimator.ofFloat(0, 1);
     private static final DecelerateInterpolator interpolator = new DecelerateInterpolator();
     private static final LayoutParams param = new LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+    private static final RelativeLayout.LayoutParams contianerParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.FILL_PARENT);
     private static float animatedValue;
     private static View view;
     private static final Runnable invalidator = new Runnable() {
@@ -24,16 +26,18 @@ public class DisconnectedButton extends FrameLayout {
         public void run() {
             try {
                 view.invalidate();
-                MainActivity.mainView.requestLayout();
-                MainActivity.mainView.invalidate();
-            } catch (Exception e) {
+                contianerParams.height = MainActivity.mainView.getHeight() - MainActivity.topPanel.getHeight() - Math.round(y - setY);
+                MainActivity.container.setLayoutParams(contianerParams);
+                MainActivity.container.invalidate();
+
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
         }
     };
     private static AnimationType animationType;
     private static FrameLayout container;
-    private static int viewHeight, y;
+    private static int viewHeight, y, setY;
     private static final android.animation.ValueAnimator.AnimatorUpdateListener updateListener = new android.animation.ValueAnimator.AnimatorUpdateListener() {
         @Override
         public void onAnimationUpdate(android.animation.ValueAnimator animation) {
@@ -99,7 +103,6 @@ public class DisconnectedButton extends FrameLayout {
             view.post(new Runnable() {
                 @Override
                 public void run() {
-
                     animator.start();
                 }
             });
@@ -111,12 +114,13 @@ public class DisconnectedButton extends FrameLayout {
     private static void update() {
         switch (animationType) {
             case IN:
-                container.setY(y + (viewHeight - (viewHeight * animatedValue)));
+                setY = Math.round(y + (viewHeight - (viewHeight * animatedValue)));
                 break;
             case OUT:
-                container.setY(y + (viewHeight * animatedValue));
+                setY = Math.round(y + (viewHeight * animatedValue));
                 break;
         }
+        container.setY(setY);
         if (view != null)
             view.postDelayed(invalidator, 8);
     }

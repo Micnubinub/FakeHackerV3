@@ -40,7 +40,7 @@ public class MainActivity extends FragmentActivity {
     //Fragments
     public static Settings settings;
     public static boolean connected;
-    public static View mainView;
+    public static View mainView, topPanel, container;
     public static WifiP2pGroup currentGroup;
     public static SurfaceView layout;
     private static DisconnectedButton disconnectedButton;
@@ -227,6 +227,8 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.main_view);
         layout = (SurfaceView) findViewById(R.id.holder);
         mainView = findViewById(R.id.main_view);
+        topPanel = findViewById(R.id.top_panel);
+        container = findViewById(R.id.container);
         mainViewManager = new MainViewManager(mainView);
         setUpFragments();
 //        RemoteTools.record(10);

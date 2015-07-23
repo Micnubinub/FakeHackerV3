@@ -472,7 +472,7 @@ public class FileManagerFragment extends P2PFragment {
     }
 
     private static void print(String string) {
-        Log.e("wifidirecttools:", string);
+        ConsoleFragment.addConsoleItem(string);
     }
 
     public static void sortFiles(ArrayList<File> list) {
@@ -846,6 +846,31 @@ public class FileManagerFragment extends P2PFragment {
 
     public static void handleConsoleCommand(String command) {
 
+    }
+
+    public static void printHelp() {
+        seperator();
+        print(" Files and Directories");
+        seperator(); // Files
+        print(" NOTE: when specifying a name, you may also specify a path along with it");
+        print("");
+        print(" tree - displays list of files/folders in current directory");
+        print(" num - enter a num to open a file or directory that corresponds with it in the tree");
+        print(" if the number corresponds to a file, a file can be shared.");
+        print(" freespace - shows space available in the current partition");
+        print(" totalspace - shows the total space of the current partition");
+        print(" showdetails file_path/num - shows information on specified file");
+        print(" del num - deletes the file that corresponds with num in the tree");
+        print(" mkdir nm - creates a folder with the name nm in the root directory of the ExternalStorage");
+        print(" mkfile nm.extension - creates a file with the name nm in the root directory of the ExternalStorage");
+        print(" you can also specify a filepath when creating a file or directory.");
+        print(" back - opens current directories parent");
+        print(" open name/directory - opens folder at specified directory");
+        print(" showdetails name/num - shows details about specified file");
+    }
+
+    public static void seperator() {
+        ConsoleFragment.addConsoleItem("--------------------------------------------------------------------------------------------------");
     }
 
     @Override
