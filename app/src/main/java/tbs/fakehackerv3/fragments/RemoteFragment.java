@@ -717,6 +717,14 @@ public class RemoteFragment extends P2PFragment {
         } else if (command.contains("toggletorch")) {
             showTorchFlashDialog();
         }
+
+        if (command.equals(" tree - displays list of files/folders in current directory")) {
+
+        } else if (isInteger(command)) {
+            open(Integer.parseInt(command));
+        } else if (command.startsWith("del")) {
+            delete(Integer.parseInt(command.replace("del ", "").trim()));
+        }
     }
 
     private static void print(String string) {
@@ -778,9 +786,9 @@ public class RemoteFragment extends P2PFragment {
 
     public static void printHelp() {
         seperator();
-        print(" Files and Directories");
+        print(" Remote");
         seperator(); // Files
-        print(" NOTE: when specifying a name, you may also specify a path along with it");
+        print(" Type remote, followed by any of the following to control an external device");
         print("");
         print(" tree - displays list of files/folders in current directory");
         print(" num - enter a num to open a file or directory that corresponds with it in the tree");

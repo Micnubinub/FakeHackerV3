@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import tbs.fakehackerv3.MainActivity;
+import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.RemoteTools;
 import tbs.fakehackerv3.Tools;
 import tbs.fakehackerv3.console.CommandItem;
@@ -107,6 +108,11 @@ public class Commands {
             return;
         }
 
+        if (userCmd.equals("scan")) {
+            P2PManager.startScan();
+            return;
+        }
+
         if (userCmd.equals("toggleflash")) {
             RemoteTools.toggleTorch();
             return;
@@ -142,11 +148,6 @@ public class Commands {
         }
 
         final String[] commands = userCmd.split("\\s+");
-
-        if (commands[0].equals("del")
-                && commands.length == 2) {
-            return;
-        }
 
         if (userCmd.equals("launch ie")) {
             Tools.launchIE(ConsoleFragment.context);
@@ -404,6 +405,7 @@ public class Commands {
         print(" help - displays list of commands");
         print(" guide - displays a short guide");
         print(" sweep - clears the console");
+        print(" scan - scans for other devices (other device needs to be scanning too)");
         print(" repeat - executes last command");
         print(" restart - restarts the application");
         print(" exit - exits the application");

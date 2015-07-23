@@ -354,6 +354,8 @@ public class FileManagerFragment extends P2PFragment {
                 Collections.addAll(tmpTree, files);
                 sortFiles(tmpTree);
 
+                printTree();
+
                 switch (mikeFileOperationType) {
                     case EXTERNAL:
                         builder.append(new MikeFile(dir.getParent(), dir.getParentFile().length()).toString());
@@ -394,6 +396,17 @@ public class FileManagerFragment extends P2PFragment {
         return "";
     }
 
+    private static void printTree() {
+        seperator();
+        print("File hierarchy " + currentLocalDirectory + " >");
+        seperator();
+
+        for (int i = 0; i < tmpTree.size(); i++) {
+            final File f = tmpTree.get(i);
+            print("" + (1 + i) + ". " + (f.isDirectory() ? "/" : "") + f.getName() + (f.isDirectory() ? "/" : ""));
+        }
+    }
+
     private static void initExternal() {
         sendFileCommand(COMMAND_BROWSE + FILE_SEP);
     }
@@ -406,6 +419,15 @@ public class FileManagerFragment extends P2PFragment {
 
         //Todo do this for both local and external files
         showTree(file, mikeFileOperationType);
+    }
+
+    private static void open(int i) {
+        try {
+            final File f = new File(currentLocalDirectory);
+            open(f.listFiles()[i - 1], MikeFileOperationType.LOCAL);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void open(File file, MikeFileOperationType mikeFileOperationType) {
@@ -470,6 +492,7 @@ public class FileManagerFragment extends P2PFragment {
         }
         showTree(getCurrentExternalDirectory(), mikeFileOperationType);
     }
+
 
     private static void print(String string) {
         ConsoleFragment.addConsoleItem(string);
@@ -844,29 +867,105 @@ public class FileManagerFragment extends P2PFragment {
         mikeFiles.add(0, new MikeFile(file.getParentFile().getParent(), file.length()));
     }
 
-    public static void handleConsoleCommand(String command) {
+    private static void delete(int i) {
+        try {
+            final File f = new File(currentLocalDirectory);
+            deleteFileOrDirectory(f.listFiles()[i - 1]);
+            print(f.getAbsolutePath() + " was deleted");
+            showTree(currentLocalDirectory, MikeFileOperationType.LOCAL);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    private static void copy(int i) {
+        final File f = new File(currentLocalDirectory);
+        tmpMikeFile = new MikeFile(f.listFiles()[i - 1].getAbsolutePath(), 0);
+        mikeFileOperation = MikeFileOperation.COPY_LOCAL;
+        print(f.getAbsolutePath() + " copied, paste in desired directory");
+    }
+
+    private static void move(int i) {
+        final File f = new File(currentLocalDirectory);
+        tmpMikeFile = new MikeFile(f.listFiles()[i - 1].getAbsolutePath(), 0);
+        mikeFileOperation = MikeFileOperation.MOVE_LOCAL;
+        print(f.getAbsolutePath() + " moved, paste in desired directory");
+    }
+
+    private static void paste() {
+        switch (mikeFileOperation) {
+            case MOVE_LOCAL:
+                copyFile(tmpMikeFile.path, currentLocalDirectory);
+                break;
+            case COPY_LOCAL:
+                moveFile(tmpMikeFile.path, currentLocalDirectory);
+                break;
+        }
+    }
+
+    public static void handleConsoleCommand(String command) {
+        command = command.replace("filemanager ", "").trim();
+
+        if (command.equals(" tree - displays list of files/folders in current directory")) {
+
+        } else if (isInteger(command)) {
+            open(Integer.parseInt(command));
+        } else if (command.startsWith("del")) {
+            delete(Integer.parseInt(command.replace("del ", "").trim()));
+        } else if (command.startsWith("mkdir")) {
+            try {
+                final String fileName = command.replace("mkdir ", "").trim();
+                final File file = new File(currentLocalDirectory + "/" + fileName);
+                file.mkdirs();
+                print(file.getAbsolutePath() + " was created");
+                showTree(currentLocalDirectory, MikeFileOperationType.LOCAL);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (command.startsWith("mkfile")) {
+            try {
+                final String fileName = command.replace("mkfile ", "").trim();
+                final File file = new File(currentLocalDirectory + "/" + fileName);
+                file.createNewFile();
+                print(file.getAbsolutePath() + " was created");
+                showTree(currentLocalDirectory, MikeFileOperationType.LOCAL);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (command.startsWith("copy")) {
+            copy(Integer.parseInt(command.replace("copy ", "").trim()));
+        } else if (command.startsWith("move")) {
+            move(Integer.parseInt(command.replace("move ", "").trim()));
+        } else if (command.equals("paste")) {
+            paste();
+        }
+    }
+
+    private static boolean isInteger(String s) {
+        try {
+            Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        // only got here if we didn't return false
+        return true;
     }
 
     public static void printHelp() {
         seperator();
-        print(" Files and Directories");
+        print(" FileManager");
         seperator(); // Files
-        print(" NOTE: when specifying a name, you may also specify a path along with it");
+        print(" Type filemanager, followed by any of the following to manage files");
         print("");
+
         print(" tree - displays list of files/folders in current directory");
-        print(" num - enter a num to open a file or directory that corresponds with it in the tree");
-        print(" if the number corresponds to a file, a file can be shared.");
-        print(" freespace - shows space available in the current partition");
-        print(" totalspace - shows the total space of the current partition");
-        print(" showdetails file_path/num - shows information on specified file");
-        print(" del num - deletes the file that corresponds with num in the tree");
-        print(" mkdir nm - creates a folder with the name nm in the root directory of the ExternalStorage");
-        print(" mkfile nm.extension - creates a file with the name nm in the root directory of the ExternalStorage");
-        print(" you can also specify a filepath when creating a file or directory.");
-        print(" back - opens current directories parent");
-        print(" open name/directory - opens folder at specified directory");
-        print(" showdetails name/num - shows details about specified file");
+        print(" number - enter a number to open a file or directory that corresponds with it in the tree");
+        print(" del number - deletes the file that corresponds with num in the tree");
+        print(" mkdir name - creates a folder in the current directory");
+        print(" mkfile name.extension - creates a file in the current directory");
+        print(" copy number - copies the corresponding file, then waits for the paste command");
+        print(" move number - moves the corresponding file, then waits for the paste command");
+        print(" paste - pastes the copied/moved file in the current directory");
     }
 
     public static void seperator() {
@@ -1121,34 +1220,38 @@ public class FileManagerFragment extends P2PFragment {
         }
 
         public static void parseLocalFile(final ArrayList<File> files) {
-            if (LocalFileManager.files == null) {
-                LocalFileManager.files = new ArrayList<MikeFile>(files.size());
-            } else {
-                try {
-                    LocalFileManager.files.clear();
-                    updateAdapter();
-                    LocalFileManager.files.ensureCapacity(files.size());
-                    updateAdapter();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    for (File file : files) {
-                        try {
-                            LocalFileManager.files.add(new MikeFile(MikeFile.getFileString(file)));
-                            updateAdapter();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+            try {
+                if (LocalFileManager.files == null) {
+                    LocalFileManager.files = new ArrayList<MikeFile>(files.size());
+                } else {
+                    try {
+                        LocalFileManager.files.clear();
+                        updateAdapter();
+                        LocalFileManager.files.ensureCapacity(files.size());
+                        updateAdapter();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    addParentFile(LocalFileManager.files);
-                    updateAdapter();
                 }
-            });
+
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (File file : files) {
+                            try {
+                                LocalFileManager.files.add(new MikeFile(MikeFile.getFileString(file)));
+                                updateAdapter();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        addParentFile(LocalFileManager.files);
+                        updateAdapter();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         public static void parseEmptyFolder(final File file) {
