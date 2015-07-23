@@ -5,6 +5,8 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
+import tbs.fakehackerv3.Tools;
+
 /**
  * Created by Michael on 7/9/2015.
  */
@@ -37,7 +39,7 @@ public class HackerEditText extends EditText {
         }
 
         setTypeface(font);
-        setTextColor(0xff22ccff);
+        setTextColor(Tools.getTextColor(context));
         setHintTextColor(0xff0a99dd);
         setBackgroundColor(0xff3a3a3a);
     }

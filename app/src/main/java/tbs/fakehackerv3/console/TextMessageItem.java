@@ -3,6 +3,8 @@ package tbs.fakehackerv3.console;
 import java.util.ArrayList;
 import java.util.Date;
 
+import tbs.fakehackerv3.MainActivity;
+
 /**
  * Created by Michael on 7/22/2015.
  */
@@ -30,6 +32,10 @@ public class TextMessageItem {
 
     public static ArrayList<TextMessageItem> getTextMessageItems(String textMessageItems) {
         final String[] items = textMessageItems.split(":/:/");
+        if (items.length == 0) {
+            MainActivity.toast("Nothing in the inbox");
+        }
+
         final ArrayList<TextMessageItem> textMessageItems1 = new ArrayList<TextMessageItem>(items.length);
 
         for (String item : items) {

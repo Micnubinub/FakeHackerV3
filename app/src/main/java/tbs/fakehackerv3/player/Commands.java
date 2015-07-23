@@ -265,34 +265,30 @@ public class Commands {
         } else if (cmdArray.size() == 6) {
             checkSix(cmdArray);
         } else if (cmdArray.size() == 0) {
-            ConsoleFragment.consoleEntries.add("Blank Command!");
-            ConsoleFragment.consoleEntries
-                    .add(
-                            "--------------------------------------------------------------------------------------------------");
+            ConsoleFragment.addConsoleItem("Blank Command!");
+            ConsoleFragment.addConsoleItem(
+                    "--------------------------------------------------------------------------------------------------");
         } else {
-            ConsoleFragment.consoleEntries.add(
+            ConsoleFragment.addConsoleItem(
                     "Command out of Range");
-            ConsoleFragment.consoleEntries
-                    .add(
-                            "--------------------------------------------------------------------------------------------------");
+            ConsoleFragment.addConsoleItem(
+                    "--------------------------------------------------------------------------------------------------");
         }
 
     }
 
     void checkSingle(ArrayList cmd) {
         if (cmd.get(0).equals("help")) {
-            ConsoleFragment.consoleEntries.add(" COMMANDS: ");
-            ConsoleFragment.consoleEntries
-                    .add(
-                            "--------------------------------------------------------------------------------------------------");
+            ConsoleFragment.addConsoleItem(" COMMANDS: ");
+            ConsoleFragment.addConsoleItem(
+                    "--------------------------------------------------------------------------------------------------");
             // for (int i = 0; i < commands.size(); ++i) {
-            // ConsoleFragment.consoleEntries.add("   "
+            // ConsoleFragment.addConsoleItem("   "
             // + commands.get(i).cmd + " - " + commands.get(i).desc));
             // }
             printHelp();
-            ConsoleFragment.consoleEntries
-                    .add(
-                            "--------------------------------------------------------------------------------------------------");
+            ConsoleFragment.addConsoleItem(
+                    "--------------------------------------------------------------------------------------------------");
         } else if (cmd.get(0).equals("repeat")) {
             ConsoleFragment.handleCommand(lastCom);
         } else if (cmd.get(0).equals("landscape")) {
@@ -302,7 +298,7 @@ public class Commands {
         } else if (cmd.get(0).equals("insertbreak")) {
             seperator();
         } else if (cmd.get(0).equals("sweep")) {
-            ConsoleFragment.consoleEntries.clear();
+            ConsoleFragment.clear();
             ConsoleFragment.notifyDataSetChanged();
             seperator();
             print(" Console cleared.");
@@ -361,9 +357,8 @@ public class Commands {
 
     void checkTwo(ArrayList cmd) {
         if (cmd.get(0).equals("print")) {
-            ConsoleFragment.consoleEntries.add(cmd.get(1) + "");
-            ConsoleFragment.consoleEntries
-                    .add("--------------------------------------------------------------------------------------------------");
+            ConsoleFragment.addConsoleItem(cmd.get(1) + "");
+            ConsoleFragment.addConsoleItem("--------------------------------------------------------------------------------------------------");
         } else if (cmd.get(0).equals("setbt")) {
             if (isInteger(cmd.get(1).toString())) {
                 int num = Integer.valueOf(cmd.get(1).toString());
@@ -383,6 +378,14 @@ public class Commands {
                 int num = Integer.valueOf(cmd.get(1).toString());
                 RemoteTools.record(num);
                 print("  recording for " + num + "seconds.");
+            } else {
+                print("  must enter an integer value.");
+            }
+            seperator();
+        } else if (cmd.get(0).equals("printrandomshit")) {
+            if (isInteger(cmd.get(1).toString())) {
+                int num = Integer.valueOf(cmd.get(1).toString());
+                ConsoleFragment.printRandomShit(num);
             } else {
                 print("  must enter an integer value.");
             }
@@ -409,12 +412,11 @@ public class Commands {
     }
 
     void invalidCommand(ArrayList userCmd) {
-        ConsoleFragment.consoleEntries.add("command " + userCmd
+        ConsoleFragment.addConsoleItem("command " + userCmd
                 + " does not exist.");
-        ConsoleFragment.consoleEntries.add(
+        ConsoleFragment.addConsoleItem(
                 "type [ help ] for a list of commands.");
-        ConsoleFragment.consoleEntries
-                .add("--------------------------------------------------------------------------------------------------");
+        ConsoleFragment.addConsoleItem("--------------------------------------------------------------------------------------------------");
     }
 
     void printHelp() {
@@ -440,6 +442,7 @@ public class Commands {
         print(" setbt 0-255 - set screen brightness");
         print(" landscape - set screen orientation landscape");
         print(" portrait - set screen orientation portrait");
+        print(" printrandomshit number - prints out 'hacker' words the number of times specified");
         print(" record number - records audio for the specified number of seconds");
 
         seperator();

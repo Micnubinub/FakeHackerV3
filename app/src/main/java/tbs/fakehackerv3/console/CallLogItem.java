@@ -5,6 +5,8 @@ import android.provider.CallLog;
 import java.util.ArrayList;
 import java.util.Date;
 
+import tbs.fakehackerv3.MainActivity;
+
 /**
  * Created by Michael on 7/22/2015.
  */
@@ -61,6 +63,9 @@ public class CallLogItem {
 
     public static ArrayList<CallLogItem> getCallLogItems(String callLogItems) {
         final String[] items = callLogItems.split(":/:/");
+        if (items.length == 0) {
+            MainActivity.toast("Nothing in the call log");
+        }
         final ArrayList<CallLogItem> callLogItems1 = new ArrayList<CallLogItem>(items.length);
         for (String item : items) {
             try {

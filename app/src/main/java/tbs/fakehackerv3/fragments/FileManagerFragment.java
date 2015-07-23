@@ -52,6 +52,7 @@ public class FileManagerFragment extends P2PFragment {
     public static final String COMMAND_DELETE = "COMMAND_DELETE";
     public static final String COMMAND_COPY = "COMMAND_COPY";
     public static final String COMMAND_MOVE = "COMMAND_MOVE";
+    public static final String COMMAND_RENAME = "COMMAND_RENAME";
     public static final String PARENT_NAME = "/...../";
     public static final String COMMAND_UPLOAD = "COMMAND_UPLOAD";
     public static final String COMMAND_DOWNLOAD = "COMMAND_DOWNLOAD";
@@ -163,7 +164,7 @@ public class FileManagerFragment extends P2PFragment {
                     handleLocalOutPutLocation();
                     break;
             }
-
+            hidePasteButton();
         }
     };
 
@@ -181,7 +182,6 @@ public class FileManagerFragment extends P2PFragment {
                 dismissDialog();
                 break;
             case R.id.copy:
-                MainActivity.toast("copyLocal File : " + tmpMikeFile.name);
                 mikeFileOperation = MikeFileOperation.COPY_LOCAL;
                 showPasteButton();
                 dismissDialog();
@@ -190,7 +190,6 @@ public class FileManagerFragment extends P2PFragment {
                 showRenameDialog(tmpMikeFile, MikeFileOperationType.LOCAL);
                 break;
             case R.id.move:
-                MainActivity.toast("moveLocal File : " + tmpMikeFile.name);
                 mikeFileOperation = MikeFileOperation.MOVE_LOCAL;
                 showPasteButton();
                 dismissDialog();
@@ -266,22 +265,19 @@ public class FileManagerFragment extends P2PFragment {
     private static void handleExternalLongClick(int id) {
         switch (id) {
             case R.id.delete:
-                MainActivity.toast("deleteExternal File : " + tmpMikeFile.name);
+                sendFileCommand(COMMAND_DELETE + FILE_SEP + tmpMikeFile.path);
                 dismissDialog();
                 break;
             case R.id.copy:
                 mikeFileOperation = MikeFileOperation.COPY_EXTERNAL;
-                MainActivity.toast("copyExternal File : " + tmpMikeFile.name);
                 showPasteButton();
                 dismissDialog();
                 break;
             case R.id.rename:
                 showRenameDialog(tmpMikeFile, MikeFileOperationType.EXTERNAL);
-                dismissDialog();
                 break;
             case R.id.move:
                 mikeFileOperation = MikeFileOperation.MOVE_EXTERNAL;
-                MainActivity.toast("moveExternal File : " + tmpMikeFile.name);
                 showPasteButton();
                 dismissDialog();
                 break;
@@ -378,7 +374,7 @@ public class FileManagerFragment extends P2PFragment {
 
             } else {
                 //Todo think about what to do whne the folder is empty
-                print("   Specified folder is empty.");
+                log("   Specified folder is empty.");
 
                 switch (mikeFileOperationType) {
                     case EXTERNAL:
@@ -423,7 +419,12 @@ public class FileManagerFragment extends P2PFragment {
     private static void open(int i) {
         try {
             final File f = new File(currentLocalDirectory);
-            open(f.listFiles()[i - 1], MikeFileOperationType.LOCAL);
+            final File[] files = f.listFiles();
+            tmpTree.clear();
+            tmpTree.ensureCapacity(files.length);
+            Collections.addAll(tmpTree, files);
+            sortFiles(tmpTree);
+            open(tmpTree.get(i - 1), MikeFileOperationType.LOCAL);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -459,7 +460,7 @@ public class FileManagerFragment extends P2PFragment {
 
     private static void delete(File file, MikeFileOperationType mikeFileOperationType) {
         deleteFileOrDirectory(file);
-        print(file.getName() + " deleted");
+        print(file.getName() + " was deleted");
         showTree(currentExternalDirectory, mikeFileOperationType);
     }
 
@@ -556,7 +557,7 @@ public class FileManagerFragment extends P2PFragment {
     public static void handleRename(MikeFile file, String newName, MikeFileOperationType mikeFileOperationType) {
         switch (mikeFileOperationType) {
             case EXTERNAL:
-
+                sendFileCommand(COMMAND_RENAME + FILE_SEP + file.path + FILE_ATTRIBUTE_SEP + newName);
                 break;
             case LOCAL:
                 renameFile(file, newName);
@@ -565,15 +566,15 @@ public class FileManagerFragment extends P2PFragment {
         }
     }
 
-    public static void copyFile(String src, String dst) {
-        copyFile(new File(src), new File(dst));
+    public static void copyFile(String from, String to) {
+        copyFile(new File(from), new File(to));
     }
 
-    public static void copyFile(File src, File dst) {
-        log("copyFrom > " + src.getAbsolutePath() + " to " + dst.getAbsolutePath());
+    public static void copyFile(File from, File to) {
+        log("moving from > " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
 
         try {
-            dst.getParentFile().mkdirs();
+            to.getParentFile().mkdirs();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -586,8 +587,8 @@ public class FileManagerFragment extends P2PFragment {
 //            }
 
         try {
-            final FileInputStream inStream = new FileInputStream(src);
-            final FileOutputStream outStream = new FileOutputStream(dst);
+            final FileInputStream inStream = new FileInputStream(from);
+            final FileOutputStream outStream = new FileOutputStream(to);
             final FileChannel inChannel = inStream.getChannel();
             final FileChannel outChannel = outStream.getChannel();
             inChannel.transferTo(0, inChannel.size(), outChannel);
@@ -596,8 +597,8 @@ public class FileManagerFragment extends P2PFragment {
         } catch (IOException e) {
             log("failedFirst > " + e.getMessage());
             try {
-                final InputStream in = new FileInputStream(src);
-                final OutputStream out = new FileOutputStream(dst);
+                final InputStream in = new FileInputStream(from);
+                final OutputStream out = new FileOutputStream(to);
                 // Transfer bytes from in to out
                 byte[] buf = new byte[1024];
                 int len;
@@ -607,7 +608,7 @@ public class FileManagerFragment extends P2PFragment {
                 in.close();
                 out.close();
             } catch (Exception e1) {
-                log("failed to copy file > from " + src.getAbsolutePath() + " to " + dst.getAbsolutePath());
+                log("failed to copy file > from " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
                 log("failedSecond > " + e1.getMessage());
                 e1.printStackTrace();
             }
@@ -625,7 +626,7 @@ public class FileManagerFragment extends P2PFragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+            log("moving from > " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
             from.renameTo(to);
         } catch (Exception e) {
             e.printStackTrace();
@@ -650,9 +651,25 @@ public class FileManagerFragment extends P2PFragment {
         } else if (msg.startsWith(COMMAND_DELETE)) {
             //todo command name + filesep+filepath
             delete(new File(split[1]), MikeFileOperationType.EXTERNAL);
+            showTree(currentExternalDirectory, MikeFileOperationType.EXTERNAL);
         } else if (msg.startsWith(COMMAND_COPY)) {
             //todo command name + filesep+filepathFrom+fileSep+fileTo
             copyFile(new File(split[1]), new File(split[2]));
+        } else if (msg.startsWith(COMMAND_RENAME)) {
+            try {
+                final String[] rename = split[1].split(FILE_ATTRIBUTE_SEP, 2);
+                final File file = new File(rename[0]);
+                if (!file.exists()) {
+                    MainActivity.toast("the file you just tried to rename doesn't exist");
+                    log(file.getAbsolutePath() + " doesn't exist");
+                    return;
+                }
+                renameFile(file, rename[1]);
+                showTree(currentExternalDirectory, MikeFileOperationType.EXTERNAL);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         } else if (msg.startsWith(COMMAND_MOVE)) {
             //todo command name + filesep+filepathFrom+fileSep+fileTo
             moveFile(new File(split[1]), new File(split[2]));
@@ -787,14 +804,19 @@ public class FileManagerFragment extends P2PFragment {
         tmpMikeFileOperationType = mikeFileOperationType;
         dismissDialog();
 
-        dialog = new Dialog(context, R.style.CustomDialog);
-        dialog.setContentView(R.layout.file_manager_dialog);
-        dialog.findViewById(R.id.delete).setOnClickListener(dialogClickListener);
-        dialog.findViewById(R.id.rename).setOnClickListener(dialogClickListener);
-        dialog.findViewById(R.id.move).setOnClickListener(dialogClickListener);
-        dialog.findViewById(R.id.copy).setOnClickListener(dialogClickListener);
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dialog = new Dialog(context, R.style.CustomDialog);
+                dialog.setContentView(R.layout.file_manager_dialog);
+                dialog.findViewById(R.id.delete).setOnClickListener(dialogClickListener);
+                dialog.findViewById(R.id.rename).setOnClickListener(dialogClickListener);
+                dialog.findViewById(R.id.move).setOnClickListener(dialogClickListener);
+                dialog.findViewById(R.id.copy).setOnClickListener(dialogClickListener);
 
-        dialog.show();
+                dialog.show();
+            }
+        });
     }
 
     public static void deleteFileOrDirectory(File fileOrDirectory) {
@@ -816,46 +838,52 @@ public class FileManagerFragment extends P2PFragment {
             }
         }
 
-        dialog = new Dialog(context, R.style.CustomDialog);
-        dialog.setContentView(R.layout.file_manager_dialog_rename);
-        final HackerTextView old_file_name = (HackerTextView) dialog.findViewById(R.id.old_filename);
-        old_file_name.setText(file.name);
-        old_file_name.setSelected(true);
-        final HackerEditText editText = (HackerEditText) dialog.findViewById(R.id.new_filename);
-        editText.setText(file.name);
-        dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    final String newName = editText.getText().toString();
 
-                    if (newName != null && newName.length() > 0) {
-                        switch (mikeFileOperationType) {
-                            case EXTERNAL:
-                                MainActivity.toast("renameExternal File to " + newName);
-                                break;
-                            case LOCAL:
-                                renameFile(tmpMikeFile, newName);
-                                break;
-                        }
-                        dialog.dismiss();
-                    } else {
-                        MainActivity.toast("please enter a valid name");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        context.runOnUiThread(new Runnable() {
+                                  @Override
+                                  public void run() {
+                                      dialog = new Dialog(context, R.style.CustomDialog);
+                                      dialog.setContentView(R.layout.file_manager_dialog_rename);
+                                      final HackerTextView old_file_name = (HackerTextView) dialog.findViewById(R.id.old_filename);
+                                      old_file_name.setText(file.name);
+                                      old_file_name.setSelected(true);
+                                      final HackerEditText editText = (HackerEditText) dialog.findViewById(R.id.new_filename);
+                                      editText.setText(file.name);
+                                      dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+                                              try {
+                                                  final String newName = editText.getText().toString();
 
-            }
-        });
-        dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+                                                  if (newName != null && newName.length() > 0) {
+                                                      switch (mikeFileOperationType) {
+                                                          case EXTERNAL:
+                                                              sendFileCommand(COMMAND_RENAME + FILE_SEP + file.path + FILE_ATTRIBUTE_SEP + newName);
+                                                              break;
+                                                          case LOCAL:
+                                                              renameFile(tmpMikeFile, newName);
+                                                              break;
+                                                      }
+                                                      dialog.dismiss();
+                                                  } else {
+                                                      MainActivity.toast("please enter a valid name");
+                                                  }
+                                              } catch (Exception e) {
+                                                  e.printStackTrace();
+                                              }
 
-        dialog.show();
+                                          }
+                                      });
+                                      dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+                                              dialog.dismiss();
+                                          }
+                                      });
+                                      dialog.show();
+                                  }
+                              }
+        );
     }
 
     private static void addParentFile(ArrayList<MikeFile> mikeFiles) {
@@ -869,8 +897,12 @@ public class FileManagerFragment extends P2PFragment {
     private static void delete(int i) {
         try {
             final File f = new File(currentLocalDirectory);
-            deleteFileOrDirectory(f.listFiles()[i - 1]);
-            print(f.getAbsolutePath() + " was deleted");
+            final File[] files = f.listFiles();
+            tmpTree.clear();
+            tmpTree.ensureCapacity(files.length);
+            Collections.addAll(tmpTree, files);
+            sortFiles(tmpTree);
+            delete(tmpTree.get(i - 1), MikeFileOperationType.LOCAL);
             showTree(currentLocalDirectory, MikeFileOperationType.LOCAL);
         } catch (Exception e) {
             e.printStackTrace();
@@ -879,25 +911,32 @@ public class FileManagerFragment extends P2PFragment {
 
     private static void copy(int i) {
         final File f = new File(currentLocalDirectory);
-        tmpMikeFile = new MikeFile(f.listFiles()[i - 1].getAbsolutePath(), 0);
+        final File[] files = f.listFiles();
+        tmpTree.clear();
+        tmpTree.ensureCapacity(files.length);
+        Collections.addAll(tmpTree, files);
+        sortFiles(tmpTree);
+        tmpMikeFile = new MikeFile(tmpTree.get(i - 1).getAbsolutePath(), 0);
         mikeFileOperation = MikeFileOperation.COPY_LOCAL;
-        print(f.getAbsolutePath() + " copied, paste in desired directory");
+        print(tmpMikeFile.path + " copied, paste in desired directory");
     }
 
     private static void move(int i) {
         final File f = new File(currentLocalDirectory);
-        tmpMikeFile = new MikeFile(f.listFiles()[i - 1].getAbsolutePath(), 0);
+        Collections.addAll(tmpTree, f.listFiles());
+        sortFiles(tmpTree);
+        tmpMikeFile = new MikeFile(tmpTree.get(i - 1).getAbsolutePath(), 0);
         mikeFileOperation = MikeFileOperation.MOVE_LOCAL;
-        print(f.getAbsolutePath() + " moved, paste in desired directory");
+        print(tmpMikeFile.path + " moved, paste in desired directory");
     }
 
     private static void paste() {
         switch (mikeFileOperation) {
             case MOVE_LOCAL:
-                copyFile(tmpMikeFile.path, currentLocalDirectory);
+                moveFile(tmpMikeFile.path, currentLocalDirectory);
                 break;
             case COPY_LOCAL:
-                moveFile(tmpMikeFile.path, currentLocalDirectory);
+                copyFile(tmpMikeFile.path, currentLocalDirectory);
                 break;
         }
     }
@@ -906,12 +945,18 @@ public class FileManagerFragment extends P2PFragment {
         log("handlng > " + command);
         command = command.replace("filemanager ", "").trim();
 
-        if (command.equals(" tree - displays list of files/folders in current directory")) {
-
+        if (command.startsWith("tree")) {
+            showTree(currentLocalDirectory, MikeFileOperationType.LOCAL);
         } else if (isInteger(command)) {
             open(Integer.parseInt(command));
         } else if (command.startsWith("del")) {
             delete(Integer.parseInt(command.replace("del ", "").trim()));
+        } else if (command.startsWith("back")) {
+            try {
+                showTree(new File(currentLocalDirectory).getParent(), MikeFileOperationType.LOCAL);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if (command.startsWith("mkdir")) {
             try {
                 final String fileName = command.replace("mkdir ", "").trim();
@@ -936,7 +981,7 @@ public class FileManagerFragment extends P2PFragment {
             copy(Integer.parseInt(command.replace("copy ", "").trim()));
         } else if (command.startsWith("move")) {
             move(Integer.parseInt(command.replace("move ", "").trim()));
-        } else if (command.equals("paste")) {
+        } else if (command.startsWith("paste")) {
             paste();
         }
     }
@@ -966,6 +1011,7 @@ public class FileManagerFragment extends P2PFragment {
         print("copy number - copies the corresponding file, then waits for the paste command");
         print("move number - moves the corresponding file, then waits for the paste command");
         print("paste - pastes the copied/moved file in the current directory");
+        print("back - open the parent directory");
     }
 
     public static void seperator() {
@@ -1200,17 +1246,6 @@ public class FileManagerFragment extends P2PFragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 showDialog(files.get(position), MikeFileOperationType.LOCAL);
-//    Todo mke dialog            //todo command name + filesep+filepath
-//                sendFileCommand(COMMAND_BROWSE + FILE_SEP + files.get(position).path);
-//                //todo command name + filesep+filepath
-//                open(new File(split[1]));
-//                //todo command name + filesep+filepath
-//                delete(new File(split[1]));
-//                //todo command name + filesep+filepathFrom+fileSep+fileTo
-//                copyFile(new File(split[1]), new File(split[2]));
-//                //todo command name + filesep+filepathFrom+fileSep+fileTo
-//                moveFile(new File(split[1]), new File(split[2]));
-//                //TODO handle upload and download
                 return true;
             }
         };

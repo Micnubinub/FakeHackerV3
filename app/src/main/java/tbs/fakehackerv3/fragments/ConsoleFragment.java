@@ -26,7 +26,7 @@ import tbs.fakehackerv3.player.Commands;
  * Created by Michael on 7/5/2015.
  */
 public class ConsoleFragment extends Fragment {
-    public static final ArrayList<String> consoleEntries = new ArrayList<String>();
+    private static final ArrayList<String> consoleEntries = new ArrayList<String>();
     private static final Random random = new Random();
     public static ConsoleListAdapter cl_adapter;
     private static final Runnable notifyConsoleList = new Runnable() {
@@ -124,16 +124,13 @@ public class ConsoleFragment extends Fragment {
     }
 
     private static void initEverythingElse() {
-        consoleEntries
-                .add(new String(
-                        "Type [help] to get a list of possible commands. Or type [guide] to view"));
-        consoleEntries.add(new String(
+        addConsoleItem(new String(
+                "Type [help] to get a list of possible commands. Or type [guide] to view"));
+        addConsoleItem(new String(
                 "the instructions and learn everything works."));
-        consoleEntries
-                .add(new String(
-                        "--------------------------------------------------------------------------------------------------"));
+        addConsoleItem(new String(
+                "--------------------------------------------------------------------------------------------------"));
         cl_adapter.notifyDataSetChanged();
-
 
         userCommand = (EditText) mainView.findViewById(R.id.userCommand);
         final Button submitCMD = (Button) mainView.findViewById(R.id.subCommand);
@@ -167,6 +164,12 @@ public class ConsoleFragment extends Fragment {
 
     public static void addConsoleItem(String consoleItem) {
         consoleEntries.add(consoleItem);
+        if (context != null)
+            context.runOnUiThread(notifyConsoleList);
+    }
+
+    public static void clear() {
+        consoleEntries.clear();
         if (context != null)
             context.runOnUiThread(notifyConsoleList);
     }
