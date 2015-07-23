@@ -47,7 +47,7 @@ public class CallLogFragment extends P2PFragment {
             CallLog.Calls.TYPE};
     private static Activity context;
     private static ListView listView;
-
+    private static View placeHolder;
 
     public static void requestCallLog() {
         P2PManager.enqueueMessage(new Message(String.valueOf(Message.MessageType.COMMAND) + Message.MESSAGE_SEPARATOR + StaticValues.GET_CALL_LOG, Message.MessageType.COMMAND));
@@ -62,6 +62,7 @@ public class CallLogFragment extends P2PFragment {
                 public void run() {
                     try {
                         listView.setAdapter(new CallLogAdapter(CallLogItem.getCallLogItems(data)));
+                        listView.invalidate();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -73,29 +74,6 @@ public class CallLogFragment extends P2PFragment {
         }
 
     }
-
-    public static void parseReceivedData(final String data) {
-        //Todo notify data set changed
-        ;
-        try {
-            listView.post(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        listView.setAdapter(new CallLogAdapter(CallLogItem.getCallLogItems(data)));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    placeHolder.setVisibility(View.GONE);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private static View placeHolder;
 
     public static String getFormatedData() {
         final StringBuilder builder = new StringBuilder();

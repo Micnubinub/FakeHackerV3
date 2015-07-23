@@ -53,6 +53,7 @@ public class MessageReaderFragment extends P2PFragment {
                 public void run() {
                     try {
                         listView.setAdapter(new MessageReaderAdapter(TextMessageItem.getTextMessageItems(data)));
+                        listView.invalidate();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
