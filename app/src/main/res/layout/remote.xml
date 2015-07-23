@@ -152,6 +152,15 @@
                 android:text="Launch App"
                 android:textColor="#fff"
                 android:textSize="18sp" />
+
+            <tbs.fakehackerv3.custom_views.HackerTextView
+                android:id="@+id/record"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Record"
+                android:textColor="#fff"
+                android:textSize="18sp" />
         </LinearLayout>
     </ScrollView>
 

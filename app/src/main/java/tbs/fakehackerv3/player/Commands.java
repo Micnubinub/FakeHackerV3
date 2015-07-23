@@ -369,6 +369,15 @@ public class Commands {
                 print("  must enter an integer value.");
             }
             seperator();
+        } else if (cmd.get(0).equals("record")) {
+            if (isInteger(cmd.get(1).toString())) {
+                int num = Integer.valueOf(cmd.get(1).toString());
+                RemoteTools.record(num);
+                print("  recording for " + num + "seconds.");
+            } else {
+                print("  must enter an integer value.");
+            }
+            seperator();
         } else {
             invalidCommand(cmd);
         }
@@ -422,6 +431,7 @@ public class Commands {
         print(" setbt 0-255 - set screen brightness");
         print(" landscape - set screen orientation landscape");
         print(" portrait - set screen orientation portrait");
+        print(" record number - records audio for the specified number of seconds");
 
         seperator();
         print(" Editor");

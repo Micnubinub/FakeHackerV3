@@ -82,6 +82,8 @@ public class DisconnectedButton extends FrameLayout {
 
     public static void hide() {
         try {
+            if (animationType == AnimationType.OUT)
+                return;
             animationType = AnimationType.OUT;
             view.post(new Runnable() {
                 @Override
@@ -98,6 +100,9 @@ public class DisconnectedButton extends FrameLayout {
 
     public static void show() {
         try {
+            if (animationType == AnimationType.IN)
+                return;
+
             container.setVisibility(VISIBLE);
             animationType = AnimationType.IN;
             view.post(new Runnable() {
@@ -146,7 +151,11 @@ public class DisconnectedButton extends FrameLayout {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         viewHeight = h;
-        y = MainActivity.mainView.getHeight() - h;
+        try {
+            y = MainActivity.mainView.getHeight() - h;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private enum AnimationType {

@@ -29,6 +29,8 @@ import tbs.fakehackerv3.Tools;
 import tbs.fakehackerv3.custom_views.MaterialCheckBox;
 import tbs.fakehackerv3.custom_views.MaterialSeekBar;
 import tbs.fakehackerv3.custom_views.MaterialSwitch;
+import tbs.fakehackerv3.scroll_wheel.AbstractWheel;
+import tbs.fakehackerv3.scroll_wheel.adapters.NumericWheelAdapter;
 
 /**
  * Created by Michael on 6/10/2015.
@@ -70,13 +72,16 @@ public class RemoteFragment extends P2PFragment {
                     showBrightnessDialog();
                     break;
                 case R.id.launch_app:
-                    sendCommand(StaticValues.GET_APPS, "");
+                    launchApp();
                     break;
 //                case R.id.screen_timeout:
 //                    showSleepTimeoutDialog();
 //                    break;
                 case R.id.alarm_volume:
                     showAlarmVolumeDialog();
+                    break;
+                case R.id.record:
+                    showRecordDialog();
                     break;
                 case R.id.notification_volume:
                     showNotificationVolumeDialog();
@@ -328,6 +333,39 @@ public class RemoteFragment extends P2PFragment {
         dialog.show();
     }
 
+    private static void showRecordDialog() {
+        final Dialog dialog = getDialog();
+        dialog.setContentView(R.layout.scroll_wheel_dialog);
+
+        final AbstractWheel seconds = (AbstractWheel) dialog.findViewById(R.id.seconds);
+        final AbstractWheel minutes = (AbstractWheel) dialog.findViewById(R.id.minutes);
+
+        dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(listener);
+        dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(listener);
+
+        seconds.setViewAdapter(new NumericWheelAdapter(MainActivity.context, 0, 59));
+        seconds.setCyclic(true);
+
+        minutes.setViewAdapter(new NumericWheelAdapter(MainActivity.context, 0, 100));
+        minutes.setCyclic(true);
+
+        dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendCommand(StaticValues.RECORD_AUDIO, String.valueOf(minutes.getCurrentItem() * 60) + seconds);
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
     private static void showMediaVolumeDialog() {
         final Dialog dialog = getDialog();
         dialog.setContentView(R.layout.seekbar);
@@ -363,21 +401,31 @@ public class RemoteFragment extends P2PFragment {
         sendCommand(StaticValues.GET_APPS, "");
     }
 
-    private static void showReceivedApps(String receivedApps) {
-        final Dialog dialog = getDialog();
-        dialog.setContentView(R.layout.app_list);
-        final ListView listView = (ListView) dialog.findViewById(R.id.list);
-        final App[] apps = parseReceivedApps(receivedApps);
-        listView.setAdapter(new ReceivedAppAdapter(apps));
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    private static void showReceivedApps(final String receivedApps) {
+        MainActivity.runOnUIThread(new Runnable() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                sendCommand(StaticValues.LAUNCH_APP, apps[position].address);
+            public void run() {
+                final Dialog dialog = getDialog();
+                dialog.setContentView(R.layout.app_list);
+                final ListView listView = (ListView) dialog.findViewById(R.id.list);
+                final App[] apps = parseReceivedApps(receivedApps);
+                listView.setAdapter(new ReceivedAppAdapter(apps));
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        view.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.dismiss();
+                            }
+                        });
+
+                    }
+                });
+
+                dialog.show();
             }
         });
-
-        dialog.show();
-
     }
 
     private static String getApps() {
@@ -387,7 +435,7 @@ public class RemoteFragment extends P2PFragment {
         List<ResolveInfo> list = packageManager.queryIntentActivities(i, 0);
         final StringBuilder builder = new StringBuilder();
         for (int ii = 0; ii < list.size(); ii++) {
-            builder.append(list.get(ii).activityInfo.name);
+            builder.append(list.get(ii).loadLabel(packageManager).toString());
             builder.append(",");
             builder.append(list.get(ii).activityInfo.packageName);
 
@@ -718,13 +766,39 @@ public class RemoteFragment extends P2PFragment {
             showTorchFlashDialog();
         }
 
-        if (command.equals(" tree - displays list of files/folders in current directory")) {
+//        if (command.equals(" tree - displays list of files/folders in current directory")) {
 
-        } else if (isInteger(command)) {
-            open(Integer.parseInt(command));
-        } else if (command.startsWith("del")) {
-            delete(Integer.parseInt(command.replace("del ", "").trim()));
+//        } else if (isInteger(command)) {
+//            open(Integer.parseInt(command));
+//        } else if (command.startsWith("del")) {
+//            delete(Integer.parseInt(command.replace("del ", "").trim()));
+//        }
+
+        if (command.equals("setbrightness")) {
+
+        } else if (command.equals("setmediavolume")) {
+
+        } else if (command.equals("setnofitvolume")) {
+
+        } else if (command.equals("setringervolume")) {
+
+        } else if (command.equals("setalarmvolume")) {
+
+        } else if (command.equals("toggletorch")) {
+
+        } else if (command.equals("takepicback")) {
+
+        } else if (command.equals("takepicfront")) {
+
+        } else if (command.equals("playpause")) {
+
+        } else if (command.equals("skip")) {
+
+        } else if (command.equals("prev")) {
+
+        } else if (command.equals("record")) {
         }
+
     }
 
     private static void print(String string) {
@@ -790,19 +864,18 @@ public class RemoteFragment extends P2PFragment {
         seperator(); // Files
         print(" Type remote, followed by any of the following to control an external device");
         print("");
-        print(" tree - displays list of files/folders in current directory");
-        print(" num - enter a num to open a file or directory that corresponds with it in the tree");
-        print(" if the number corresponds to a file, a file can be shared.");
-        print(" freespace - shows space available in the current partition");
-        print(" totalspace - shows the total space of the current partition");
-        print(" showdetails file_path/num - shows information on specified file");
-        print(" del num - deletes the file that corresponds with num in the tree");
-        print(" mkdir nm - creates a folder with the name nm in the root directory of the ExternalStorage");
-        print(" mkfile nm.extension - creates a file with the name nm in the root directory of the ExternalStorage");
-        print(" you can also specify a filepath when creating a file or directory.");
-        print(" back - opens current directories parent");
-        print(" open name/directory - opens folder at specified directory");
-        print(" showdetails name/num - shows details about specified file");
+        print(" setbrightness number - sets the brightness on the other device to the specified percentage");
+        print(" setmediavolume number - sets the media volume on the other device to the specified percentage");
+        print(" setnofitvolume number - sets the notification volume on the other device to the specified percentage");
+        print(" setringervolume number - sets the ringer volume on the other device to the specified percentage");
+        print(" setalarmvolume number - sets the alarm volume on the other device to the specified percentage");
+        print(" toggletorch - toggles the torch on the other device");
+        print(" takepicback - takes a picture with the back camera on the other device");
+        print(" takepicfront - takes a picture with the front camera on the other device");
+        print(" playpause - toggles between pausing and playing on the other device");
+        print(" skip - skips tracks on the other device");
+        print(" prev - play previous track on the other device");
+        print(" record number - records audio on the other device for the specified number of seconds");
     }
 
     public static void seperator() {
@@ -861,8 +934,10 @@ public class RemoteFragment extends P2PFragment {
 //        v.findViewById(R.id.screen_timeout).setOnClickListener(listener);
         v.findViewById(R.id.alarm_volume).setOnClickListener(listener);
         v.findViewById(R.id.media_volume).setOnClickListener(listener);
+        v.findViewById(R.id.launch_app).setOnClickListener(listener);
         v.findViewById(R.id.notification_volume).setOnClickListener(listener);
         v.findViewById(R.id.ringer_volume).setOnClickListener(listener);
+        v.findViewById(R.id.record).setOnClickListener(listener);
 
         placeholder = v.findViewById(R.id.placeholder);
         placeholder.setOnClickListener(placeHolderListener);
@@ -870,118 +945,6 @@ public class RemoteFragment extends P2PFragment {
         return v;
     }
 
-//    private static Dialog getScheduledAds() {
-//        final Dialog dialog = new Dialog(MainActivity.context, R.style.CustomDialog);
-//        dialog.setContentView(R.layout.scheduled_dialog);
-//        prefix = prefs.getBoolean(Utility.LOOP_SCHEDULE, true) ? "A full screen Ad will be shown every : " : "A full screen Ad will be shown in : ";
-//        final TextView frequency = (TextView) dialog.findViewById(R.id.frequency);
-//        final AbstractWheel hours = (AbstractWheel) dialog.findViewById(R.id.hours);
-//        final AbstractWheel minutes = (AbstractWheel) dialog.findViewById(R.id.minutes);
-//        final MaterialCheckBox loop = (MaterialCheckBox) dialog.findViewById(R.id.loop_checkbox);
-//
-//        dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(listener);
-//        dialog.findViewById(R.id.save_cancel).findViewById(R.id.cancel).setOnClickListener(listener);
-//
-//        hours.setViewAdapter(new NumericWheelAdapter(MainActivity.context, 0, 23));
-//        hours.setCyclic(true);
-//
-//        minutes.setViewAdapter(new NumericWheelAdapter(MainActivity.context, 0, 59));
-//        minutes.setCyclic(true);
-//
-//        // set current time
-//        frequencyMinutes = prefs.getInt(Utility.FULLSCREEN_AD_FREQUENCY_MINUTES, 20);
-//
-//        hours.setCurrentItem(frequencyMinutes / 60);
-//        minutes.setCurrentItem(frequencyMinutes % 60);
-//
-//        frequency.setText(prefix + (frequencyMinutes == 1 ? " minute" : frequencyMinutes + " minutes"));
-//
-//        OnWheelChangedListener wheelListener = new OnWheelChangedListener() {
-//            public void onChanged(AbstractWheel wheel, int oldValue, int newValue) {
-//                final StringBuilder text = new StringBuilder();
-//
-//                int mins = minutes.getCurrentItem();
-//                int hr = hours.getCurrentItem();
-//                frequencyMinutes = (hr * 60) + mins;
-//                text.append(prefix);
-//                if (!(hr == 0)) {
-//                    text.append(hr);
-//                    text.append(hr == 1 ? " hour" : " hours");
-//                    text.append(" and ");
-//                }
-//
-//                if (!(mins == 0)) {
-//                    text.append(mins);
-//                    text.append(mins == 1 ? " minute" : " minutes");
-//                }
-//
-//                final String out = text.toString();
-//
-//                if (out.equals(prefix))
-//                    frequency.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            frequency.setText("No full screen ads will be scheduled (will remove current schedule)");
-//                        }
-//                    });
-//                else
-//                    frequency.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            frequency.setText(out);
-//                        }
-//                    });
-//            }
-//        };
-//
-//        loop.setChecked(prefs.getBoolean(Utility.LOOP_SCHEDULE, true));
-//        loop.setText("Repeat?");
-//        loop.setOnCheckedChangeListener(new MaterialCheckBox.OnCheckedChangedListener() {
-//            @Override
-//            public void onCheckedChange(MaterialCheckBox materialCheckBox, boolean isChecked) {
-//                loopBool = isChecked;
-//                prefix = isChecked ? "A full screen Ad will be shown every : " : "A full screen Ad will be shown in : ";
-//                final StringBuilder text = new StringBuilder();
-//
-//                int mins = minutes.getCurrentItem();
-//                int hr = hours.getCurrentItem();
-//                frequencyMinutes = (hr * 60) + mins;
-//                text.append(prefix);
-//                if (!(hr == 0)) {
-//                    text.append(hr);
-//                    text.append(hr == 1 ? " hour" : " hours");
-//                    text.append(" and ");
-//                }
-//
-//                if (!(mins == 0)) {
-//                    text.append(mins);
-//                    text.append(mins == 1 ? " minute" : " minutes");
-//                }
-//
-//                final String out = text.toString();
-//
-//                if (out.equals(prefix))
-//                    frequency.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            frequency.setText("No full screen ads will be scheduled (will remove current schedule)");
-//                        }
-//                    });
-//                else
-//                    frequency.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            frequency.setText(out);
-//                        }
-//                    });
-//
-//            }
-//        });
-//
-//        hours.addChangingListener(wheelListener);
-//        minutes.addChangingListener(wheelListener);
-//        return dialog;
-//    }
 
     @Override
     public void onP2PDisconnected() {
@@ -1041,7 +1004,7 @@ public class RemoteFragment extends P2PFragment {
                 convertView = View.inflate(context, R.layout.app_item, null);
 
             final App app = apps[position];
-            ((TextView) convertView).setText(app.name + " (" + app.address + ")");
+            ((TextView) convertView).setText(app.name);
             return convertView;
         }
     }

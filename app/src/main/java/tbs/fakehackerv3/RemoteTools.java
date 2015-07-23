@@ -284,7 +284,6 @@ public class RemoteTools {
 
     public static Bitmap getScreenShot() {
         Bitmap bitmap = null;
-
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
 
@@ -293,7 +292,6 @@ public class RemoteTools {
 
     public static void takePictureFront() {
         frontCamera = getFrontCamera();
-
         MainActivity.runOnUIThread(takePictureFront);
     }
 
