@@ -32,6 +32,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="center"
             android:maxLines="1"
             android:padding="10dp"
             android:text="Minutes"
@@ -42,6 +43,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="center"
             android:maxLines="1"
             android:padding="10dp"
             android:text="Seconds"
@@ -85,6 +87,6 @@
         android:layout_height="56dp"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/body"
-        android:layout_margin="8dp" />
+        android:layout_marginRight="8dp" />
 
 </RelativeLayout>

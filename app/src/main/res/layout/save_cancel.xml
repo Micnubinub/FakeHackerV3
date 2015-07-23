@@ -24,7 +24,7 @@
         android:background="@drawable/grey_button_selector"
         android:minWidth="110dp"
         android:padding="8dp"
-        android:text="Set"
+        android:text="Confirm"
         android:textColor="@color/material_blue_lightr"
         android:textSize="18sp" />
 

@@ -13,6 +13,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
@@ -291,6 +293,20 @@ public class MainActivity extends FragmentActivity {
         disconnectedButton.show();
     }
 
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            DisconnectedButton.show();
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        DisconnectedButton.show();
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
         public MyPagerAdapter(FragmentManager fm) {
@@ -312,5 +328,4 @@ public class MainActivity extends FragmentActivity {
             return fragments[position];
         }
     }
-
 }

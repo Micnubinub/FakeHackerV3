@@ -359,7 +359,7 @@ public class RemoteFragment extends P2PFragment {
         dialog.findViewById(R.id.save_cancel).findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendCommand(StaticValues.RECORD_AUDIO, String.valueOf(minutes.getCurrentItem() * 60) + seconds);
+                sendCommand(StaticValues.RECORD_AUDIO, String.valueOf(minutes.getCurrentItem() * 60) + seconds.getCurrentItem());
                 dialog.dismiss();
             }
         });
