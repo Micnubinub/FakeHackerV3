@@ -20,5 +20,6 @@
     <ListView
         android:id="@+id/list_view"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        android:listSelector="@drawable/grey_button_selector" />
 </LinearLayout>

@@ -38,6 +38,7 @@ import tbs.fakehackerv3.Message;
 import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
 import tbs.fakehackerv3.Tools;
+import tbs.fakehackerv3.custom_views.DisconnectedButton;
 import tbs.fakehackerv3.custom_views.FilePagerSlidingTabStrip;
 import tbs.fakehackerv3.custom_views.HackerEditText;
 import tbs.fakehackerv3.custom_views.HackerTextView;
@@ -1337,7 +1338,8 @@ public class FileManagerFragment extends P2PFragment {
             @Override
             public void onClick(View v) {
                 if (!P2PManager.isActive()) {
-                    MainActivity.toast("click the refresh button on both devices to connect");
+                    MainActivity.toast("click the reconnect button on both devices to connect");
+                    DisconnectedButton.show();
                     return;
                 }
                 v.setVisibility(View.GONE);

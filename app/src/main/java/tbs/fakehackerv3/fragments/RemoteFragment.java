@@ -26,6 +26,7 @@ import tbs.fakehackerv3.R;
 import tbs.fakehackerv3.RemoteTools;
 import tbs.fakehackerv3.StaticValues;
 import tbs.fakehackerv3.Tools;
+import tbs.fakehackerv3.custom_views.DisconnectedButton;
 import tbs.fakehackerv3.custom_views.MaterialCheckBox;
 import tbs.fakehackerv3.custom_views.MaterialSeekBar;
 import tbs.fakehackerv3.custom_views.MaterialSwitch;
@@ -40,7 +41,8 @@ public class RemoteFragment extends P2PFragment {
         @Override
         public void onClick(View v) {
             if (!P2PManager.isActive()) {
-                MainActivity.toast("click the refresh button on both devices to connect");
+                MainActivity.toast("click the reconnect button on both devices to connect");
+                DisconnectedButton.show();
                 return;
             }
 

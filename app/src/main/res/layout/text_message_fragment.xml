@@ -10,6 +10,7 @@
         android:clickable="false"
         android:divider="@color/grey"
         android:dividerHeight="1dp"
+        android:listSelector="@drawable/grey_button_selector"
         android:orientation="vertical" />
 
     <tbs.fakehackerv3.custom_views.HackerTextView

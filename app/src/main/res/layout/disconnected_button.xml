@@ -22,16 +22,14 @@
         android:text="Disconnected, click to reconnect"
         android:textSize="20sp" />
 
-    <tbs.fakehackerv3.custom_views.HackerTextView
+    <ImageView
         android:id="@+id/close_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_alignParentRight="true"
         android:layout_margin="8dp"
-        android:padding="12dp"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:text="X"
-        android:textSize="20sp" />
+        android:padding="6dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/down_arrow" />
 
 </RelativeLayout>

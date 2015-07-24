@@ -11,6 +11,7 @@
         android:layout_height="fill_parent"
         android:layout_above="@+id/message"
         android:dividerHeight="9dp"
+        android:listSelector="@drawable/grey_button_selector"
         android:padding="8dp" />
 
     <tbs.fakehackerv3.custom_views.HackerEditText

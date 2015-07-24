@@ -23,7 +23,7 @@ import tbs.fakehackerv3.fragments.CallLogFragment;
 import tbs.fakehackerv3.fragments.ConsoleFragment;
 import tbs.fakehackerv3.fragments.FileManagerFragment;
 import tbs.fakehackerv3.fragments.MessageReaderFragment;
-import tbs.fakehackerv3.fragments.MessagingFragent;
+import tbs.fakehackerv3.fragments.MessagingFragment;
 import tbs.fakehackerv3.fragments.RemoteFragment;
 
 
@@ -99,7 +99,7 @@ public class Commands {
             FileManagerFragment.handleConsoleCommand(userCmd);
             return;
         } else if (userCmd.startsWith("chat")) {
-            MessagingFragent.handleConsoleCommand(userCmd);
+            MessagingFragment.handleConsoleCommand(userCmd);
             return;
         } else if (userCmd.startsWith("remote")) {
             RemoteFragment.handleConsoleCommand(userCmd);
@@ -157,7 +157,18 @@ public class Commands {
 
         if (commands[0].equals("setbackground")) {
             try {
-                Tools.setBackgroundColor(MainActivity.context, Color.parseColor("#" + commands[1]));
+                String color;
+                final String input = commands[1];
+
+                if (input.startsWith("#"))
+                    color = input;
+                else if (input.startsWith("0x"))
+                    color = input.replace("0x", "#");
+                else {
+                    color = "#" + input;
+                }
+
+                Tools.setBackgroundColor(MainActivity.context, Color.parseColor(color));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -444,6 +455,8 @@ public class Commands {
         print(" portrait - set screen orientation portrait");
         print(" printrandomshit number - prints out 'hacker' words the number of times specified");
         print(" record number - records audio for the specified number of seconds");
+        print(" setbackgroundcolor x - where x is either: ARGB, HTML color code or an int");
+        print(" settextcolor x - where x is either: ARGB, HTML color code or an int");
 
         seperator();
         print(" Editor");

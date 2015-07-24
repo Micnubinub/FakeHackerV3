@@ -1,7 +1,6 @@
 package tbs.fakehackerv3.custom_views;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -99,11 +98,11 @@ public class DisconnectedButton extends FrameLayout {
             if (animationType == AnimationType.IN)
                 return;
 
-            container.setVisibility(VISIBLE);
             animationType = AnimationType.IN;
             view.post(new Runnable() {
                 @Override
                 public void run() {
+                    container.setVisibility(VISIBLE);
                     animator.start();
                 }
             });
@@ -131,11 +130,7 @@ public class DisconnectedButton extends FrameLayout {
         view.setOnClickListener(clickListener);
         final HackerTextView text = (HackerTextView) view.findViewById(R.id.text);
         text.setSelected(true);
-        final HackerTextView closeButton = (HackerTextView) view.findViewById(R.id.close_button);
-        closeButton.setTextColor(0xffd01716);
-        closeButton.setOnClickListener(clickListener);
-        closeButton.setBackgroundResource(R.drawable.round_rect);
-        closeButton.setTypeFaceStyle(Typeface.BOLD);
+        view.findViewById(R.id.close_button).setOnClickListener(clickListener);
         container = this;
         addView(view, param);
 

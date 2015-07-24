@@ -20,6 +20,7 @@ import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
 import tbs.fakehackerv3.StaticValues;
 import tbs.fakehackerv3.console.TextMessageItem;
+import tbs.fakehackerv3.custom_views.DisconnectedButton;
 
 /**
  * Created by Michael on 7/10/2015.
@@ -29,7 +30,8 @@ public class MessageReaderFragment extends P2PFragment {
         @Override
         public void onClick(View v) {
             if (!P2PManager.isActive()) {
-                MainActivity.toast("click the refresh button on both devices to connect");
+                MainActivity.toast("click the reconnect button on both devices to connect");
+                DisconnectedButton.show();
                 return;
             }
             requestTexts();

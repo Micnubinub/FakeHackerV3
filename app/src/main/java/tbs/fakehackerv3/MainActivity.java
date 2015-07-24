@@ -26,7 +26,7 @@ import tbs.fakehackerv3.fragments.ConsoleFragment;
 import tbs.fakehackerv3.fragments.FileManagerFragment;
 import tbs.fakehackerv3.fragments.LogFragment;
 import tbs.fakehackerv3.fragments.MessageReaderFragment;
-import tbs.fakehackerv3.fragments.MessagingFragent;
+import tbs.fakehackerv3.fragments.MessagingFragment;
 import tbs.fakehackerv3.fragments.P2PFragment;
 import tbs.fakehackerv3.fragments.RemoteFragment;
 import tbs.fakehackerv3.fragments.Settings;
@@ -64,7 +64,7 @@ public class MainActivity extends FragmentActivity {
             if (received[0].equals(String.valueOf(Message.MessageType.COMMAND))) {
                 RemoteFragment.handleReceivedCommand(received[1]);
             } else if (received[0].equals(String.valueOf(Message.MessageType.MESSAGE))) {
-                MessagingFragent.handleReceivedMessage(received[1]);
+                MessagingFragment.handleReceivedMessage(received[1]);
             } else if (received[0].equals(String.valueOf(Message.MessageType.FILE))) {
                 FileManagerFragment.handleMessage(received[1]);
             }
@@ -255,7 +255,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void setUpFragments() {
-        fragments[0] = new MessagingFragent();
+        fragments[0] = new MessagingFragment();
         titles[0] = "Messaging";
 
         fragments[1] = new RemoteFragment();

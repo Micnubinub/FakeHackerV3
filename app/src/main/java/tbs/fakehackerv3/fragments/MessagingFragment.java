@@ -24,19 +24,20 @@ import tbs.fakehackerv3.Message;
 import tbs.fakehackerv3.P2PManager;
 import tbs.fakehackerv3.R;
 import tbs.fakehackerv3.ReceivedMessage;
+import tbs.fakehackerv3.custom_views.DisconnectedButton;
 
 /**
  * Created by Michael on 5/22/2015.
  */
-public class MessagingFragent extends P2PFragment {
+public class MessagingFragment extends P2PFragment {
     public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (!P2PManager.isActive()) {
-                MainActivity.toast("click the refresh button on both devices to connect");
+                MainActivity.toast("click the reconnect button on both devices to connect");
+                DisconnectedButton.show();
                 return;
             }
-
             v.setVisibility(View.GONE);
         }
     };
@@ -59,8 +60,6 @@ public class MessagingFragent extends P2PFragment {
             if (messageEditText == null)
                 return;
             sendMessage(messageEditText.getText().toString());
-
-
         }
     };
     private static View v;
@@ -98,15 +97,6 @@ public class MessagingFragent extends P2PFragment {
                     notifyDataSetChanged();
                     addMessageToDataBase(message);
                 }
-
-//                if (!isInit) {
-//                    try {
-//                        v.findViewById(R.id.placeholder).setVisibility(View.GONE);
-//                        isInit = true;
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
             }
         });
     }

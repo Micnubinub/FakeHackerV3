@@ -30,9 +30,9 @@ public class ConsoleListAdapter extends ArrayAdapter<String> {
                 consoleItems.get(position));
 
         if (consoleItems.get(position).contains("----"))
-            ((ViewHolder) convertView.getTag()).textView.setMaxLines(1);
-
-
+            ((ViewHolder) convertView.getTag()).textView.setSingleLine(true);
+        else
+            ((ViewHolder) convertView.getTag()).textView.setSingleLine(false);
         return convertView;
     }
 
