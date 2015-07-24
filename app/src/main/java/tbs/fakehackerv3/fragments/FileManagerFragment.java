@@ -32,6 +32,8 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 
 import tbs.fakehackerv3.MainActivity;
 import tbs.fakehackerv3.Message;
@@ -42,6 +44,7 @@ import tbs.fakehackerv3.custom_views.DisconnectedButton;
 import tbs.fakehackerv3.custom_views.FilePagerSlidingTabStrip;
 import tbs.fakehackerv3.custom_views.HackerEditText;
 import tbs.fakehackerv3.custom_views.HackerTextView;
+import tbs.fakehackerv3.custom_views.ProgressBar;
 
 /**
  * Crffileeated by root on 31/07/14.
@@ -70,7 +73,6 @@ public class FileManagerFragment extends P2PFragment {
     public static final String[] VIDEO_EXTENSIONS = {"webm", "mkv", "flv", "vob", "ogv", "ogg", "drc", "mng", "avi", "mov", "qt", "wmv", "yuv", "rm", "rmvb", "asf", "mp4", "m4p", "m4v", "mpg", "mp2", "mpeg", "mpe", "mpv", "m2v", "svi", "3gp", "3g2", "mxf", "roq", "nsv"};
     public static final String[] PICTURE_EXTENSIONS = {"jpg", "jpeg", "tif", "gif", "png", "raw"};
     public static final String[] MUSIC_EXTENSIONS = {"3gp", "act", "aiff", "aac", "amr", "au", "awb", "dct", "dss", "dvf", "flac", "gsm", "m4a", "m4p", "mmf", "mp3", "mpc", "msv", "ogg", "oga", "opus", "ra", "rm", "raw", "sln", "tta", "vox", "wav", "wma", "wv", "webm"};
-
     private static final Comparator<File> fileComp = new Comparator<File>() {
         @Override
         public int compare(File file1, File file2) {
@@ -87,20 +89,11 @@ public class FileManagerFragment extends P2PFragment {
                     return String.valueOf(file1.getName().toLowerCase()).compareTo(file2.getName().toLowerCase());
                 }
             }
-/*                int i;
-                if (file.isDirectory() && !file2.isDirectory()) {
-                    i = -1;
-                } else if (!file.isDirectory() && file2.isDirectory()) {
-                    i = 1;
-                } else {
-                    i = file.getName().compareToIgnoreCase(file2.getName());
-                }
-                return i;*/
         }
     };
     private static final Fragment[] fragments = new Fragment[2];
     private static final ArrayList<File> tmpTree = new ArrayList<File>();
-    public static boolean isInit;
+    public static long fileLength;
     public static String tmpFileBeingDownloadedPath, tmpFileBeingUploadedPath;
     private static FragmentActivity context;
     //Todo local and external, make sure these are correct, as they are important for copy/move
@@ -168,6 +161,7 @@ public class FileManagerFragment extends P2PFragment {
             hidePasteButton();
         }
     };
+    private static ProgressBar progressBar;
 
     public static String getCurrentExternalDirectory() {
         if (!(new File(currentExternalDirectory).isDirectory()) || currentExternalDirectory.length() < 1) {
@@ -201,19 +195,43 @@ public class FileManagerFragment extends P2PFragment {
     public static void handleLocalOutPutLocation() {
         switch (mikeFileOperation) {
             case COPY_EXTERNAL:
-                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name);
+                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name + FILE_SEP + getFileSize(new File(tmpMikeFile.path)));
                 break;
             case COPY_LOCAL:
                 copyFile(tmpMikeFile.path, currentLocalDirectory + "/" + tmpMikeFile.name);
                 break;
             case MOVE_EXTERNAL:
-                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name);
+                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name + FILE_SEP + getFileSize(new File(tmpMikeFile.path)));
                 break;
             case MOVE_LOCAL:
                 moveFile(tmpMikeFile.path, currentLocalDirectory + "/" + tmpMikeFile.name);
                 break;
         }
         showTree(currentLocalDirectory, MikeFileOperationType.LOCAL);
+    }
+
+    public static long getFileSize(final File file) {
+        if (file == null || !file.exists())
+            return 0;
+        if (!file.isDirectory())
+            return file.length();
+        final List<File> dirs = new LinkedList<File>();
+        dirs.add(file);
+        long result = 0;
+        while (!dirs.isEmpty()) {
+            final File dir = dirs.remove(0);
+            if (!dir.exists())
+                continue;
+            final File[] listFiles = dir.listFiles();
+            if (listFiles == null || listFiles.length == 0)
+                continue;
+            for (final File child : listFiles) {
+                result += child.length();
+                if (child.isDirectory())
+                    dirs.add(child);
+            }
+        }
+        return result;
     }
 
     public static void handleExternalOutPutLocation() {
@@ -223,8 +241,7 @@ public class FileManagerFragment extends P2PFragment {
                 break;
             case COPY_LOCAL:
                 tmpFileBeingUploadedPath = tmpMikeFile.path;
-                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name);
-
+                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name + FILE_SEP + getFileSize(new File(tmpMikeFile.path)));
                 break;
             case MOVE_EXTERNAL:
                 sendFileCommand(COMMAND_MOVE + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name);
@@ -241,7 +258,7 @@ public class FileManagerFragment extends P2PFragment {
                 break;
             case MOVE_LOCAL:
                 tmpFileBeingUploadedPath = tmpMikeFile.path;
-                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name);
+                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name + FILE_SEP + getFileSize(new File(tmpMikeFile.path)));
                 break;
         }
         showTree(currentExternalDirectory, MikeFileOperationType.EXTERNAL);
@@ -494,7 +511,6 @@ public class FileManagerFragment extends P2PFragment {
         showTree(getCurrentExternalDirectory(), mikeFileOperationType);
     }
 
-
     private static void print(String string) {
         ConsoleFragment.addConsoleItem(string);
     }
@@ -587,31 +603,35 @@ public class FileManagerFragment extends P2PFragment {
 //                e.printStackTrace();
 //            }
 
-        try {
-            final FileInputStream inStream = new FileInputStream(from);
-            final FileOutputStream outStream = new FileOutputStream(to);
-            final FileChannel inChannel = inStream.getChannel();
-            final FileChannel outChannel = outStream.getChannel();
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-            inStream.close();
-            outStream.close();
-        } catch (IOException e) {
-            log("failedFirst > " + e.getMessage());
+        if (from.isDirectory()) {
+            copyDirectory(from, to);
+        } else {
             try {
-                final InputStream in = new FileInputStream(from);
-                final OutputStream out = new FileOutputStream(to);
-                // Transfer bytes from in to out
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
+                final FileInputStream inStream = new FileInputStream(from);
+                final FileOutputStream outStream = new FileOutputStream(to);
+                final FileChannel inChannel = inStream.getChannel();
+                final FileChannel outChannel = outStream.getChannel();
+                inChannel.transferTo(0, inChannel.size(), outChannel);
+                inStream.close();
+                outStream.close();
+            } catch (IOException e) {
+                log("failedFirst > " + e.getMessage());
+                try {
+                    final InputStream in = new FileInputStream(from);
+                    final OutputStream out = new FileOutputStream(to);
+                    // Transfer bytes from in to out
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                    in.close();
+                    out.close();
+                } catch (Exception e1) {
+                    log("failed to copy file > from " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+                    log("failedSecond > " + e1.getMessage());
+                    e1.printStackTrace();
                 }
-                in.close();
-                out.close();
-            } catch (Exception e1) {
-                log("failed to copy file > from " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
-                log("failedSecond > " + e1.getMessage());
-                e1.printStackTrace();
             }
         }
     }
@@ -676,11 +696,21 @@ public class FileManagerFragment extends P2PFragment {
             moveFile(new File(split[1]), new File(split[2]));
         } else if (msg.startsWith(COMMAND_DOWNLOAD)) {
             //todo command name + fileSep +filePath + fileSep +filePathTo
-            sendFileCommand(COMMAND_UPLOAD + FILE_SEP + split[2]);
+            sendFileCommand(COMMAND_UPLOAD + FILE_SEP + split[2] + FILE_SEP + split[3]);
+            try {
+                fileLength = Long.parseLong(split[3]);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
             tmpFileBeingUploadedPath = split[1];
         } else if (msg.startsWith(COMMAND_UPLOAD)) {
             //todo command name + fileSep+fileFrom
             tmpFileBeingDownloadedPath = split[1];
+            try {
+                fileLength = Long.parseLong(split[2]);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
             try {
                 final File file = new File(tmpFileBeingDownloadedPath);
                 file.getParentFile().mkdirs();
@@ -693,7 +723,7 @@ public class FileManagerFragment extends P2PFragment {
 
     public static void handleResponse(String msg) {
         if (msg.startsWith(RESPONSE_BROWSE)) {
-            //todo RESPONSE name + filesep+filepath
+//todo RESPONSE name + filesep+filepath
             final String[] split = msg.split(FILE_SEP, 2);
             ((ExternalFileManager) fragments[1]).parseReceivedFiles(split[1]);
         } else if (msg.startsWith(RESPONSE_OPEN)) {
@@ -839,7 +869,6 @@ public class FileManagerFragment extends P2PFragment {
             }
         }
 
-
         context.runOnUiThread(new Runnable() {
                                   @Override
                                   public void run() {
@@ -942,22 +971,30 @@ public class FileManagerFragment extends P2PFragment {
         }
     }
 
-    public static void handleConsoleCommand(String command) {
+    public static boolean handleConsoleCommand(String command) {
         log("handlng > " + command);
-        command = command.replace("filemanager ", "").trim();
 
         if (command.startsWith("tree")) {
             showTree(currentLocalDirectory, MikeFileOperationType.LOCAL);
-        } else if (isInteger(command)) {
-            open(Integer.parseInt(command));
+            return true;
+        } else if (command.startsWith("open")) {
+            try {
+                open(Integer.parseInt(command.replace("open ", "").trim()));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                MainActivity.toast("Please enter a valid number");
+            }
+            return true;
         } else if (command.startsWith("del")) {
             delete(Integer.parseInt(command.replace("del ", "").trim()));
+            return true;
         } else if (command.startsWith("back")) {
             try {
                 showTree(new File(currentLocalDirectory).getParent(), MikeFileOperationType.LOCAL);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return true;
         } else if (command.startsWith("mkdir")) {
             try {
                 final String fileName = command.replace("mkdir ", "").trim();
@@ -968,6 +1005,7 @@ public class FileManagerFragment extends P2PFragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return true;
         } else if (command.startsWith("mkfile")) {
             try {
                 final String fileName = command.replace("mkfile ", "").trim();
@@ -978,13 +1016,18 @@ public class FileManagerFragment extends P2PFragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return true;
         } else if (command.startsWith("copy")) {
             copy(Integer.parseInt(command.replace("copy ", "").trim()));
+            return true;
         } else if (command.startsWith("move")) {
             move(Integer.parseInt(command.replace("move ", "").trim()));
+            return true;
         } else if (command.startsWith("paste")) {
             paste();
+            return true;
         }
+        return false;
     }
 
     private static boolean isInteger(String s) {
@@ -1019,6 +1062,48 @@ public class FileManagerFragment extends P2PFragment {
         ConsoleFragment.addConsoleItem("--------------------------------------------------------------------------------------------------");
     }
 
+    public static void setProgress(float progress) {
+        if (progressBar != null)
+            ProgressBar.setProgress(progress);
+    }
+
+    public static void copyDirectory(File sourceLocation, File targetLocation) {
+        try {
+            if (sourceLocation.isDirectory()) {
+                if (!targetLocation.exists() && !targetLocation.mkdirs()) {
+                    throw new IOException("Cannot create dir " + targetLocation.getAbsolutePath());
+                }
+
+                String[] children = sourceLocation.list();
+                for (int i = 0; i < children.length; i++) {
+                    copyDirectory(new File(sourceLocation, children[i]),
+                            new File(targetLocation, children[i]));
+                }
+            } else {
+
+                // make sure the directory we plan to store the recording in exists
+                File directory = targetLocation.getParentFile();
+                if (directory != null && !directory.exists() && !directory.mkdirs()) {
+                    throw new IOException("Cannot create dir " + directory.getAbsolutePath());
+                }
+
+                InputStream in = new FileInputStream(sourceLocation);
+                OutputStream out = new FileOutputStream(targetLocation);
+
+                // Copy the bits from instream to outstream
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -1034,7 +1119,7 @@ public class FileManagerFragment extends P2PFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //Todo
+//Todo
         final View view = inflater.inflate(R.layout.file_manager_fragment, null);
         //Todo
         setUpFragments(view);
@@ -1048,6 +1133,7 @@ public class FileManagerFragment extends P2PFragment {
         tabs = (FilePagerSlidingTabStrip) v.findViewById(R.id.tabs);
         pager = (ViewPager) v.findViewById(R.id.view_pager);
         pager.setOffscreenPageLimit(3);
+        progressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
         pagerAdapter = new MyPagerAdapter(getChildFragmentManager());
 
         pager.setAdapter(pagerAdapter);
@@ -1338,7 +1424,6 @@ public class FileManagerFragment extends P2PFragment {
             @Override
             public void onClick(View v) {
                 if (!P2PManager.isActive()) {
-                    MainActivity.toast("click the reconnect button on both devices to connect");
                     DisconnectedButton.show();
                     return;
                 }
@@ -1363,7 +1448,6 @@ public class FileManagerFragment extends P2PFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    MainActivity.toast("file clicked : " + files.get(position).toString());
                     final MikeFile file = files.get(position);
                     if (file.fileType == FileType.FOLDER) {
                         sendFileCommand(COMMAND_BROWSE + FILE_SEP + file.path);

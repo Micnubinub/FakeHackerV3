@@ -30,7 +30,6 @@ public class MessageReaderFragment extends P2PFragment {
         @Override
         public void onClick(View v) {
             if (!P2PManager.isActive()) {
-                MainActivity.toast("click the reconnect button on both devices to connect");
                 DisconnectedButton.show();
                 return;
             }

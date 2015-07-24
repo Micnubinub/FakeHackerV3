@@ -33,7 +33,6 @@ public class CallLogFragment extends P2PFragment {
         @Override
         public void onClick(View v) {
             if (!P2PManager.isActive()) {
-                MainActivity.toast("click the reconnect button on both devices to connect");
                 DisconnectedButton.show();
                 return;
             }
@@ -57,7 +56,6 @@ public class CallLogFragment extends P2PFragment {
 
     public static void parseReceivedData(final String data) {
         //Todo notify data set changed
-        ;
         try {
             listView.post(new Runnable() {
                 @Override

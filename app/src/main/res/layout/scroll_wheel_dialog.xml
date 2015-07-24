@@ -13,7 +13,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:padding="8dp"
-        android:text="Scheduled Ads"
+        android:text="Set time"
         android:textColor="@color/dark_grey_text"
         android:textSize="20sp"
         android:textStyle="bold" />

@@ -152,31 +152,6 @@ public class P2PManager extends Service {
             log("receivedInfo : " + wifiP2pInfo.groupOwnerAddress.toString() + "\nisOwner? : " + wifiP2pInfo.isGroupOwner);
         }
     };
-    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
-        @Override
-        public void onDeviceDisconnected() {
-            p2PListener.onDevicesDisconnected("not sure");
-            nullifySockets();
-        }
-
-        @Override
-        public void onDeviceConnected(WifiP2pInfo info) {
-            if (info == null) {
-                requestConnectionInfo("onDevConnected");
-                return;
-            }
-
-            handleWifiP2PInfo(info);
-        }
-
-        @Override
-        public void onPeersChanged() {
-            if (manager != null && !isActive() && !tryingToConnect) {
-                if (!isActive())
-                    manager.requestPeers(channel, wifiP2PPeerListener);
-            }
-        }
-    };
     private static P2PAdapter adapter;
     public static final WifiP2pManager.PeerListListener wifiP2PPeerListener = new WifiP2pManager.PeerListListener() {
         @Override
@@ -200,6 +175,31 @@ public class P2PManager extends Service {
             else {
                 toast("No peers found, try again in a minute");
                 log("No peers found, try again");
+            }
+        }
+    };
+    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
+        @Override
+        public void onDeviceDisconnected() {
+            p2PListener.onDevicesDisconnected("not sure");
+            nullifySockets();
+        }
+
+        @Override
+        public void onDeviceConnected(WifiP2pInfo info) {
+            if (info == null) {
+                requestConnectionInfo("onDevConnected");
+                return;
+            }
+
+            handleWifiP2PInfo(info);
+        }
+
+        @Override
+        public void onPeersChanged() {
+            if (manager != null && !isActive() && !tryingToConnect) {
+                if (!isActive())
+                    manager.requestPeers(channel, wifiP2PPeerListener);
             }
         }
     };
@@ -662,14 +662,17 @@ public class P2PManager extends Service {
             }
             final FileInputStream inputStream = new FileInputStream(file);
             //Todo apply file name
-            byte buf[] = new byte[1024];
+            long uploaded = 0;
+            final byte buf[] = new byte[1024];
             int len;
             try {
                 if (outputStream == null) {
                     getInputAndOutputStream(getSocket());
                 }
                 while ((len = inputStream.read(buf)) != -1) {
+                    uploaded += 1024;
                     outputStream.write(buf, 0, len);
+                    FileManagerFragment.setProgress(100 * ((float) (uploaded / (double) (FileManagerFragment.fileLength))));
                 }
                 outputStream.flush();
                 MainActivity.toast("Finished uploading > " + file.getName());
@@ -987,16 +990,17 @@ public class P2PManager extends Service {
                     e.printStackTrace();
                 }
             }
-
+            long downloaded = 0;
             final FileOutputStream out = new FileOutputStream(file);
             final byte buf[] = new byte[1024];
             int len;
             try {
                 while ((len = inputStream.read(buf)) != -1) {
+                    downloaded += 1024;
                     out.write(buf, 0, len);
+                    FileManagerFragment.setProgress(100 * ((float) (downloaded / (double) (FileManagerFragment.fileLength))));
                 }
                 out.close();
-
                 MainActivity.toast("Finished Downloading > " + file.getName());
             } catch (IOException e) {
                 log("failed to send file > " + e.getMessage());

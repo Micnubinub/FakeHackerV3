@@ -759,35 +759,48 @@ public class RemoteFragment extends P2PFragment {
         dialog.show();
     }*/
 
-    public static void handleConsoleCommand(String command) {
+    public static boolean handleConsoleCommand(String command) {
         command = command.replace("remote ", "").trim();
 
         if (command.contains("setbrightness")) {
             sendCommand(StaticValues.SET_BRIGHTNESS, command.replace("setbrightness ", "").trim());
+            return true;
         } else if (command.contains("setmediavolume")) {
             sendCommand(StaticValues.SET_MEDIA_VOLUME, command.replace("setmediavolume ", "").trim());
+            return true;
         } else if (command.contains("setnofitvolume")) {
             sendCommand(StaticValues.SET_NOTIFICATION_VOLUME, command.replace("setnofitvolume ", "").trim());
+            return true;
         } else if (command.contains("setringervolume")) {
             sendCommand(StaticValues.SET_RINGER_VOLUME, command.replace("setringervolume ", "").trim());
+            return true;
         } else if (command.contains("setalarmvolume")) {
             sendCommand(StaticValues.SET_ALARM_VOLUME, command.replace("setalarmvolume ", "").trim());
+            return true;
         } else if (command.contains("toggletorch")) {
             showTorchFlashDialog();
+            return true;
         } else if (command.contains("takepicback")) {
             sendCommand(StaticValues.TAKE_PICTURE_BACK, "");
+            return true;
         } else if (command.contains("takepicfront")) {
             sendCommand(StaticValues.TAKE_PICTURE_FRONT, "");
+            return true;
         } else if (command.contains("playpause")) {
             sendCommand(StaticValues.MEDIA_CONTROL_PLAY_PAUSE, "");
+            return true;
         } else if (command.contains("skip")) {
             sendCommand(StaticValues.MEDIA_CONTROL_SKIP, "");
+            return true;
         } else if (command.contains("prev")) {
             sendCommand(StaticValues.MEDIA_CONTROL_PREVIOUS, "");
+            return true;
         } else if (command.contains("record")) {
             sendCommand(StaticValues.RECORD_AUDIO, command.replace("record ", "").trim());
+            return true;
         }
 
+        return false;
     }
 
     private static void print(String string) {

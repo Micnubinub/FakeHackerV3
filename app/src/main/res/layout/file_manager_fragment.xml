@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -21,7 +22,11 @@
             android:layout_below="@+id/tabs" />
     </RelativeLayout>
 
-
+    <tbs.fakehackerv3.custom_views.ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="4dp"
+        android:layout_alignParentBottom="true" />
     <tbs.fakehackerv3.custom_views.HackerTextView
         android:id="@+id/paste"
         android:layout_width="fill_parent"
