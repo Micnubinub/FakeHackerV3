@@ -260,13 +260,7 @@ public class Commands {
             cmdArray.add(commands[i]);
         }
 
-        if (cmdArray.get(0).
-
-                equals("for")
-
-                )
-
-        {
+        if (cmdArray.get(0).equals("for")) {
             if (isInteger(cmdArray.get(1))) {
 
                 int itr = Integer.valueOf(cmdArray.get(1));
@@ -364,7 +358,6 @@ public class Commands {
             seperator();
         } else if (cmd.get(0).equals("sweep")) {
             ConsoleFragment.clear();
-            ConsoleFragment.notifyDataSetChanged();
             seperator();
             print(" Console cleared.");
             seperator();

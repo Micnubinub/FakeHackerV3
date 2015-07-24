@@ -232,7 +232,6 @@ public class WheelVerticalView extends AbstractWheelView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
         int widthMode = View.MeasureSpec.getMode(widthMeasureSpec);
         int heightMode = View.MeasureSpec.getMode(heightMeasureSpec);
         int widthSize = View.MeasureSpec.getSize(widthMeasureSpec);

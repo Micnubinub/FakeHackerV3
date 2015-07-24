@@ -12,12 +12,20 @@ import tbs.fakehackerv3.R;
 
 public class ConsoleListAdapter extends ArrayAdapter<String> {
 
-    private final ArrayList<String> consoleItems;
+    private static final ArrayList<String> consoleItems = new ArrayList<String>();
 
-    public ConsoleListAdapter(Context context, int textViewResourceId,
-                              ArrayList<String> objects) {
-        super(context, textViewResourceId, objects);
-        this.consoleItems = objects;
+    public ConsoleListAdapter(Context context, int textViewResourceId) {
+        super(context, textViewResourceId, consoleItems);
+    }
+
+    @Override
+    public void add(String object) {
+        super.add(object);
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {

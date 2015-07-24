@@ -14,6 +14,12 @@ public class ProgressBar extends View {
     private static float progress;
     private static int width, height;
     private static View view;
+    private static final Runnable invalidate = new Runnable() {
+        @Override
+        public void run() {
+            view.invalidate();
+        }
+    };
     private static Runnable hide = new Runnable() {
         @Override
         public void run() {
@@ -44,17 +50,16 @@ public class ProgressBar extends View {
 
     public static void setProgress(float progress) {
         ProgressBar.progress = progress;
-        if (progress >= 0.9999f) {
+        if (progress >= 99.9999f) {
             view.post(hide);
         } else {
             view.post(show);
         }
-
+        view.post(invalidate);
     }
 
     public void init(Context context) {
         paint.setColor(0xffffbb00);
-//        paint.setColor(Tools.getTextColor(context));
         view = this;
     }
 

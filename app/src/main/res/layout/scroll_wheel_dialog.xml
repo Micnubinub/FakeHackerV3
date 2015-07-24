@@ -13,7 +13,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:padding="8dp"
-        android:text="Set time"
+        android:text="Set duration"
         android:textColor="@color/dark_grey_text"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -67,6 +67,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
+            android:background="#ff1a1a1a"
             android:paddingLeft="16dp"
             android:paddingRight="16dp" />
 
@@ -75,6 +76,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
+            android:background="#ff1a1a1a"
             android:paddingLeft="16dp"
             android:paddingRight="16dp" />
 

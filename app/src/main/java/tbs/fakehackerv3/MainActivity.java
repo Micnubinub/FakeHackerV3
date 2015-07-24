@@ -73,7 +73,6 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onDevicesDisconnected(String reason) {
             log("disconnected because of : " + reason);
-            toast("disconnected because of : " + reason);
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

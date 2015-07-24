@@ -48,6 +48,7 @@
                 android:id="@+id/take_pic_back"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/grey_button_selector"
                 android:padding="12dp"
                 android:text="Take picture (back)"
                 android:textColor="#fff"
@@ -137,6 +138,7 @@
                 android:id="@+id/media_volume"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/grey_button_selector"
                 android:padding="12dp"
                 android:text="Media Volume"
                 android:textColor="#fff"
@@ -168,7 +170,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/grey_button_selector"
                 android:padding="12dp"
-                android:text="Record"
+                android:text="Record audio"
                 android:textColor="#fff"
                 android:textSize="18sp" />
         </LinearLayout>

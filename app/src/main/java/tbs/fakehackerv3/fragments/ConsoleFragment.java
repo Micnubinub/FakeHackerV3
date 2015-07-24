@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Random;
 
 import tbs.fakehackerv3.R;
@@ -26,19 +25,9 @@ import tbs.fakehackerv3.player.Commands;
  * Created by Michael on 7/5/2015.
  */
 public class ConsoleFragment extends Fragment {
-    private static final ArrayList<String> consoleEntries = new ArrayList<String>();
+
     private static final Random random = new Random();
     public static ConsoleListAdapter cl_adapter;
-    private static final Runnable notifyConsoleList = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                cl_adapter.notifyDataSetChanged();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
     public static FragmentActivity context;
     private static View mainView;
     // Todo
@@ -163,15 +152,11 @@ public class ConsoleFragment extends Fragment {
     }
 
     public static void addConsoleItem(String consoleItem) {
-        consoleEntries.add(consoleItem);
-        if (context != null)
-            context.runOnUiThread(notifyConsoleList);
+        cl_adapter.add(consoleItem);
     }
 
     public static void clear() {
-        consoleEntries.clear();
-        if (context != null)
-            context.runOnUiThread(notifyConsoleList);
+        cl_adapter.clear();
     }
 
     public static String getRandomHackerString() {
@@ -184,16 +169,13 @@ public class ConsoleFragment extends Fragment {
             return randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)] + " " + randomCommandWords[random.nextInt(randomCommandWords.length)] + " 0x" + Integer.toHexString(random.nextInt());
     }
 
-    public static void notifyDataSetChanged() {
-        mainListView.post(notifyConsoleList);
-    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainView = inflater.inflate(R.layout.console_frament, null);
         mainListView = (ListView) mainView.findViewById(R.id.list);
-        cl_adapter = new ConsoleListAdapter(context, R.layout.console_entry, consoleEntries);
+        cl_adapter = new ConsoleListAdapter(context, R.layout.console_entry);
         mainListView.setAdapter(cl_adapter);
 
         initEverythingElse();

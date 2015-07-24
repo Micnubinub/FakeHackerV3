@@ -414,14 +414,14 @@ public class RemoteFragment extends P2PFragment {
                 listView.setAdapter(new ReceivedAppAdapter(apps));
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                         view.post(new Runnable() {
                             @Override
                             public void run() {
+                                sendCommand(StaticValues.LAUNCH_APP, apps[position].address);
                                 dialog.dismiss();
                             }
                         });
-
                     }
                 });
 

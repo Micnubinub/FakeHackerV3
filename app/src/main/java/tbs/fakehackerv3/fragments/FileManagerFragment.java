@@ -195,13 +195,15 @@ public class FileManagerFragment extends P2PFragment {
     public static void handleLocalOutPutLocation() {
         switch (mikeFileOperation) {
             case COPY_EXTERNAL:
-                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name + FILE_SEP + getFileSize(new File(tmpMikeFile.path)));
+                fileLength = getFileSize(new File(tmpMikeFile.path));
+                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name + FILE_SEP + fileLength);
                 break;
             case COPY_LOCAL:
                 copyFile(tmpMikeFile.path, currentLocalDirectory + "/" + tmpMikeFile.name);
                 break;
             case MOVE_EXTERNAL:
-                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name + FILE_SEP + getFileSize(new File(tmpMikeFile.path)));
+                fileLength = getFileSize(new File(tmpMikeFile.path));
+                sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name + FILE_SEP + fileLength);
                 break;
             case MOVE_LOCAL:
                 moveFile(tmpMikeFile.path, currentLocalDirectory + "/" + tmpMikeFile.name);
@@ -241,7 +243,8 @@ public class FileManagerFragment extends P2PFragment {
                 break;
             case COPY_LOCAL:
                 tmpFileBeingUploadedPath = tmpMikeFile.path;
-                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name + FILE_SEP + getFileSize(new File(tmpMikeFile.path)));
+                fileLength = getFileSize(new File(tmpMikeFile.path));
+                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name + FILE_SEP + fileLength);
                 break;
             case MOVE_EXTERNAL:
                 sendFileCommand(COMMAND_MOVE + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name);
@@ -258,7 +261,8 @@ public class FileManagerFragment extends P2PFragment {
                 break;
             case MOVE_LOCAL:
                 tmpFileBeingUploadedPath = tmpMikeFile.path;
-                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name + FILE_SEP + getFileSize(new File(tmpMikeFile.path)));
+                fileLength = getFileSize(new File(tmpMikeFile.path));
+                sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name + FILE_SEP + fileLength);
                 break;
         }
         showTree(currentExternalDirectory, MikeFileOperationType.EXTERNAL);
@@ -370,7 +374,7 @@ public class FileManagerFragment extends P2PFragment {
 
                 switch (mikeFileOperationType) {
                     case EXTERNAL:
-                        builder.append(new MikeFile(dir.getParent(), dir.getParentFile().length()).toString());
+                        builder.append(new MikeFile(dir.getParent(), getFileSize(dir.getParentFile())).toString());
                         builder.append(FILE_SEP);
 
                         for (int i = 0; i < tmpTree.size(); i++) {
@@ -391,13 +395,13 @@ public class FileManagerFragment extends P2PFragment {
 
 
             } else {
-                //Todo think about what to do whne the folder is empty
+                //Todo think about what to do when the folder is empty
                 log("   Specified folder is empty.");
 
                 switch (mikeFileOperationType) {
                     case EXTERNAL:
                         //Todo test
-                        builder.append(new MikeFile(dir.getParent(), dir.getParentFile().length()).toString());
+                        builder.append(new MikeFile(dir.getParent(), getFileSize(dir.getParentFile())).toString());
                         return builder.toString();
                     case LOCAL:
                         tmpTree.clear();
@@ -420,6 +424,8 @@ public class FileManagerFragment extends P2PFragment {
             final File f = tmpTree.get(i);
             print("" + (1 + i) + ". " + (f.isDirectory() ? "/" : "") + f.getName() + (f.isDirectory() ? "/" : ""));
         }
+
+        seperator();
     }
 
     private static void initExternal() {
@@ -587,53 +593,51 @@ public class FileManagerFragment extends P2PFragment {
         copyFile(new File(from), new File(to));
     }
 
-    public static void copyFile(File from, File to) {
+    public static void copyFile(final File from, final File to) {
         log("moving from > " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
 
-        try {
-            to.getParentFile().mkdirs();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-//        if (!dst.exists())
-//            try {
-//                dst.createNewFile();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
-        if (from.isDirectory()) {
-            copyDirectory(from, to);
-        } else {
-            try {
-                final FileInputStream inStream = new FileInputStream(from);
-                final FileOutputStream outStream = new FileOutputStream(to);
-                final FileChannel inChannel = inStream.getChannel();
-                final FileChannel outChannel = outStream.getChannel();
-                inChannel.transferTo(0, inChannel.size(), outChannel);
-                inStream.close();
-                outStream.close();
-            } catch (IOException e) {
-                log("failedFirst > " + e.getMessage());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
                 try {
-                    final InputStream in = new FileInputStream(from);
-                    final OutputStream out = new FileOutputStream(to);
-                    // Transfer bytes from in to out
-                    byte[] buf = new byte[1024];
-                    int len;
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
+                    to.getParentFile().mkdirs();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (from.isDirectory()) {
+                    copyDirectory(from, to);
+                } else {
+                    try {
+                        final FileInputStream inStream = new FileInputStream(from);
+                        final FileOutputStream outStream = new FileOutputStream(to);
+                        final FileChannel inChannel = inStream.getChannel();
+                        final FileChannel outChannel = outStream.getChannel();
+                        inChannel.transferTo(0, inChannel.size(), outChannel);
+                        inStream.close();
+                        outStream.close();
+                    } catch (IOException e) {
+                        log("failedFirst > " + e.getMessage());
+                        try {
+                            final InputStream in = new FileInputStream(from);
+                            final OutputStream out = new FileOutputStream(to);
+                            // Transfer bytes from in to out
+                            byte[] buf = new byte[1024];
+                            int len;
+                            while ((len = in.read(buf)) > 0) {
+                                out.write(buf, 0, len);
+                            }
+                            in.close();
+                            out.close();
+                        } catch (Exception e1) {
+                            log("failed to copy file > from " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
+                            log("failedSecond > " + e1.getMessage());
+                            e1.printStackTrace();
+                        }
                     }
-                    in.close();
-                    out.close();
-                } catch (Exception e1) {
-                    log("failed to copy file > from " + from.getAbsolutePath() + " to " + to.getAbsolutePath());
-                    log("failedSecond > " + e1.getMessage());
-                    e1.printStackTrace();
                 }
             }
-        }
+        }).start();
     }
 
     public static void moveFile(String from, String to) {
@@ -690,7 +694,6 @@ public class FileManagerFragment extends P2PFragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         } else if (msg.startsWith(COMMAND_MOVE)) {
             //todo command name + filesep+filepathFrom+fileSep+fileTo
             moveFile(new File(split[1]), new File(split[2]));
@@ -921,7 +924,7 @@ public class FileManagerFragment extends P2PFragment {
             return;
 
         final File file = new File(mikeFiles.get(0).path);
-        mikeFiles.add(0, new MikeFile(file.getParentFile().getParent(), file.length()));
+        mikeFiles.add(0, new MikeFile(file.getParentFile().getParent(), getFileSize(file)));
     }
 
     private static void delete(int i) {
@@ -1283,7 +1286,7 @@ public class FileManagerFragment extends P2PFragment {
             builder.append(FILE_ATTRIBUTE_SEP);
             builder.append(file.getName());
             builder.append(FILE_ATTRIBUTE_SEP);
-            builder.append(Tools.getFileSize(file.length()));
+            builder.append(Tools.getFileSize(getFileSize(file)));
 
             return builder.toString();
         }
@@ -1394,7 +1397,7 @@ public class FileManagerFragment extends P2PFragment {
                 @Override
                 public void run() {
                     try {
-                        LocalFileManager.files.add(new MikeFile(file.getParent(), file.length()));
+                        LocalFileManager.files.add(new MikeFile(file.getParent(), getFileSize(file)));
                         updateAdapter();
                     } catch (Exception e) {
                         e.printStackTrace();
