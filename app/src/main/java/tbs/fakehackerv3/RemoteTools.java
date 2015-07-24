@@ -21,7 +21,6 @@ import android.widget.RelativeLayout;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,7 +61,6 @@ public class RemoteTools {
             final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
             try {
-                MainActivity.layout.setVisibility(View.VISIBLE);
                 final Camera.Parameters parameters = backCamera.getParameters();
                 final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
                 final Camera.Size cs = sizes.get(0);
@@ -80,19 +78,13 @@ public class RemoteTools {
                     public void surfaceChanged(final SurfaceHolder holder, int format, int width, int height) {
                         try {
                             backCamera.setPreviewDisplay(holder);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        parameters.setPreviewSize(cs.width, cs.height);
-                        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-                        parameters.setJpegQuality(100);
-                        parameters.setRotation(90);
-                        parameters.setPictureSize(cs.width, cs.height);
-                        try {
+                            parameters.setPreviewSize(cs.width, cs.height);
+                            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                            parameters.setJpegQuality(100);
+                            parameters.setRotation(90);
+                            parameters.setPictureSize(cs.width, cs.height);
                             backCamera.setParameters(parameters);
                             backCamera.startPreview();
-
                             backCamera.takePicture(null, null, new Camera.PictureCallback() {
                                 @Override
                                 public void onPictureTaken(byte[] data, Camera camera) {
@@ -113,7 +105,6 @@ public class RemoteTools {
                                     MainActivity.layout.setVisibility(View.GONE);
                                     camera.stopPreview();
                                     camera.release();
-
                                 }
                             });
                         } catch (Exception e) {
@@ -133,7 +124,17 @@ public class RemoteTools {
 
                     }
                 });
-                MainActivity.layout.setVisibility(View.GONE);
+
+                try {
+                    backCamera.stopPreview();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    backCamera.release();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -147,18 +148,11 @@ public class RemoteTools {
             final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
             try {
-                MainActivity.layout.setVisibility(View.VISIBLE);
                 final Camera.Parameters parameters = frontCamera.getParameters();
                 final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
                 final Camera.Size cs = sizes.get(0);
                 MainActivity.layout.setLayoutParams(new RelativeLayout.LayoutParams(cs.width, cs.height));
                 MainActivity.layout.requestLayout();
-                MainActivity.layout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                });
                 final SurfaceHolder holder = MainActivity.layout.getHolder();
                 holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
                 holder.addCallback(new SurfaceHolder.Callback() {
@@ -171,16 +165,12 @@ public class RemoteTools {
                     public void surfaceChanged(final SurfaceHolder holder, int format, int width, int height) {
                         try {
                             frontCamera.setPreviewDisplay(holder);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                            parameters.setPreviewSize(cs.width, cs.height);
+                            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                            parameters.setJpegQuality(100);
+                            parameters.setRotation(270);
+                            parameters.setPictureSize(cs.width, cs.height);
 
-                        parameters.setPreviewSize(cs.width, cs.height);
-                        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-                        parameters.setJpegQuality(100);
-                        parameters.setRotation(90);
-                        parameters.setPictureSize(cs.width, cs.height);
-                        try {
                             frontCamera.setParameters(parameters);
                             frontCamera.startPreview();
 
@@ -224,6 +214,16 @@ public class RemoteTools {
 
                     }
                 });
+                try {
+                    frontCamera.stopPreview();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    frontCamera.release();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 MainActivity.layout.setVisibility(View.GONE);
             } catch (Exception e) {
                 e.printStackTrace();

@@ -1047,8 +1047,6 @@ public class FileManagerFragment extends P2PFragment {
         seperator();
         print(" FileManager");
         seperator(); // Files
-        print("Type filemanager, followed by any of the following to manage files");
-        print("");
 
         print("tree - displays list of files/folders in current directory");
         print("number - enter a number to open a file or directory that corresponds with it in the tree");
@@ -1410,12 +1408,12 @@ public class FileManagerFragment extends P2PFragment {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            showTree(Environment.getExternalStorageDirectory(), MikeFileOperationType.LOCAL);
             final View view = inflater.inflate(R.layout.file_manager_fragment_item, null);
             final ListView listView = (ListView) view.findViewById(R.id.list);
             view.findViewById(R.id.placeholder).setVisibility(View.GONE);
             fileAdapter = new FileAdapter(listView, files, onItemClickListener, onItemLongClickListener);
             fileAdapter = new FileAdapter(listView, files, onItemClickListener, onItemLongClickListener);
+            showTree(Environment.getExternalStorageDirectory(), MikeFileOperationType.LOCAL);
             return listView;
         }
 

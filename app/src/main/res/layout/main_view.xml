@@ -2,13 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_view"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#ff222222">
+    android:layout_height="fill_parent">
+
+    <SurfaceView
+        android:id="@+id/holder"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
+        android:clickable="true" />
 
     <LinearLayout
         android:id="@+id/top_panel"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:background="#ff222222"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -46,6 +53,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/top_panel"
+        android:background="#ff222222"
         android:orientation="vertical">
 
         <tbs.fakehackerv3.custom_views.PagerSlidingTabStrip
@@ -69,12 +77,8 @@
         android:id="@+id/disconnect_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:background="#ff222222" />
 
-    <SurfaceView
-        android:id="@+id/holder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:visibility="gone" />
+
 </RelativeLayout>

@@ -30,6 +30,9 @@
     <uses-feature
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
+    <uses-feature
+        android:name="android.net.wifi.p2p"
+        android:required="true" />
 
     <application
         android:allowBackup="true"

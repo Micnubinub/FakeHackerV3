@@ -151,8 +151,13 @@ public class ConsoleFragment extends Fragment {
         });
     }
 
-    public static void addConsoleItem(String consoleItem) {
-        cl_adapter.add(consoleItem);
+    public static void addConsoleItem(final String consoleItem) {
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                cl_adapter.add(consoleItem);
+            }
+        });
     }
 
     public static void clear() {

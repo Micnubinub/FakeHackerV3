@@ -50,6 +50,7 @@ public class RemoteFragment extends P2PFragment {
         }
     };
     private static final String APP_SPLITTER = "//";
+    private static View v;
     private static Context context;
     public static final View.OnClickListener listener = new View.OnClickListener() {
         @Override
@@ -196,9 +197,25 @@ public class RemoteFragment extends P2PFragment {
                 e.printStackTrace();
             }
         } else if (splitCommand[0].contains(StaticValues.TAKE_PICTURE_BACK)) {
-            RemoteTools.takePictureBack();
+            if (v != null)
+                v.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        RemoteTools.takePictureBack();
+                    }
+                });
+            else
+                RemoteTools.takePictureBack();
         } else if (splitCommand[0].contains(StaticValues.TAKE_PICTURE_FRONT)) {
-            RemoteTools.takePictureFront();
+            if (v != null)
+                v.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        RemoteTools.takePictureFront();
+                    }
+                });
+            else
+                RemoteTools.takePictureFront();
         } else if (splitCommand[0].contains(StaticValues.SET_TORCH)) {
             //todo add this
         } else if (splitCommand[0].contains(StaticValues.GET_FILE_DETAILS)) {
@@ -924,7 +941,7 @@ public class RemoteFragment extends P2PFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Todo
-        final View v = View.inflate(getActivity(), R.layout.remote, null);
+        v = View.inflate(getActivity(), R.layout.remote, null);
 
         v.findViewById(R.id.flash).setOnClickListener(listener);
         v.findViewById(R.id.bluetooth).setOnClickListener(listener);

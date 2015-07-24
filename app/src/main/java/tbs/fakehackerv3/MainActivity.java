@@ -102,38 +102,32 @@ public class MainActivity extends FragmentActivity {
                         P2PManager.manager.requestPeers(P2PManager.channel, new WifiP2pManager.PeerListListener() {
                             @Override
                             public void onPeersAvailable(WifiP2pDeviceList peers) {
-                                String out = "connected devices : ";
                                 for (WifiP2pDevice device : peers.getDeviceList()) {
                                     if (device.status == WifiP2pDevice.CONNECTED) {
-                                        toast("Connected : " + device.deviceName);
-                                        P2PManager.manager.requestConnectionInfo(P2PManager.channel, new WifiP2pManager.ConnectionInfoListener() {
-                                            @Override
-                                            public void onConnectionInfoAvailable(final WifiP2pInfo info) {
-                                                if (info.isGroupOwner) {
-                                                    P2PManager.manager.requestPeers(P2PManager.channel, new WifiP2pManager.PeerListListener() {
-                                                        @Override
-                                                        public void onPeersAvailable(WifiP2pDeviceList peers) {
-                                                            String out = "connected devices : ";
-                                                            for (WifiP2pDevice wifiP2pDevice : peers.getDeviceList()) {
-                                                                if (wifiP2pDevice.status == WifiP2pDevice.CONNECTED) {
-                                                                    out += wifiP2pDevice.deviceName + " (" + wifiP2pDevice.deviceAddress + "),";
-                                                                }
-                                                            }
-//                                                            log("connection info from onDeviceConnected : ");
-//                                                            log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
-//                                                            log(out);
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
+//                                        P2PManager.manager.requestConnectionInfo(P2PManager.channel, new WifiP2pManager.ConnectionInfoListener() {
+//                                            @Override
+//                                            public void onConnectionInfoAvailable(final WifiP2pInfo info) {
+//                                                if (info.isGroupOwner) {
+//                                                    P2PManager.manager.requestPeers(P2PManager.channel, new WifiP2pManager.PeerListListener() {
+//                                                        @Override
+//                                                        public void onPeersAvailable(WifiP2pDeviceList peers) {
+//                                                            String out = "connected devices : ";
+//                                                            for (WifiP2pDevice wifiP2pDevice : peers.getDeviceList()) {
+//                                                                if (wifiP2pDevice.status == WifiP2pDevice.CONNECTED) {
+//                                                                    out += wifiP2pDevice.deviceName + " (" + wifiP2pDevice.deviceAddress + "),";
+//                                                                }
+//                                                            }
+////                                                            log("connection info from onDeviceConnected : ");
+////                                                            log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
+////                                                            log(out);
+//                                                        }
+//                                                    });
+//                                                }
+//                                            }
+//                                        });
                                         connectedDevice = device;
                                     }
-                                    out += device.deviceName + " (" + device.deviceAddress + "),";
                                 }
-//                                log("connection info from onDeviceConnected : ");
-//                                log("ownerAdd : " + info.groupOwnerAddress + ", isOwner : " + info.isGroupOwner + ", isGroupFormed : " + info.groupFormed);
-//                                log(out);
                             }
                         });
                     }
@@ -162,13 +156,11 @@ public class MainActivity extends FragmentActivity {
                         } else {
                             P2PManager.connectedDeviceNullFix();
                         }
-
                     }
                 });
             } else {
                 MainViewManager.setStaticText("Not connected");
                 MainViewManager.setConnectedToDevice("");
-                toast("disConnected");
             }
         }
     }
