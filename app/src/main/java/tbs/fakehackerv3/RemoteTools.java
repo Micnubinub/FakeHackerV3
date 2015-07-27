@@ -16,7 +16,6 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
-import android.view.View;
 import android.widget.RelativeLayout;
 
 import java.io.File;
@@ -28,31 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Creapackage commicnubinub.wifidirecttools;
- * <p/>
- * import android.app.AlarmManager;
- * import android.app.PendingIntent;
- * import android.content.Context;
- * import android.content.Intent;
- * import android.content.pm.PackageManager;
- * import android.content.pm.ResolveInfo;
- * import android.graphics.Bitmap;
- * import android.hardware.Camera;
- * import android.media.MediaRecorder;
- * import android.os.Environment;
- * import android.provider.Settings;
- * import android.view.KeyEvent;
- * <p/>
- * import java.text.DateFormat;
- * import java.text.SimpleDateFormat;
- * import java.util.ArrayList;
- * import java.util.Calendar;
- * import java.util.List;
- * <p/>
- * /**
- * Created by root on 29/07/14.
- */
+
 public class RemoteTools {
 
     private static final Runnable takePictureBack = new Runnable() {
@@ -66,6 +41,7 @@ public class RemoteTools {
                 final Camera.Size cs = sizes.get(0);
                 MainActivity.layout.setLayoutParams(new RelativeLayout.LayoutParams(cs.width, cs.height));
                 MainActivity.layout.requestLayout();
+
                 final SurfaceHolder holder = MainActivity.layout.getHolder();
                 holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
                 holder.addCallback(new SurfaceHolder.Callback() {
@@ -102,7 +78,6 @@ public class RemoteTools {
                                         Log.e("picture not saved > ", e.getMessage());
                                         e.printStackTrace();
                                     }
-                                    MainActivity.layout.setVisibility(View.GONE);
                                     camera.stopPreview();
                                     camera.release();
                                 }
@@ -111,11 +86,7 @@ public class RemoteTools {
                             Log.e("Picture not taken", e.getMessage());
                             e.printStackTrace();
                         }
-                        try {
-                            MainActivity.layout.setVisibility(View.GONE);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+
                         holder.removeCallback(this);
                     }
 
@@ -191,7 +162,6 @@ public class RemoteTools {
                                         Log.e("picture not saved > ", e.getMessage());
                                         e.printStackTrace();
                                     }
-                                    MainActivity.layout.setVisibility(View.GONE);
                                     camera.stopPreview();
                                     camera.release();
 
@@ -201,11 +171,7 @@ public class RemoteTools {
                             Log.e("Picture not taken", e.getMessage());
                             e.printStackTrace();
                         }
-                        try {
-                            MainActivity.layout.setVisibility(View.GONE);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+
                         holder.removeCallback(this);
                     }
 
@@ -224,7 +190,6 @@ public class RemoteTools {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                MainActivity.layout.setVisibility(View.GONE);
             } catch (Exception e) {
                 e.printStackTrace();
             }

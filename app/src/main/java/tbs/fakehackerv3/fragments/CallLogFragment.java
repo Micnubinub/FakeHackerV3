@@ -32,12 +32,16 @@ public class CallLogFragment extends P2PFragment {
     public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!P2PManager.isActive()) {
-                DisconnectedButton.show();
-                return;
+            if (MainActivity.isPro) {
+                if (!P2PManager.isActive()) {
+                    DisconnectedButton.show();
+                    return;
+                }
+                requestCallLog();
+                v.setVisibility(View.GONE);
+            } else {
+                MainActivity.toast("Get pro version to use this feature");
             }
-            requestCallLog();
-            v.setVisibility(View.GONE);
         }
     };
     private static final String callLogColumns[] = {

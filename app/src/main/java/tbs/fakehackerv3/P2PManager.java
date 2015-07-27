@@ -53,11 +53,13 @@ public class P2PManager extends Service {
     private static final WifiP2pManager.ActionListener actionListener = new WifiP2pManager.ActionListener() {
         @Override
         public void onSuccess() {
+            log("Action listener success");
         }
 
 
         @Override
         public void onFailure(int reason) {
+            log("Action listener failure");
         }
     };
     private static final ArrayList<LocalFileMoved> LocalFileMovedListeners = new ArrayList<LocalFileMoved>();
@@ -68,45 +70,6 @@ public class P2PManager extends Service {
     public static WifiManager wifiManager;
     public static Collection<WifiP2pDevice> peers;
     public static WifiP2pManager.Channel channel;
-    public static final WifiP2pManager.ActionListener wifiP2PActionListener = new WifiP2pManager.ActionListener() {
-        @Override
-        public void onSuccess() {
-        }
-
-        @Override
-        public void onFailure(int i) {
-            String out = "";
-            switch (i) {
-                case WifiP2pManager.P2P_UNSUPPORTED:
-                    out = "UnSupported";
-                    break;
-                case WifiP2pManager.ERROR:
-                    out = "Error";
-                    break;
-                case WifiP2pManager.BUSY:
-                    out = "Busy";
-                    break;
-            }
-
-            log("failed to discover devices : " + out);
-            manager.requestGroupInfo(channel, new WifiP2pManager.GroupInfoListener() {
-                @Override
-                public void onGroupInfoAvailable(WifiP2pGroup group) {
-                    manager.removeGroup(channel, new WifiP2pManager.ActionListener() {
-                        @Override
-                        public void onSuccess() {
-                            log("successfully removed group");
-                        }
-
-                        @Override
-                        public void onFailure(int reason) {
-                            log("failed to remove group");
-                        }
-                    });
-                }
-            });
-        }
-    };
     public static P2PBroadcastReceiver receiver;
     public static P2PListener p2PListener;
     public static boolean stop, isWaitingForConfirmation, hasntSentConfirmation;
@@ -152,6 +115,73 @@ public class P2PManager extends Service {
             log("receivedInfo : " + wifiP2pInfo.groupOwnerAddress.toString() + "\nisOwner? : " + wifiP2pInfo.isGroupOwner);
         }
     };
+    public static final WifiP2pManager.ActionListener wifiP2PActionListener = new WifiP2pManager.ActionListener() {
+        @Override
+        public void onSuccess() {
+            log("wifiP2PActionListener success");
+        }
+
+        @Override
+        public void onFailure(int i) {
+            String out = "";
+            switch (i) {
+                case WifiP2pManager.P2P_UNSUPPORTED:
+                    out = "UnSupported";
+                    break;
+                case WifiP2pManager.ERROR:
+                    out = "Error";
+                    break;
+                case WifiP2pManager.BUSY:
+                    out = "Busy";
+                    break;
+            }
+
+            log("failed to discover devices : " + out);
+            manager.requestGroupInfo(channel, new WifiP2pManager.GroupInfoListener() {
+                @Override
+                public void onGroupInfoAvailable(WifiP2pGroup group) {
+                    manager.removeGroup(channel, new WifiP2pManager.ActionListener() {
+                        @Override
+                        public void onSuccess() {
+                            log("successfully removed group");
+                            connectToDeviceForConnectToDevice();
+                        }
+
+                        @Override
+                        public void onFailure(int reason) {
+                            log("failed to remove group");
+                        }
+                    });
+                }
+            });
+        }
+    };
+    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
+        @Override
+        public void onDeviceDisconnected() {
+            p2PListener.onDevicesDisconnected("not sure");
+            log("device disconnected, releasing sockets");
+            nullifySockets();
+        }
+
+        @Override
+        public void onDeviceConnected(WifiP2pInfo info) {
+            if (info == null) {
+                requestConnectionInfo("onDevConnected");
+                return;
+            }
+
+            handleWifiP2PInfo(info);
+        }
+
+        @Override
+        public void onPeersChanged() {
+            if (manager != null && !isActive() && !tryingToConnect) {
+                if (!isActive())
+                    manager.requestPeers(channel, wifiP2PPeerListener);
+            }
+        }
+    };
     private static P2PAdapter adapter;
     public static final WifiP2pManager.PeerListListener wifiP2PPeerListener = new WifiP2pManager.PeerListListener() {
         @Override
@@ -175,31 +205,7 @@ public class P2PManager extends Service {
             else {
                 toast("No peers found, try again in a minute");
                 log("No peers found, try again");
-            }
-        }
-    };
-    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
-        @Override
-        public void onDeviceDisconnected() {
-            p2PListener.onDevicesDisconnected("not sure");
-            nullifySockets();
-        }
-
-        @Override
-        public void onDeviceConnected(WifiP2pInfo info) {
-            if (info == null) {
-                requestConnectionInfo("onDevConnected");
-                return;
-            }
-
-            handleWifiP2PInfo(info);
-        }
-
-        @Override
-        public void onPeersChanged() {
-            if (manager != null && !isActive() && !tryingToConnect) {
-                if (!isActive())
-                    manager.requestPeers(channel, wifiP2PPeerListener);
+                //Todo maybe add start scan here and make sure that oyu do a retry count so it doesn't overflow toasts
             }
         }
     };
@@ -259,7 +265,7 @@ public class P2PManager extends Service {
         manager.connect(channel, config, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                log("connected");
+                log("connected, requesting connection info");
                 dismissDialog();
                 requestConnectionInfo("connect to device");
                 /*manager.requestConnectionInfo(channel, new WifiP2pManager.ConnectionInfoListener() {
@@ -305,6 +311,7 @@ public class P2PManager extends Service {
                 dismissDialog();
                 log("failed to connect to " + device.deviceName + " (" + device.deviceAddress + ")" + "because of : " + out);
                 disconnectToCurrentDevice();
+                connectToDeviceForConnectToDevice();
             }
         });
     }
@@ -313,35 +320,34 @@ public class P2PManager extends Service {
         manager.createGroup(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
+                log("successfully created group, now connecting");
                 connectToDevice(clickedDevice);
             }
 
             @Override
             public void onFailure(int reason) {
-
+                log("failed to create group");
             }
         });
     }
 
     public static void toast(final String msg) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
-            }
-        });
+        if (activity != null)
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
     }
 
     public static void requestConnectionInfo(String from) {
         log("requestConnectionInfo : " + from);
         if (!isActive()) {
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-//                e.printStackTrace();
-                e.printStackTrace();
-            }
-            // log("reqInfo : not active " + from);
             manager.requestConnectionInfo(channel, connectionInfoListener);
         } else {
             log("reqInfo : active " + from);
@@ -353,11 +359,13 @@ public class P2PManager extends Service {
             log("getClientSocketThreadVoid>active");
             return;
         }
-        if (!(getClientSocketThread == null))
+        if (getClientSocketThread != null)
             try {
                 getClientSocketThread.interrupt();
+                getClientSocketThread.join();
+
             } catch (Exception e) {
-                log("crashed (getClientSocketThreadVoid)> " + e.getMessage());
+                log("failed to interrupt getClientSocket");
                 e.printStackTrace();
             }
 
@@ -365,22 +373,21 @@ public class P2PManager extends Service {
         getClientSocketThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                log("getClientSocket");
+                log("getClientSocket : host > " + hostIP);
                 try {
-                    host = hostIP;
-                    if (host.length() < 7 || !host.contains(".")) {
-                        log("invalidIp getting connection info");
-                        requestConnectionInfo("getClientThreadVoid : invalid ip");
+                    if (hostIP.length() < 7 || !hostIP.contains(".")) {
+                        log("invalidIp getting connection info > " + hostIP);
+                        requestConnectionInfo("getClientThreadVoid : invalid ip > " + hostIP);
+                        tryingToConnect = false;
                         return;
                     } else {
-                        if (host.startsWith("/"))
-                            host = host.split("/")[1].trim();
+                        host = hostIP.replace("/", "").trim();
                         boolean run = true;
-                        while ((socketFromClient == null || !socketFromClient.isConnected()) && run) {
+                        do {
                             log(String.format("getCliSoc2 socket %s, %s", (socketFromClient == null ? "null" :
                                     (socketFromClient.isConnected() ? "connected" : "not connected")), (run ? "run" : "not run")));
                             try {
-                                Thread.sleep(150);
+                                Thread.sleep(50);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -388,39 +395,23 @@ public class P2PManager extends Service {
                             try {
                                 socketFromClient = new Socket(host, 8899);
                             } catch (Exception ee) {
-                                log("host : " + host);
-                                log("ras : " + ee.toString());
+                                log("ras failed to get socket client because : " + ee.toString());
                             }
 
                             run = ((socketFromClient == null) || (!socketFromClient.isConnected()));
 
                             if (socketFromClient == null) {
                                 log("socket from client == nul");
-                            } else {
-                                if (!socketFromClient.isConnected()) {
-                                    log("socketFromClient not connected");
-                                }
-                            }
-                            if (run) {
-                                log("isRun");
-                            } else {
-                                startMainThread();
+                            } else if (!socketFromClient.isConnected()) {
+                                log("socketFromClient not connected");
                             }
 
-                            try {
-                                Thread.sleep(150);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                long stop = System.currentTimeMillis() + 150;
-                                while (System.currentTimeMillis() < stop) {
-                                }
-                            }
                         }
+                        while ((socketFromClient == null || !socketFromClient.isConnected()) && run);
+                        startMainThread();
                     }
                 } catch (Exception e) {
                     log("crashed (getClientSocketThread)> " + e.toString());
-                    e.printStackTrace();
-
                     try {
                         getClientSocketThreadVoid(hostIP);
                     } catch (Exception w) {
@@ -432,7 +423,6 @@ public class P2PManager extends Service {
         getClientSocketThread.start();
     }
 
-    //TODO
     public static void setReadyToReceiveFile() {
         isReceivingFile = true;
     }
@@ -458,6 +448,7 @@ public class P2PManager extends Service {
         if (!(getServerSocketThread == null))
             try {
                 getServerSocketThread.interrupt();
+                getServerSocketThread.join();
             } catch (Exception e) {
                 log("crashed (getServerSocketThreadVoid)> " + e.getMessage());
                 e.printStackTrace();
@@ -471,28 +462,27 @@ public class P2PManager extends Service {
                     serverSocket.setReuseAddress(true);
                     serverSocket.bind(new InetSocketAddress(8899));
 
-                    while (socketFromServer == null || !socketFromServer.isConnected()) {
+                    do {
                         log("accepting");
                         socketFromServer = serverSocket.accept();
-
-                    }
-                    log("stepped past accepting connected >> " + (socketFromServer.isConnected() ? "connected" : "not connected"));
+                    } while (socketFromServer == null || !socketFromServer.isConnected());
+                    log("stepped past accepting connected >> " + socketFromServer.isConnected());
 
                     if (!isActive()) {
                         log("not active, request info");
-                        Thread.sleep(150);
+                        Thread.sleep(50);
                         requestConnectionInfo("getServerSocketThreadVoid");
                     } else {
                         log("getServerSocket3");
                         startMainThread();
                     }
-
                 } catch (IOException e) {
                     disconnectToCurrentDevice();
                     requestConnectionInfo("getServerSocket IOException");
                     try {
                         getServerSocketThread.stop();
                         getServerSocketThread.interrupt();
+
                         return;
                     } catch (Exception d) {
                         d.printStackTrace();
@@ -552,26 +542,7 @@ public class P2PManager extends Service {
 
         log("sending Message : current list > " + messages.toString());
         sendSimpleText(message.getSendableMessage());
-     /*Todo   switch (message.messageType) {
-            case CONFIRMATION:
-            case COMMAND:
-            case MESSAGE:
 
-                break;
-            case FILE:
-                //Todo message_background structure >> fileName + sep + file
-//                if (cr == null && (activity != null))
-//                    cr = activity.getContentResolver();
-//                try {
-//                    final File file = new File(message.getMessage());
-//                    copyFile(file.getName(), cr.openInputStream(Uri.parse(Environment.getExternalStorageDirectory().getPath() + "a014.jpg")));
-//                } catch (Exception e) {
-//                    log("crashed (sendFile)> " + e.getMessage());
-//                    e.printStackTrace();
-//              }
-
-                break;
-        }*/
         isSendingMessage = false;
         if (shouldSendFileStraightAfter)
             sendFile();
@@ -722,14 +693,13 @@ public class P2PManager extends Service {
     }
 
     public static boolean isActive() {
-        boolean bool = false;
         try {
             if (getSocket() != null)
-                bool = (getSocket().getInputStream().available() >= 0);
+                return getSocket().isConnected() && !(getSocket().isClosed()) && (getSocket().getInputStream().available() >= 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return bool;
+        return false;
     }
 
     public static boolean isServiceRunning() {
@@ -897,13 +867,14 @@ public class P2PManager extends Service {
             log("not is IO, socket is null");
             return false;
         }
-        if (!socket.isConnected()) {
-            log("not is IO, socket noy connected");
-            return false;
-        }
 
         if (socket.isClosed()) {
             log("not is IO, socket is closed");
+            return false;
+        }
+
+        if (!socket.isConnected()) {
+            log("not is IO, socket noy connected");
             return false;
         }
 
@@ -927,6 +898,7 @@ public class P2PManager extends Service {
             log("not is IO, inputStream is null");
             return false;
         }
+
 
         return true;
     }
@@ -997,6 +969,7 @@ public class P2PManager extends Service {
                     out.write(buf, 0, len);
                     FileManagerFragment.setProgress(100 * ((float) (downloaded / (double) (FileManagerFragment.fileLength))));
                 }
+
                 out.close();
                 MainActivity.toast("Finished Downloading > " + file.getName());
             } catch (IOException e) {
@@ -1077,7 +1050,7 @@ public class P2PManager extends Service {
                     if (socket != null) {
                         getInputAndOutputStream(socket);
                     }
-                    Thread.sleep(150);
+                    Thread.sleep(50);
                 } catch (Exception e) {
                     log("p2pserver " + e.getMessage());
                     return;
@@ -1162,6 +1135,22 @@ public class P2PManager extends Service {
                     } else {
                         while (available > 0) {
                             log("available " + String.valueOf(available));
+                     /* Todo      userInput =stdIn.readLine();
+                            if(userInput.Equals("START_MSG");
+                            boolean reading=true;
+                            while(reading)
+                            {
+                                userInput=stdIn.readLine();
+                                if(userInput.Equals("END_MSG")
+                                {
+                                    //END LOOP!
+                                    reading = false;
+                                }
+                                else
+                                {
+                                    //You have received a msg - do what you want here
+                                }
+                            }*/
                             final byte[] msg = new byte[available];
                             final int input = inputStream.read(msg, 0, available);
                             if (input < 0) {

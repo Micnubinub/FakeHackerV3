@@ -33,6 +33,7 @@ import tbs.fakehackerv3.fragments.Settings;
 
 
 public class MainActivity extends FragmentActivity {
+    public static final boolean isPro = true;
     private static final Fragment[] fragments = new Fragment[6];
     private static final String[] titles = new String[6];
     public static WifiP2pDevice connectedDevice;

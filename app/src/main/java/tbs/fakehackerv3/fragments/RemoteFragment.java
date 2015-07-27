@@ -57,16 +57,25 @@ public class RemoteFragment extends P2PFragment {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.flash:
-                    showTorchFlashDialog();
+                    if (MainActivity.isPro)
+                        showTorchFlashDialog();
+                    else
+                        MainActivity.toast("Get pro version to use this feature");
                     break;
                 case R.id.bluetooth:
                     showBluetoothDialog();
                     break;
                 case R.id.take_pic_back:
-                    sendCommand(StaticValues.TAKE_PICTURE_BACK, "");
+                    if (MainActivity.isPro)
+                        sendCommand(StaticValues.TAKE_PICTURE_BACK, "");
+                    else
+                        MainActivity.toast("Get pro version to use this feature");
                     break;
                 case R.id.take_pic_front:
-                    sendCommand(StaticValues.TAKE_PICTURE_FRONT, "");
+                    if (MainActivity.isPro)
+                        sendCommand(StaticValues.TAKE_PICTURE_FRONT, "");
+                    else
+                        MainActivity.toast("Get pro version to use this feature");
                     break;
                 case R.id.media_control:
                     showMusicPlayerDialog();

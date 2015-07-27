@@ -196,6 +196,10 @@ public class FileManagerFragment extends P2PFragment {
         switch (mikeFileOperation) {
             case COPY_EXTERNAL:
                 fileLength = getFileSize(new File(tmpMikeFile.path));
+                if ((fileLength > 2048000) && !MainActivity.isPro) {
+                    MainActivity.toast("Get pro version to upload/download files bigger than 2MB");
+                    return;
+                }
                 sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name + FILE_SEP + fileLength);
                 break;
             case COPY_LOCAL:
@@ -203,6 +207,10 @@ public class FileManagerFragment extends P2PFragment {
                 break;
             case MOVE_EXTERNAL:
                 fileLength = getFileSize(new File(tmpMikeFile.path));
+                if ((fileLength > 2048000) && !MainActivity.isPro) {
+                    MainActivity.toast("Get pro version to upload/download files bigger than 2MB");
+                    return;
+                }
                 sendFileCommand(COMMAND_DOWNLOAD + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentLocalDirectory + "/" + tmpMikeFile.name + FILE_SEP + fileLength);
                 break;
             case MOVE_LOCAL:
@@ -244,6 +252,10 @@ public class FileManagerFragment extends P2PFragment {
             case COPY_LOCAL:
                 tmpFileBeingUploadedPath = tmpMikeFile.path;
                 fileLength = getFileSize(new File(tmpMikeFile.path));
+                if ((fileLength > 2048000) && !MainActivity.isPro) {
+                    MainActivity.toast("Get pro version to upload/download files bigger than 2MB");
+                    return;
+                }
                 sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name + FILE_SEP + fileLength);
                 break;
             case MOVE_EXTERNAL:
@@ -262,6 +274,10 @@ public class FileManagerFragment extends P2PFragment {
             case MOVE_LOCAL:
                 tmpFileBeingUploadedPath = tmpMikeFile.path;
                 fileLength = getFileSize(new File(tmpMikeFile.path));
+                if ((fileLength > 2048000) && !MainActivity.isPro) {
+                    MainActivity.toast("Get pro version to upload/download files bigger than 2MB");
+                    return;
+                }
                 sendFileCommand(COMMAND_UPLOAD + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name + FILE_SEP + fileLength);
                 break;
         }
@@ -1114,7 +1130,6 @@ public class FileManagerFragment extends P2PFragment {
 
     public void init() {
         //TODO
-
     }
 
     @Nullable

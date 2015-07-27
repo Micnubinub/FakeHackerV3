@@ -29,12 +29,16 @@ public class MessageReaderFragment extends P2PFragment {
     public static final View.OnClickListener placeHolderListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!P2PManager.isActive()) {
+            if (MainActivity.isPro) {
+                if (!P2PManager.isActive()) {
                 DisconnectedButton.show();
                 return;
             }
             requestTexts();
-            v.setVisibility(View.GONE);
+                v.setVisibility(View.GONE);
+            } else {
+                MainActivity.toast("Get pro version to use this feature");
+            }
         }
     };
     private static final String[] columns = {"ADDRESS", "BODY", "DATE"};
