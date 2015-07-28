@@ -24,7 +24,6 @@ import tbs.fakehackerv3.custom_views.PagerSlidingTabStrip;
 import tbs.fakehackerv3.fragments.CallLogFragment;
 import tbs.fakehackerv3.fragments.ConsoleFragment;
 import tbs.fakehackerv3.fragments.FileManagerFragment;
-import tbs.fakehackerv3.fragments.LogFragment;
 import tbs.fakehackerv3.fragments.MessageReaderFragment;
 import tbs.fakehackerv3.fragments.MessagingFragment;
 import tbs.fakehackerv3.fragments.P2PFragment;
@@ -180,7 +179,7 @@ public class MainActivity extends FragmentActivity {
 
     private static void log(String msg) {
         Log.e("main", msg);
-        LogFragment.log(msg);
+//        LogFragment.log(msg);
     }
 
     public static void toast(final String msg) {
@@ -189,7 +188,7 @@ public class MainActivity extends FragmentActivity {
                 context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                     }
                 });
             } catch (Exception e) {

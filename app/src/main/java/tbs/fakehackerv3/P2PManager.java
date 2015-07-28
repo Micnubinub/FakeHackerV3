@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import tbs.fakehackerv3.fragments.FileManagerFragment;
-import tbs.fakehackerv3.fragments.LogFragment;
 
 /**
  * Created by Michael on 5/16/2015.
@@ -161,6 +160,32 @@ public class P2PManager extends Service {
             });
         }
     };
+    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
+        @Override
+        public void onDeviceDisconnected() {
+            p2PListener.onDevicesDisconnected("not sure");
+            log("device disconnected, releasing sockets");
+            nullifySockets();
+        }
+
+        @Override
+        public void onDeviceConnected(WifiP2pInfo info) {
+            if (info == null) {
+                requestConnectionInfo("onDevConnected");
+                return;
+            }
+
+            handleWifiP2PInfo(info);
+        }
+
+        @Override
+        public void onPeersChanged() {
+            if (manager != null && !isActive() && !tryingToConnect) {
+                if (!isActive())
+                    manager.requestPeers(channel, wifiP2PPeerListener);
+            }
+        }
+    };
     private static P2PAdapter adapter;
     public static final WifiP2pManager.PeerListListener wifiP2PPeerListener = new WifiP2pManager.PeerListListener() {
         @Override
@@ -185,32 +210,6 @@ public class P2PManager extends Service {
                 toast("No peers found, try again in a minute");
                 log("No peers found, try again");
                 //Todo maybe add start scan here and make sure that oyu do a retry count so it doesn't overflow toasts
-            }
-        }
-    };
-    public static final P2PBroadcastReceiver.P2PBroadcastReceiverListener p2pBClistener = new P2PBroadcastReceiver.P2PBroadcastReceiverListener() {
-        @Override
-        public void onDeviceDisconnected() {
-            p2PListener.onDevicesDisconnected("not sure");
-            log("device disconnected, releasing sockets");
-            nullifySockets();
-        }
-
-        @Override
-        public void onDeviceConnected(WifiP2pInfo info) {
-            if (info == null) {
-                requestConnectionInfo("onDevConnected");
-                return;
-            }
-
-            handleWifiP2PInfo(info);
-        }
-
-        @Override
-        public void onPeersChanged() {
-            if (manager != null && !isActive() && !tryingToConnect) {
-                if (!isActive())
-                    manager.requestPeers(channel, wifiP2PPeerListener);
             }
         }
     };
@@ -671,7 +670,7 @@ public class P2PManager extends Service {
 
     public static void log(String msg) {
         Log.e("p2p", msg);
-        LogFragment.log(msg);
+//        LogFragment.log(msg);
     }
 
     public static Socket getSocket() {
@@ -950,13 +949,21 @@ public class P2PManager extends Service {
             float progress = 0;
             int len;
             try {
-                while ((len = inputStream.read(buf)) != -1 && Math.floor(progress) <= 100) {
+                loop:
+                while (progress <= 100) {
+                    len = inputStream.read(buf);
+                    if (len < 1)
+                        break loop;
                     downloaded += len;
                     out.write(buf, 0, len);
                     progress = 100 * ((float) (downloaded / (double) (FileManagerFragment.fileLength)));
                     FileManagerFragment.setProgress(progress);
+                    if (len < buf.length && progress > 99.2) {
+                        FileManagerFragment.setProgress(101);
+                        log("len > " + len + "prog > " + progress);
+                        break loop;
+                    }
                 }
-                log("done downloading");
                 MainActivity.toast("Finished Downloading > " + file.getName());
                 out.close();
                 FileManagerFragment.showCurrentLocalTree();

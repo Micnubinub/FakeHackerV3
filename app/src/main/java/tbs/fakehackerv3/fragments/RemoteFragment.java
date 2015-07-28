@@ -326,7 +326,7 @@ public class RemoteFragment extends P2PFragment {
     }
 
     private static void log(String msg) {
-        LogFragment.log(msg);
+//        LogFragment.log(msg);
         Log.e("Remote", msg);
     }
 

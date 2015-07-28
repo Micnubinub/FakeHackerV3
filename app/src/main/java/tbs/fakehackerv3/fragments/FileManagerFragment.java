@@ -411,7 +411,7 @@ public class FileManagerFragment extends P2PFragment {
                 switch (mikeFileOperationType) {
                     case EXTERNAL:
                         //Todo test
-                        builder.append(new MikeFile(dir.getParent(), getFileSize(dir.getParentFile(), true)).toString());
+                        builder.append(new MikeFile(dir.getParent(), getFileSize(dir.getParentFile(), false)).toString());
                         return builder.toString();
                     case LOCAL:
                         tmpTree.clear();
@@ -842,7 +842,7 @@ public class FileManagerFragment extends P2PFragment {
     }
 
     private static void log(String msg) {
-        LogFragment.log(msg);
+//        LogFragment.log(msg);
         Log.e("File Manager", msg);
     }
 

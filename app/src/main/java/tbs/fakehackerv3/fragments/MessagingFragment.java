@@ -84,7 +84,7 @@ public class MessagingFragment extends P2PFragment {
 
     public static void log(String msg) {
         Log.e("Messaging Fragment", msg);
-        LogFragment.log(msg);
+//        LogFragment.log(msg);
     }
 
     public static void addReceivedMessage(final ReceivedMessage message) {

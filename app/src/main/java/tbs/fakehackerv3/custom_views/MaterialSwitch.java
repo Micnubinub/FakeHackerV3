@@ -13,9 +13,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.TextView;
 
 import tbs.fakehackerv3.R;
+import tbs.fakehackerv3.Tools;
 
 
 /**
@@ -34,6 +34,9 @@ public class MaterialSwitch extends ViewGroup {
     private float ripple_animated_value = 0;
     private int clickedX, clickedY;
     private boolean touchDown = false, animateRipple;
+    private int textSize;
+    private String text = "";
+    private Switch materialSwitch;
     private ValueAnimator.AnimatorListener animatorListener = new Animator.AnimatorListener() {
         @Override
         public void onAnimationStart(Animator animator) {
@@ -60,10 +63,6 @@ public class MaterialSwitch extends ViewGroup {
 
         }
     };
-    private int textSize;
-    private String text = "";
-    private Switch materialSwitch;
-
     private float line_pos;
     private int r, color_on, color_off, hole_r, color_hole;
     private boolean updating = false;
@@ -78,7 +77,7 @@ public class MaterialSwitch extends ViewGroup {
         }
     };
     private OnCheckedChangedListener listener;
-    private TextView textView;
+    private HackerTextView textView;
     private int width;
     private int rippleColor = 0x25000000;
 
@@ -248,11 +247,11 @@ public class MaterialSwitch extends ViewGroup {
         materialSwitch.setLayoutParams(new LayoutParams(dpToPixels(35), dpToPixels(20)));
         setPadding(PADDING, PADDING, PADDING, PADDING);
 
-        textView = new TextView(getContext());
+        textView = new HackerTextView(getContext());
         PADDING = dpToPixels(5);
         textView.setPadding(PADDING, PADDING, PADDING, PADDING);
         textView.setEllipsize(TextUtils.TruncateAt.END);
-        textView.setTextColor(getResources().getColor(R.color.dark_grey_text));
+        textView.setTextColor(Tools.getTextColor(getContext()));
         textView.setTextSize(textSize);
         textView.setMaxLines(1);
         textView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
