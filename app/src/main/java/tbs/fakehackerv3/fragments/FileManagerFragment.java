@@ -264,16 +264,6 @@ public class FileManagerFragment extends P2PFragment {
                 break;
             case MOVE_EXTERNAL:
                 sendFileCommand(COMMAND_MOVE + FILE_SEP + tmpMikeFile.path + FILE_SEP + currentExternalDirectory + "/" + tmpMikeFile.name);
-//                P2PManager.addLocalFileMovedListener(new LocalFileMoved() {
-//                    @Override
-//                    public void onLocalFileMoved(String path) {
-//                        //Todo
-//
-//                        if (true) {
-//                            P2PManager.removeLocalFileMovedListener(this);
-//                        }
-//                    }
-//                });
                 break;
             case MOVE_LOCAL:
                 tmpFileBeingUploadedPath = tmpMikeFile.path;
@@ -718,13 +708,15 @@ public class FileManagerFragment extends P2PFragment {
             moveFile(new File(split[1]), new File(split[2]));
         } else if (msg.startsWith(COMMAND_DOWNLOAD)) {
             //todo command name + fileSep +filePath + fileSep +filePathTo
-            sendFileCommand(COMMAND_UPLOAD + FILE_SEP + split[2] + FILE_SEP + split[3]);
+            tmpFileBeingUploadedPath = split[1];
             try {
-                fileLength = Long.parseLong(split[3]);
+                fileLength = getFileSize(new File(tmpFileBeingUploadedPath), true);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
-            tmpFileBeingUploadedPath = split[1];
+            sendFileCommand(COMMAND_UPLOAD + FILE_SEP + split[2] + FILE_SEP + fileLength);
+
+
         } else if (msg.startsWith(COMMAND_UPLOAD)) {
             //todo command name + fileSep+fileFrom
             tmpFileBeingDownloadedPath = split[1];
@@ -743,6 +735,10 @@ public class FileManagerFragment extends P2PFragment {
 
             P2PManager.downloadFile();
         }
+    }
+
+    public static void showCurrentLocalTree() {
+        showTree(currentLocalDirectory, MikeFileOperationType.LOCAL);
     }
 
     public static void handleResponse(String msg) {
