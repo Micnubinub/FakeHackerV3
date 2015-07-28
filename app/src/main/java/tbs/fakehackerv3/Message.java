@@ -22,9 +22,7 @@ public class Message {
                     message = "nothing to see here";
                 }
                 this.message = String.valueOf(messageType) + MESSAGE_SEPARATOR + message + MESSAGE_SEPARATOR + String.valueOf(System.currentTimeMillis());
-                break;
-            case CONFIRMATION:
-                this.message = message;
+
                 break;
         }
     }
@@ -60,6 +58,6 @@ public class Message {
     }
 
     public enum MessageType {
-        MESSAGE, FILE, COMMAND, CONFIRMATION
+        MESSAGE, FILE, COMMAND
     }
 }

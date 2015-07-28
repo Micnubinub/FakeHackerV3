@@ -60,7 +60,7 @@ public class FileManagerFragment extends P2PFragment {
     public static final String PARENT_NAME = "/...../";
     public static final String COMMAND_UPLOAD = "COMMAND_UPLOAD";
     public static final String COMMAND_DOWNLOAD = "COMMAND_DOWNLOAD";
-    public static final String READY_TO_RECEIVE_FILE = "/READY_TO_RECEIVE_FILE\\";
+    //Todo    public static final String READY_TO_RECEIVE_FILE = "/READY_TO_RECEIVE_FILE\\";
     public static final String RESPONSE_BROWSE = "RESPONSE_BROWSE";
     public static final String RESPONSE_OPEN = "RESPONSE_OPEN";
     public static final String RESPONSE_DELETE = "RESPONSE_DELETE";
@@ -569,15 +569,13 @@ public class FileManagerFragment extends P2PFragment {
             log("handleMessage > msg == null or len < 1");
             return;
         }
-        if (msg.startsWith(READY_TO_RECEIVE_FILE)) {
-            P2PManager.sendFile();
+
+        if (msg.startsWith("COMMAND")) {
+            handleCommand(msg);
         } else {
-            if (msg.startsWith("COMMAND")) {
-                handleCommand(msg);
-            } else {
-                handleResponse(msg);
-            }
+            handleResponse(msg);
         }
+
     }
 
     public static void renameFile(MikeFile file, String newName) {
@@ -725,6 +723,7 @@ public class FileManagerFragment extends P2PFragment {
         } else if (msg.startsWith(COMMAND_UPLOAD)) {
             //todo command name + fileSep+fileFrom
             tmpFileBeingDownloadedPath = split[1];
+
             try {
                 fileLength = Long.parseLong(split[2]);
             } catch (NumberFormatException e) {
@@ -736,7 +735,8 @@ public class FileManagerFragment extends P2PFragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            sendFileCommand(READY_TO_RECEIVE_FILE);
+
+            P2PManager.downloadFile();
         }
     }
 
