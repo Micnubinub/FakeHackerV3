@@ -195,7 +195,7 @@ public class FileManagerFragment extends P2PFragment {
     public static void handleLocalOutPutLocation() {
         switch (mikeFileOperation) {
             case COPY_EXTERNAL:
-                fileLength = getFileSize(new File(tmpMikeFile.path));
+                fileLength = getFileSize(new File(tmpMikeFile.path), true);
                 if ((fileLength > 2048000) && !MainActivity.isPro) {
                     MainActivity.toast("Get pro version to upload/download files bigger than 2MB");
                     return;
@@ -206,7 +206,7 @@ public class FileManagerFragment extends P2PFragment {
                 copyFile(tmpMikeFile.path, currentLocalDirectory + "/" + tmpMikeFile.name);
                 break;
             case MOVE_EXTERNAL:
-                fileLength = getFileSize(new File(tmpMikeFile.path));
+                fileLength = getFileSize(new File(tmpMikeFile.path), true);
                 if ((fileLength > 2048000) && !MainActivity.isPro) {
                     MainActivity.toast("Get pro version to upload/download files bigger than 2MB");
                     return;
@@ -220,28 +220,32 @@ public class FileManagerFragment extends P2PFragment {
         showTree(currentLocalDirectory, MikeFileOperationType.LOCAL);
     }
 
-    public static long getFileSize(final File file) {
+    public static long getFileSize(final File file, boolean detailed) {
         if (file == null || !file.exists())
             return 0;
         if (!file.isDirectory())
             return file.length();
-        final List<File> dirs = new LinkedList<File>();
-        dirs.add(file);
-        long result = 0;
-        while (!dirs.isEmpty()) {
-            final File dir = dirs.remove(0);
-            if (!dir.exists())
-                continue;
-            final File[] listFiles = dir.listFiles();
-            if (listFiles == null || listFiles.length == 0)
-                continue;
-            for (final File child : listFiles) {
-                result += child.length();
-                if (child.isDirectory())
-                    dirs.add(child);
+
+        if (detailed) {
+            final List<File> dirs = new LinkedList<File>();
+            dirs.add(file);
+            long result = 0;
+            while (!dirs.isEmpty()) {
+                final File dir = dirs.remove(0);
+                if (!dir.exists())
+                    continue;
+                final File[] listFiles = dir.listFiles();
+                if (listFiles == null || listFiles.length == 0)
+                    continue;
+                for (final File child : listFiles) {
+                    result += child.length();
+                    if (child.isDirectory())
+                        dirs.add(child);
+                }
             }
+            return result;
         }
-        return result;
+        return 4096;
     }
 
     public static void handleExternalOutPutLocation() {
@@ -251,7 +255,7 @@ public class FileManagerFragment extends P2PFragment {
                 break;
             case COPY_LOCAL:
                 tmpFileBeingUploadedPath = tmpMikeFile.path;
-                fileLength = getFileSize(new File(tmpMikeFile.path));
+                fileLength = getFileSize(new File(tmpMikeFile.path), true);
                 if ((fileLength > 2048000) && !MainActivity.isPro) {
                     MainActivity.toast("Get pro version to upload/download files bigger than 2MB");
                     return;
@@ -273,7 +277,7 @@ public class FileManagerFragment extends P2PFragment {
                 break;
             case MOVE_LOCAL:
                 tmpFileBeingUploadedPath = tmpMikeFile.path;
-                fileLength = getFileSize(new File(tmpMikeFile.path));
+                fileLength = getFileSize(new File(tmpMikeFile.path), true);
                 if ((fileLength > 2048000) && !MainActivity.isPro) {
                     MainActivity.toast("Get pro version to upload/download files bigger than 2MB");
                     return;
@@ -390,7 +394,7 @@ public class FileManagerFragment extends P2PFragment {
 
                 switch (mikeFileOperationType) {
                     case EXTERNAL:
-                        builder.append(new MikeFile(dir.getParent(), getFileSize(dir.getParentFile())).toString());
+                        builder.append(new MikeFile(dir.getParent(), getFileSize(dir.getParentFile(), false)).toString());
                         builder.append(FILE_SEP);
 
                         for (int i = 0; i < tmpTree.size(); i++) {
@@ -417,7 +421,7 @@ public class FileManagerFragment extends P2PFragment {
                 switch (mikeFileOperationType) {
                     case EXTERNAL:
                         //Todo test
-                        builder.append(new MikeFile(dir.getParent(), getFileSize(dir.getParentFile())).toString());
+                        builder.append(new MikeFile(dir.getParent(), getFileSize(dir.getParentFile(), true)).toString());
                         return builder.toString();
                     case LOCAL:
                         tmpTree.clear();
@@ -692,6 +696,7 @@ public class FileManagerFragment extends P2PFragment {
             delete(new File(split[1]), MikeFileOperationType.EXTERNAL);
             showTree(currentExternalDirectory, MikeFileOperationType.EXTERNAL);
         } else if (msg.startsWith(COMMAND_COPY)) {
+
             //todo command name + filesep+filepathFrom+fileSep+fileTo
             copyFile(new File(split[1]), new File(split[2]));
         } else if (msg.startsWith(COMMAND_RENAME)) {
@@ -940,7 +945,7 @@ public class FileManagerFragment extends P2PFragment {
             return;
 
         final File file = new File(mikeFiles.get(0).path);
-        mikeFiles.add(0, new MikeFile(file.getParentFile().getParent(), getFileSize(file)));
+        mikeFiles.add(0, new MikeFile(file.getParentFile().getParent(), getFileSize(file, false)));
     }
 
     private static void delete(int i) {
@@ -1299,7 +1304,7 @@ public class FileManagerFragment extends P2PFragment {
             builder.append(FILE_ATTRIBUTE_SEP);
             builder.append(file.getName());
             builder.append(FILE_ATTRIBUTE_SEP);
-            builder.append(Tools.getFileSize(getFileSize(file)));
+            builder.append(Tools.getFileSize(getFileSize(file, false)));
 
             return builder.toString();
         }
@@ -1410,7 +1415,7 @@ public class FileManagerFragment extends P2PFragment {
                 @Override
                 public void run() {
                     try {
-                        LocalFileManager.files.add(new MikeFile(file.getParent(), getFileSize(file)));
+                        LocalFileManager.files.add(new MikeFile(file.getParent(), getFileSize(file, true)));
                         updateAdapter();
                     } catch (Exception e) {
                         e.printStackTrace();

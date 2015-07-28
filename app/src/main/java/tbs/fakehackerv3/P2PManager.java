@@ -427,14 +427,6 @@ public class P2PManager extends Service {
         getClientSocketThread.start();
     }
 
-
-    public static void sendFile() {
-        log("should send file >> " + FileManagerFragment.tmpFileBeingUploadedPath);
-        if (FileManagerFragment.tmpFileBeingUploadedPath != null)
-            uploadFile(FileManagerFragment.tmpFileBeingUploadedPath);
-
-    }
-
     public static void getServerSocketThreadVoid() {
         if (isActive()) {
             log("getServerSocket, already active> exiting...");
@@ -532,7 +524,7 @@ public class P2PManager extends Service {
 
         log("sending Message : current list > " + messages.toString());
         sendSimpleText(message.getSendableMessage());
-        if (message.messageType == Message.MessageType.FILE) {
+        if (message.messageType == Message.MessageType.FILE && (message.getMessage().contains(FileManagerFragment.COMMAND_UPLOAD))) {
             final long tic = System.currentTimeMillis();
             final short sleep = 30;
             try {
@@ -543,9 +535,9 @@ public class P2PManager extends Service {
 
             while ((System.currentTimeMillis() - tic) < sleep) {
             }
-
             uploadFile(FileManagerFragment.tmpFileBeingUploadedPath);
         }
+
         messages.remove(message);
     }
 
@@ -1067,8 +1059,6 @@ public class P2PManager extends Service {
                     e.printStackTrace();
                 }
                 sendMessage();
-
-
             }
         }
     }
@@ -1099,14 +1089,15 @@ public class P2PManager extends Service {
                         inputStreamReader = new BufferedReader(new InputStreamReader(inputStream));
 
                     String line = null;
-                    while (line == null && !(line.equals(START))) {
+                    while (line == null || !(line.equals(START))) {
                         line = inputStreamReader.readLine();
                     }
 
                     do {
                         line = inputStreamReader.readLine();
                         log("line > " + line);
-                        builder.append(line);
+                        if (!line.equals(END))
+                            builder.append(line);
                     } while (!line.equals(END));
 
                     if (p2PListener != null) {
@@ -1156,14 +1147,15 @@ public class P2PManager extends Service {
                         inputStreamReader = new BufferedReader(new InputStreamReader(inputStream));
 
                     String line = null;
-                    while (line == null && !(line.equals(START))) {
+                    while (line == null || !(line.equals(START))) {
                         line = inputStreamReader.readLine();
                     }
 
                     do {
                         line = inputStreamReader.readLine();
                         log("line > " + line);
-                        builder.append(line);
+                        if (!line.equals(END))
+                            builder.append(line);
                     } while (!line.equals(END));
 
                     if (p2PListener != null) {
