@@ -16,7 +16,7 @@ import tbs.fakehackerv3.R;
 public class DisconnectedButton extends FrameLayout {
     private static final android.animation.ValueAnimator animator = android.animation.ValueAnimator.ofFloat(0, 1);
     private static final DecelerateInterpolator interpolator = new DecelerateInterpolator();
-    private static final LayoutParams param = new LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+    private static final LayoutParams param = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
     private static float animatedValue;
     private static View view;
     private static final Runnable invalidator = new Runnable() {
@@ -49,7 +49,7 @@ public class DisconnectedButton extends FrameLayout {
             }
         }
     };
-    private static final View.OnClickListener clickListener = new OnClickListener() {
+    private static final OnClickListener clickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.close_button)

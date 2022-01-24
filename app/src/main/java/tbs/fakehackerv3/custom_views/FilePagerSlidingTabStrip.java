@@ -36,7 +36,7 @@ public class FilePagerSlidingTabStrip extends FrameLayout {
     private static int currentPosition;
     private static HackerTextView localTitle, externalTitle;
     private final PageListener pageListener = new PageListener();
-    private final View.OnClickListener listener = new OnClickListener() {
+    private final OnClickListener listener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {

@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -399,71 +400,75 @@ public class RemoteTools {
     }
 
     public static void setVolumeMedia(final int percent) {
-        try {
-            MainActivity.context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_MUSIC, Math.round((percent / 100f) * 15));
-                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
-                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-                    audio.setStreamVolume(AudioManager.STREAM_MUSIC, Math.round((percent / 100f) * maxVolume), 0);
-                }
-            });
-        } catch (Exception e) {
-            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_MUSIC, Math.round((percent / 100f) * 15));
-            e.printStackTrace();
-        }
+        Toast.makeText(MainActivity.context.getApplicationContext(), "Set media Volume" + percent, Toast.LENGTH_LONG).show();
+//        try {
+//            MainActivity.context.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_MUSIC, Math.round((percent / 100f) * 15));
+//                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
+//                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+//                    audio.setStreamVolume(AudioManager.STREAM_MUSIC, Math.round((percent / 100f) * maxVolume), 0);
+//                }
+//            });
+//        } catch (Exception e) {
+//            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_MUSIC, Math.round((percent / 100f) * 15));
+//            e.printStackTrace();
+//        }
     }
 
     public static void setVolumeAlarm(final int percent) {
-        try {
-            MainActivity.context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_ALARM, Math.round((percent / 100f) * 15));
-                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
-                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_ALARM);
-                    audio.setStreamVolume(AudioManager.STREAM_ALARM, Math.round((percent / 100f) * maxVolume), 0);
-                }
-            });
-        } catch (Exception e) {
-            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_ALARM, Math.round((percent / 100f) * 15));
-            e.printStackTrace();
-        }
+        Toast.makeText(MainActivity.context.getApplicationContext(), "Set Alarm Volume" + percent, Toast.LENGTH_LONG).show();
+//        try {
+//            MainActivity.context.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_ALARM, Math.round((percent / 100f) * 15));
+//                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
+//                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_ALARM);
+//                    audio.setStreamVolume(AudioManager.STREAM_ALARM, Math.round((percent / 100f) * maxVolume), 0);
+//                }
+//            });
+//        } catch (Exception e) {
+//            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_ALARM, Math.round((percent / 100f) * 15));
+//            e.printStackTrace();
+//        }
     }
 
     public static void setVolumeNotification(final int percent) {
-        try {
-            MainActivity.context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_NOTIFICATION, Math.round((percent / 100f) * 15));
-                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
-                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
-                    audio.setStreamVolume(AudioManager.STREAM_NOTIFICATION, Math.round((percent / 100f) * maxVolume), 0);
-                }
-            });
-        } catch (Exception e) {
-            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_NOTIFICATION, Math.round((percent / 100f) * 15));
-            e.printStackTrace();
-        }
+        Toast.makeText(MainActivity.context.getApplicationContext(), "Set notif Volume" + percent, Toast.LENGTH_LONG).show();
+//        try {
+//            MainActivity.context.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_NOTIFICATION, Math.round((percent / 100f) * 15));
+//                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
+//                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
+//                    audio.setStreamVolume(AudioManager.STREAM_NOTIFICATION, Math.round((percent / 100f) * maxVolume), 0);
+//                }
+//            });
+//        } catch (Exception e) {
+//            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_NOTIFICATION, Math.round((percent / 100f) * 15));
+//            e.printStackTrace();
+//        }
     }
 
     public static void setVolumeRinger(final int percent) {
-        try {
-            MainActivity.context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_RING, ((int) ((percent / 100f) * 15)));
-                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
-                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_RING);
-                    audio.setStreamVolume(AudioManager.STREAM_RING, Math.round((percent / 100f) * maxVolume), 0);
-                }
-            });
-        } catch (Exception e) {
-            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_RING, ((int) ((percent / 100f) * 15)));
-            e.printStackTrace();
-        }
+        Toast.makeText(MainActivity.context.getApplicationContext(), "Set ringer Volume" + percent, Toast.LENGTH_LONG).show();
+//        try {
+//            MainActivity.context.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_RING, ((int) ((percent / 100f) * 15)));
+//                    AudioManager audio = (AudioManager) MainActivity.context.getSystemService(Context.AUDIO_SERVICE);
+//                    int maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_RING);
+//                    audio.setStreamVolume(AudioManager.STREAM_RING, Math.round((percent / 100f) * maxVolume), 0);
+//                }
+//            });
+//        } catch (Exception e) {
+//            Settings.System.putInt(context().getContentResolver(), Settings.System.VOLUME_RING, ((int) ((percent / 100f) * 15)));
+//            e.printStackTrace();
+//        }
     }
 
     private static Context context() {
@@ -531,7 +536,7 @@ public class RemoteTools {
     public static WifiManager getWifiManager() {
         try {
             if (wifiManager == null)
-                wifiManager = (WifiManager) context().getSystemService(Context.WIFI_SERVICE);
+                wifiManager = (WifiManager) context().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         } catch (Exception e) {
             e.printStackTrace();
         }
