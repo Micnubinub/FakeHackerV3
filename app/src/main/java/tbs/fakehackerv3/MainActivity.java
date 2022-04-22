@@ -1,12 +1,15 @@
 package tbs.fakehackerv3;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -99,6 +102,17 @@ public class MainActivity extends FragmentActivity {
                 @Override
                 public void onConnectionInfoAvailable(final WifiP2pInfo info) {
                     if (info.isGroupOwner) {
+                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            log("no permission to check group ownership");
+                            return;
+                        }
                         P2PManager.manager.requestPeers(P2PManager.channel, new WifiP2pManager.PeerListListener() {
                             @Override
                             public void onPeersAvailable(WifiP2pDeviceList peers) {
